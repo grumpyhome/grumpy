@@ -1,6 +1,15 @@
-language: go
-go:
-  - "1.10.x"
+#language: go
+#go:
+#  - "1.10.x"
+
+language: python
+
+addons:  # Add the version of go that we want
+  apt:
+    sources:
+      - sourceline: 'ppa:gophers/archive'
+    update: true
+    packages: golang-1.10-go
 
 matrix:
   include:
@@ -12,6 +21,19 @@ matrix:
       env:
         - SUDO="sudo"
           USER_FLAG=""
+
+install:  # These commands are done by Travis when language: go
+  - PATH=/usr/lib/go-1.10/bin:${PATH}
+  - export GOPATH=$HOME/gopath
+  - export PATH=$HOME/gopath/bin:$PATH
+  - mkdir -p $HOME/gopath/src/github.com/grumpyhome/grumpy
+  - rsync -az ${TRAVIS_BUILD_DIR}/ $HOME/gopath/src/github.com/grumpyhome/grumpy/
+  - export TRAVIS_BUILD_DIR=$HOME/gopath/src/github.com/grumpyhome/grumpy
+  - cd $HOME/gopath/src/github.com/grumpyhome/grumpy
+  - go env
+  - go version
+  - go get -t -v ./...
+  #- ${PIP_SUDO} pip install --upgrade pip
 
 before_script:
   - python -c "import fcntl; fcntl.fcntl(1, fcntl.F_SETFL, 0)"  # https://github.com/travis-ci/travis-ci/issues/8920#issuecomment-352661024
