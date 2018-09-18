@@ -18,7 +18,7 @@ import weetest
 
 
 def BenchmarkForXRange(b):
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     pass
 
 
@@ -29,10 +29,10 @@ def BenchmarkWhileCounter(b):
 
 
 def BenchmarkWhileXRange(b):
-  i = iter(xrange(b.N))
+  i = iter(range(b.N))
   try:
     while True:
-      i.next()
+      next(i)
   except StopIteration:
     pass
 

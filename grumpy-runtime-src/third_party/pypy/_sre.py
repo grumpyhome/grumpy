@@ -61,7 +61,7 @@ class SRE_Pattern(object):
         self._indexgroup = indexgroup # Maps indices to group names
         self._code = code
 
-    def match(self, string, pos=0, endpos=sys.maxint):
+    def match(self, string, pos=0, endpos=sys.maxsize):
         """If zero or more characters at the beginning of string match this
         regular expression, return a corresponding MatchObject instance. Return
         None if the string does not match the pattern."""
@@ -71,7 +71,7 @@ class SRE_Pattern(object):
         else:
             return None
 
-    def search(self, string, pos=0, endpos=sys.maxint):
+    def search(self, string, pos=0, endpos=sys.maxsize):
         """Scan through string looking for a location where this regular
         expression produces a match, and return a corresponding MatchObject
         instance. Return None if no position in the string matches the
@@ -82,7 +82,7 @@ class SRE_Pattern(object):
         else:
             return None
 
-    def findall(self, string, pos=0, endpos=sys.maxint):
+    def findall(self, string, pos=0, endpos=sys.maxsize):
         """Return a list of all non-overlapping matches of pattern in string."""
         matchlist = []
         state = _State(string, pos, endpos, self.flags)
@@ -108,7 +108,7 @@ class SRE_Pattern(object):
         if not callable(template) and "\\" in template:
             # handle non-literal strings ; hand it over to the template compiler
             raise NotImplementedError()
-        state = _State(string, 0, sys.maxint, self.flags)
+        state = _State(string, 0, sys.maxsize, self.flags)
         sublist = []
 
         n = last_pos = 0
@@ -123,7 +123,7 @@ class SRE_Pattern(object):
                                 last_pos == state.string_position and n > 0):
                 # the above ignores empty matches on latest position
                 if callable(filter):
-                    sublist.append(filter(SRE_Match(self, state)))
+                    sublist.append(list(filter(SRE_Match(self, state))))
                 else:
                     sublist.append(filter)
                 last_pos = state.string_position
@@ -155,7 +155,7 @@ class SRE_Pattern(object):
     def split(self, string, maxsplit=0):
         """Split string by the occurrences of pattern."""
         splitlist = []
-        state = _State(string, 0, sys.maxint, self.flags)
+        state = _State(string, 0, sys.maxsize, self.flags)
         n = 0
         last = state.start
         while not maxsplit or n < maxsplit:
@@ -180,19 +180,19 @@ class SRE_Pattern(object):
         splitlist.append(string[last:state.end])
         return splitlist
 
-    def finditer(self, string, pos=0, endpos=sys.maxint):
+    def finditer(self, string, pos=0, endpos=sys.maxsize):
         """Return a list of all non-overlapping matches of pattern in string."""
         scanner = self.scanner(string, pos, endpos)
         return iter(scanner.search, None)
 
-    def scanner(self, string, start=0, end=sys.maxint):
+    def scanner(self, string, start=0, end=sys.maxsize):
         return SRE_Scanner(self, string, start, end)
 
     def __copy__(self):
-        raise TypeError, "cannot copy this pattern object"
+        raise TypeError("cannot copy this pattern object")
 
     def __deepcopy__(self):
-        raise TypeError, "cannot copy this pattern object"
+        raise TypeError("cannot copy this pattern object")
 
 
 class SRE_Scanner(object):
@@ -310,7 +310,7 @@ class SRE_Match(object):
         The default argument is used for groups that did not participate in the
         match (defaults to None)."""
         groupdict = {}
-        for key, value in self.re.groupindex.items():
+        for key, value in list(self.re.groupindex.items()):
             groupdict[key] = self._get_slice(value, default)
         return groupdict
 
@@ -328,10 +328,10 @@ class SRE_Match(object):
             return tuple(grouplist)
 
     def __copy__():
-        raise TypeError, "cannot copy this pattern object"
+        raise TypeError("cannot copy this pattern object")
 
     def __deepcopy__():
-        raise TypeError, "cannot copy this pattern object"
+        raise TypeError("cannot copy this pattern object")
 
 
 class _State(object):
@@ -567,7 +567,7 @@ class _Dispatcher(object):
         if cls.DISPATCH_TABLE is not None:
             return
         table = {}
-        for key, value in code_dict.items():
+        for key, value in list(code_dict.items()):
             if hasattr(cls, "%s%s" % (method_prefix, key)):
                 table[value] = getattr(cls, "%s%s" % (method_prefix, key))
         cls.DISPATCH_TABLE = table
@@ -601,13 +601,13 @@ class _OpcodeDispatcher(_Dispatcher):
         if id(context) in self.executing_contexts:
             generator = self.executing_contexts[id(context)]
             del self.executing_contexts[id(context)]
-            has_finished = generator.next()
+            has_finished = next(generator)
         else:
             method = self.DISPATCH_TABLE.get(opcode, _OpcodeDispatcher.unknown)
             has_finished = method(self, context)
             if hasattr(has_finished, "next"): # avoid using the types module
                 generator = has_finished
-                has_finished = generator.next()
+                has_finished = next(generator)
         if not has_finished:
             self.executing_contexts[id(context)] = generator
         return has_finished
@@ -1285,7 +1285,7 @@ def _is_loc_word(char):
     return (not (ord(char) & ~255) and char.isalnum()) or char == '_'
 
 def _is_uni_word(char):
-    return unichr(ord(char)).isalnum() or char == '_'
+    return chr(ord(char)).isalnum() or char == '_'
 
 def _is_linebreak(char):
     return char == "\n"
@@ -1295,4 +1295,4 @@ _uni_linebreaks = [10, 13, 28, 29, 30, 133, 8232, 8233]
 
 def _log(message):
     if 0:
-        print message
+        print(message)

@@ -21,23 +21,23 @@ import weetest
 
 def BenchmarkGeneratorExpCreate(b):
   l = []
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     (x for x in l)  # pylint: disable=pointless-statement
 
 
 def BenchmarkGeneratorExpIterate(b):
-  for _ in (x for x in xrange(b.N)):
+  for _ in (x for x in range(b.N)):
     pass
 
 
 def BenchmarkListCompCreate(b):
-  for _ in xrange(b.N):
-    [x for x in xrange(1000)]  # pylint: disable=expression-not-assigned
+  for _ in range(b.N):
+    [x for x in range(1000)]  # pylint: disable=expression-not-assigned
 
 
 def BenchmarkDictCompCreate(b):
-  for _ in xrange(b.N):
-    {x: x for x in xrange(1000)}  # pylint: disable=expression-not-assigned
+  for _ in range(b.N):
+    {x: x for x in range(1000)}  # pylint: disable=expression-not-assigned
 
 
 if __name__ == '__main__':

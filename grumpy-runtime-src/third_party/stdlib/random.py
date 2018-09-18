@@ -114,7 +114,7 @@ class Random(_random.GrumpyRandom):
 
 ## -------------------- integer methods  -------------------
 
-    def randrange(self, start, stop=None, step=1, _int=int, _maxwidth=1L<<BPF):
+    def randrange(self, start, stop=None, step=1, _int=int, _maxwidth=1<<BPF):
         """Choose a random item from range(start, stop[, step]).
 
         This fixes the problem with randint() which includes the
@@ -126,18 +126,18 @@ class Random(_random.GrumpyRandom):
         # common case while still doing adequate error checking.
         istart = _int(start)
         if istart != start:
-            raise ValueError, "non-integer arg 1 for randrange()"
+            raise ValueError("non-integer arg 1 for randrange()")
         if stop is None:
             if istart > 0:
                 if istart >= _maxwidth:
                     return self._randbelow(istart)
                 return _int(self.random() * istart)
-            raise ValueError, "empty range for randrange()"
+            raise ValueError("empty range for randrange()")
 
         # stop argument supplied.
         istop = _int(stop)
         if istop != stop:
-            raise ValueError, "non-integer stop for randrange()"
+            raise ValueError("non-integer stop for randrange()")
         width = istop - istart
         if step == 1 and width > 0:
             # Note that
@@ -157,21 +157,21 @@ class Random(_random.GrumpyRandom):
                 return _int(istart + self._randbelow(width))
             return _int(istart + _int(self.random()*width))
         if step == 1:
-            raise ValueError, "empty range for randrange() (%d,%d, %d)" % (istart, istop, width)
+            raise ValueError("empty range for randrange() (%d,%d, %d)" % (istart, istop, width))
 
         # Non-unit step argument supplied.
         istep = _int(step)
         if istep != step:
-            raise ValueError, "non-integer step for randrange()"
+            raise ValueError("non-integer step for randrange()")
         if istep > 0:
             n = (width + istep - 1) // istep
         elif istep < 0:
             n = (width + istep + 1) // istep
         else:
-            raise ValueError, "zero step for randrange()"
+            raise ValueError("zero step for randrange()")
 
         if n <= 0:
-            raise ValueError, "empty range for randrange()"
+            raise ValueError("empty range for randrange()")
 
         if n >= _maxwidth:
             return istart + istep*self._randbelow(n)
@@ -200,7 +200,7 @@ class Random(_random.GrumpyRandom):
         if random is None:
             random = self.random
         _int = int
-        for i in reversed(xrange(1, len(x))):
+        for i in reversed(range(1, len(x))):
             # pick an element in x[:i+1] with which to exchange x[i]
             j = _int(random() * (i+1))
             x[i], x[j] = x[j], x[i]
@@ -569,7 +569,7 @@ class Random(_random.GrumpyRandom):
 
 def _test_generator(n, func, args):
     import time
-    print n, 'times', func.__name__
+    print(n, 'times', func.__name__)
     total = 0.0
     sqsum = 0.0
     smallest = 1e10
@@ -582,11 +582,11 @@ def _test_generator(n, func, args):
         smallest = min(x, smallest)
         largest = max(x, largest)
     t1 = time.time()
-    print round(t1-t0, 3), 'sec,',
+    print(round(t1-t0, 3), 'sec,', end=' ')
     avg = total/n
     stddev = _sqrt(sqsum/n - avg*avg)
-    print 'avg %g, stddev %g, min %g, max %g' % \
-              (avg, stddev, smallest, largest)
+    print('avg %g, stddev %g, min %g, max %g' % \
+              (avg, stddev, smallest, largest))
 
 
 def _test(N=2000):

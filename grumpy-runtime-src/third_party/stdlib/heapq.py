@@ -191,7 +191,7 @@ def heapify(x):
     # or i < (n-1)/2.  If n is even = 2*j, this is (2*j-1)/2 = j-1/2 so
     # j-1 is the largest, which is n//2 - 1.  If n is odd = 2*j+1, this is
     # (2*j+1-1)/2 = j so j-1 is the largest, and that's again n//2-1.
-    for i in reversed(xrange(n//2)):
+    for i in reversed(range(n//2)):
         _siftup(x, i)
 
 def _heappushpop_max(heap, item):
@@ -204,7 +204,7 @@ def _heappushpop_max(heap, item):
 def _heapify_max(x):
     """Transform list into a maxheap, in-place, in O(len(x)) time."""
     n = len(x)
-    for i in reversed(range(n//2)):
+    for i in reversed(list(range(n//2))):
         _siftup_max(x, i)
 
 def nlargest(n, iterable):
@@ -379,7 +379,7 @@ def merge(*iterables):
     h_append = h.append
     for itnum, it in enumerate(map(iter, iterables)):
         try:
-            next = it.next
+            next = it.__next__
             h_append([next(), itnum, next])
         except _StopIteration:
             pass
@@ -429,15 +429,15 @@ def nsmallest(n, iterable, key=None):
 
     # When key is none, use simpler decoration
     if key is None:
-        it = izip(iterable, count())                        # decorate
+        it = zip(iterable, count())                        # decorate
         result = _nsmallest(n, it)
-        return map(itemgetter(0), result)                   # undecorate
+        return list(map(itemgetter(0), result))                   # undecorate
 
     # General case, slowest method
     in1, in2 = tee(iterable)
-    it = izip(imap(key, in1), count(), in2)                 # decorate
+    it = zip(map(key, in1), count(), in2)                 # decorate
     result = _nsmallest(n, it)
-    return map(itemgetter(2), result)                       # undecorate
+    return list(map(itemgetter(2), result))                       # undecorate
 
 _nlargest = nlargest
 def nlargest(n, iterable, key=None):
@@ -467,15 +467,15 @@ def nlargest(n, iterable, key=None):
 
     # When key is none, use simpler decoration
     if key is None:
-        it = izip(iterable, count(0,-1))                    # decorate
+        it = zip(iterable, count(0,-1))                    # decorate
         result = _nlargest(n, it)
-        return map(itemgetter(0), result)                   # undecorate
+        return list(map(itemgetter(0), result))                   # undecorate
 
     # General case, slowest method
     in1, in2 = tee(iterable)
-    it = izip(imap(key, in1), count(0,-1), in2)             # decorate
+    it = zip(map(key, in1), count(0,-1), in2)             # decorate
     result = _nlargest(n, it)
-    return map(itemgetter(2), result)                       # undecorate
+    return list(map(itemgetter(2), result))                       # undecorate
 
 #if __name__ == "__main__":
 #    # Simple sanity test

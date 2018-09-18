@@ -21,19 +21,19 @@ import weetest
 
 def BenchmarkTupleGetItem(b):
   l = (1, 3, 9)
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     l[2]
 
 
 def BenchmarkTupleContains3(b):
   t = (1, 3, 9)
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     9 in t
 
 
 def BenchmarkTupleContains10(b):
   t = tuple(range(10))
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     9 in t
 
 

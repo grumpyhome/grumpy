@@ -36,7 +36,7 @@ class chain(object):
   def __iter__(self):
     return self
 
-  def next(self):
+  def __next__(self):
     flag = True
     while flag:
       try:
@@ -48,7 +48,7 @@ class chain(object):
 
 
 def compress(data, selectors):
-  return (d for d,s in izip(data, selectors) if s)
+  return (d for d,s in zip(data, selectors) if s)
 
 
 def count(start=0, step=1):
@@ -91,7 +91,7 @@ class groupby(object):
   def __iter__(self):
     return self
 
-  def next(self):
+  def __next__(self):
     while self.currkey == self.tgtkey:
       self.currvalue = next(self.it)    # Exit on StopIteration
       self.currkey = self.keyfunc(self.currvalue)
@@ -122,7 +122,7 @@ def ifilterfalse(predicate, iterable):
 
 
 def imap(function, *iterables):
-  iterables = map(iter, iterables)
+  iterables = list(map(iter, iterables))
   while True:
     args = [next(it) for it in iterables]
     if function is None:
@@ -133,7 +133,7 @@ def imap(function, *iterables):
 
 def islice(iterable, *args):
   s = slice(*args)
-  it = iter(xrange(s.start or 0, s.stop or sys.maxint, s.step or 1))
+  it = iter(range(s.start or 0, s.stop or sys.maxsize, s.step or 1))
   nexti = next(it)
   for i, element in enumerate(iterable):
     if i == nexti:
@@ -142,7 +142,7 @@ def islice(iterable, *args):
 
 
 def izip(*iterables):
-  iterators = map(iter, iterables)
+  iterators = list(map(iter, iterables))
   while iterators:
     yield tuple(map(next, iterators))
 
@@ -172,7 +172,7 @@ def izip_longest(*args, **kwds):
 def product(*args, **kwds):
   # product('ABCD', 'xy') --> Ax Ay Bx By Cx Cy Dx Dy
   # product(range(2), repeat=3) --> 000 001 010 011 100 101 110 111
-  pools = map(tuple, args) * kwds.get('repeat', 1)
+  pools = list(map(tuple, args)) * kwds.get('repeat', 1)
   result = [[]]
   for pool in pools:
     result = [x+[y] for x in result for y in pool]
@@ -184,7 +184,7 @@ def permutations(iterable, r=None):
   pool = tuple(iterable)
   n = len(pool)
   r = n if r is None else r
-  for indices in product(range(n), repeat=r):
+  for indices in product(list(range(n)), repeat=r):
     if len(set(indices)) == r:
       yield tuple(pool[i] for i in indices)
 
@@ -192,7 +192,7 @@ def permutations(iterable, r=None):
 def combinations(iterable, r):
   pool = tuple(iterable)
   n = len(pool)
-  for indices in permutations(range(n), r):
+  for indices in permutations(list(range(n)), r):
     if sorted(indices) == list(indices):
       yield tuple(pool[i] for i in indices)
 
@@ -200,7 +200,7 @@ def combinations(iterable, r):
 def combinations_with_replacement(iterable, r):
   pool = tuple(iterable)
   n = len(pool)
-  for indices in product(range(n), repeat=r):
+  for indices in product(list(range(n)), repeat=r):
     if sorted(indices) == list(indices):
       yield tuple(pool[i] for i in indices)
 
@@ -210,7 +210,7 @@ def repeat(object, times=None):
     while True:
       yield object
   else:
-    for i in xrange(times):
+    for i in range(times):
       yield object
 
 

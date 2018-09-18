@@ -67,7 +67,7 @@ def _reduce_ex(self, proto):
         state = None
     else:
         if base is self.__class__:
-            raise TypeError, "can't pickle %s objects" % base.__name__
+            raise TypeError("can't pickle %s objects" % base.__name__)
         state = base(self)
     args = (self.__class__, base, state)
     try:
@@ -119,7 +119,7 @@ def _slotnames(cls):
             if "__slots__" in c.__dict__:
                 slots = c.__dict__['__slots__']
                 # if class has a single slot, it can be given as a string
-                if isinstance(slots, basestring):
+                if isinstance(slots, str):
                     slots = (slots,)
                 for name in slots:
                     # special descriptors
@@ -158,7 +158,7 @@ def add_extension(module, name, code):
     """Register an extension code."""
     code = int(code)
     if not 1 <= code <= 0x7fffffff:
-        raise ValueError, "code out of range"
+        raise ValueError("code out of range")
     key = (module, name)
     if (_extension_registry.get(key) == code and
         _inverted_registry.get(code) == key):

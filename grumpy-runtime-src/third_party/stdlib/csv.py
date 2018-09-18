@@ -5,6 +5,7 @@ csv.py - read/write/investigate CSV files
 
 import re
 import functools
+from functools import reduce
 reduce = functools.reduce
 # from functools import reduce
 
@@ -21,7 +22,7 @@ for name in _csv.__all__:
 # from _csv import Dialect as _Dialect
 _Dialect = _csv.Dialect
 
-import StringIO as _StringIO
+import io as _StringIO
 StringIO = _StringIO.StringIO
 # try:
 #     from cStringIO import StringIO
@@ -61,7 +62,7 @@ class Dialect(object):
     def _validate(self):
         try:
             _Dialect(self)
-        except TypeError, e:
+        except TypeError as e:
             # We do this for compatibility with py2.3
             raise Error(str(e))
 
@@ -98,7 +99,7 @@ class DictReader(object):
     def fieldnames(self):
         if self._fieldnames is None:
             try:
-                self._fieldnames = self.reader.next()
+                self._fieldnames = next(self.reader)
             except StopIteration:
                 pass
         self.line_num = self.reader.line_num
@@ -113,19 +114,19 @@ class DictReader(object):
     def fieldnames(self, value):
         self._fieldnames = value
 
-    def next(self):
+    def __next__(self):
         if self.line_num == 0:
             # Used only for its side effect.
             self.fieldnames
-        row = self.reader.next()
+        row = next(self.reader)
         self.line_num = self.reader.line_num
 
         # unlike the basic reader, we prefer not to return blanks,
         # because we will typically wind up with a dict full of None
         # values
         while row == []:
-            row = self.reader.next()
-        d = dict(zip(self.fieldnames, row))
+            row = next(self.reader)
+        d = dict(list(zip(self.fieldnames, row)))
         lf = len(self.fieldnames)
         lr = len(row)
         if lf < lr:
@@ -142,14 +143,13 @@ class DictWriter(object):
         self.fieldnames = fieldnames    # list of keys for the dict
         self.restval = restval          # for writing short dicts
         if extrasaction.lower() not in ("raise", "ignore"):
-            raise ValueError, \
-                  ("extrasaction (%s) must be 'raise' or 'ignore'" %
+            raise ValueError("extrasaction (%s) must be 'raise' or 'ignore'" %
                    extrasaction)
         self.extrasaction = extrasaction
         self.writer = writer(f, dialect, *args, **kwds)
 
     def writeheader(self):
-        header = dict(zip(self.fieldnames, self.fieldnames))
+        header = dict(list(zip(self.fieldnames, self.fieldnames)))
         self.writerow(header)
 
     def _dict_to_list(self, rowdict):
@@ -198,7 +198,7 @@ class Sniffer(object):
                                                                 delimiters)
 
         if not delimiter:
-            raise Error, "Could not determine delimiter"
+            raise Error("Could not determine delimiter")
 
         class dialect(Dialect):
             _name = "sniffed"
@@ -263,11 +263,11 @@ class Sniffer(object):
                 spaces += 1
 
         quotechar = reduce(lambda a, b, quotes = quotes:
-                           (quotes[a] > quotes[b]) and a or b, quotes.keys())
+                           (quotes[a] > quotes[b]) and a or b, list(quotes.keys()))
 
         if delims:
             delim = reduce(lambda a, b, delims = delims:
-                           (delims[a] > delims[b]) and a or b, delims.keys())
+                           (delims[a] > delims[b]) and a or b, list(delims.keys()))
             skipinitialspace = delims[delim] == spaces
             if delim == '\n': # most likely a file with a single column
                 delim = ''
@@ -311,7 +311,7 @@ class Sniffer(object):
         additional chunks as necessary.
         """
 
-        data = filter(None, data.split('\n'))
+        data = [_f for _f in data.split('\n') if _f]
 
         ascii = [chr(c) for c in range(127)] # 7-bit ASCII
 
@@ -333,8 +333,8 @@ class Sniffer(object):
                     metaFrequency[freq] = metaFrequency.get(freq, 0) + 1
                     charFrequency[char] = metaFrequency
 
-            for char in charFrequency.keys():
-                items = charFrequency[char].items()
+            for char in list(charFrequency.keys()):
+                items = list(charFrequency[char].items())
                 if len(items) == 1 and items[0][0] == 0:
                     continue
                 # get the mode of the frequencies
@@ -351,7 +351,7 @@ class Sniffer(object):
                     modes[char] = items[0]
 
             # build a list of possible delimiters
-            modeList = modes.items()
+            modeList = list(modes.items())
             total = float(chunkLength * iteration)
             # (rows of consistent data) / (number of rows) = 100%
             consistency = 1.0
@@ -366,7 +366,7 @@ class Sniffer(object):
                 consistency -= 0.01
 
             if len(delims) == 1:
-                delim = delims.keys()[0]
+                delim = list(delims.keys())[0]
                 skipinitialspace = (data[0].count(delim) ==
                                     data[0].count("%c " % delim))
                 return (delim, skipinitialspace)
@@ -381,14 +381,14 @@ class Sniffer(object):
         # if there's more than one, fall back to a 'preferred' list
         if len(delims) > 1:
             for d in self.preferred:
-                if d in delims.keys():
+                if d in list(delims.keys()):
                     skipinitialspace = (data[0].count(d) ==
                                         data[0].count("%c " % d))
                     return (d, skipinitialspace)
 
         # nothing else indicates a preference, pick the character that
         # dominates(?)
-        items = [(v,k) for (k,v) in delims.items()]
+        items = [(v,k) for (k,v) in list(delims.items())]
         items.sort()
         delim = items[-1][1]
 
@@ -409,7 +409,7 @@ class Sniffer(object):
 
         rdr = reader(StringIO(sample), self.sniff(sample))
 
-        header = rdr.next() # assume first row is header
+        header = next(rdr) # assume first row is header
 
         columns = len(header)
         columnTypes = {}
@@ -425,9 +425,9 @@ class Sniffer(object):
             if len(row) != columns:
                 continue # skip rows that have irregular number of columns
 
-            for col in columnTypes.keys():
+            for col in list(columnTypes.keys()):
 
-                for thisType in [int, long, float, complex]:
+                for thisType in [int, int, float, complex]:
                     try:
                         thisType(row[col])
                         break
@@ -438,7 +438,7 @@ class Sniffer(object):
                     thisType = len(row[col])
 
                 # treat longs as ints
-                if thisType == long:
+                if thisType == int:
                     thisType = int
 
                 if thisType != columnTypes[col]:
@@ -452,7 +452,7 @@ class Sniffer(object):
         # finally, compare results against first row and "vote"
         # on whether it's a header
         hasHeader = 0
-        for col, colType in columnTypes.items():
+        for col, colType in list(columnTypes.items()):
             if type(colType) == type(0): # it's a length
                 if len(header[col]) != colType:
                     hasHeader += 1

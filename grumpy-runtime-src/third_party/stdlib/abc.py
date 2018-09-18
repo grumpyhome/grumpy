@@ -87,7 +87,7 @@ class ABCMeta(type):
         cls = super(ABCMeta, mcls).__new__(mcls, name, bases, namespace)
         # Compute set of abstract method names
         abstracts = set(name
-                     for name, value in namespace.items()
+                     for name, value in list(namespace.items())
                      if getattr(value, "__isabstractmethod__", False))
         for base in bases:
             for name in getattr(base, "__abstractmethods__", set()):
@@ -118,12 +118,12 @@ class ABCMeta(type):
 
     def _dump_registry(cls, file=None):
         """Debug helper to print the ABC registry."""
-        print >> file, "Class: %s.%s" % (cls.__module__, cls.__name__)
-        print >> file, "Inv.counter: %s" % ABCMeta._abc_invalidation_counter
+        print("Class: %s.%s" % (cls.__module__, cls.__name__), file=file)
+        print("Inv.counter: %s" % ABCMeta._abc_invalidation_counter, file=file)
         for name in sorted(cls.__dict__.keys()):
             if name.startswith("_abc_"):
                 value = getattr(cls, name)
-                print >> file, "%s: %r" % (name, value)
+                print("%s: %r" % (name, value), file=file)
 
     def __instancecheck__(cls, instance):
         """Override for isinstance(instance, cls)."""

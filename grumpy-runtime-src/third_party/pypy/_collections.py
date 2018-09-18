@@ -14,8 +14,8 @@
 #     def _thread_ident():
 #         return -1
 
-import thread
-_thread_ident = thread.get_ident
+import _thread
+_thread_ident = _thread.get_ident
 
 n = 30
 LFTLNK = n
@@ -378,7 +378,7 @@ class deque_iterator(object):
             raise RuntimeError("deque mutated during iteration")
         self._gen = itergen(deq.state, giveup)
 
-    def next(self):
+    def __next__(self):
         res = next(self._gen)
         self.counter -= 1
         return res
@@ -433,5 +433,5 @@ class defaultdict(dict):
 
            This API is used by pickle.py and copy.py.
         """
-        return (type(self), (self.default_factory,), None, None, self.iteritems())
+        return (type(self), (self.default_factory,), None, None, iter(self.items()))
 

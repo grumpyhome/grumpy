@@ -5,7 +5,7 @@ import sys
 import traceback
 
 # from StringIO import StringIO
-import StringIO as _StringIO
+import io as _StringIO
 StringIO = _StringIO.StringIO
 
 # from . import util

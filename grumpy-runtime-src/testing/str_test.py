@@ -18,7 +18,7 @@ import sys
 
 # Test Add
 assert "foo" + "bar" == "foobar"
-assert "foo" + u"bar" == u"foobar"
+assert "foo" + "bar" == "foobar"
 assert "baz" + "" == "baz"
 
 # Test capitalize
@@ -62,8 +62,8 @@ assert 'abcdefghiabc'.find('abc', 1) == 9
 assert 'abcdefghiabc'.find('def', 4) == -1
 assert 'abc'.find('', 0) == 0
 assert 'abc'.find('', 3) == 3
-assert 'abc'.find('c', long(1)) == 2
-assert 'abc'.find('c', 0, long(3)) == 2
+assert 'abc'.find('c', int(1)) == 2
+assert 'abc'.find('c', 0, int(3)) == 2
 assert 'abc'.find('', 4) == -1
 assert 'rrarrrrrrrrra'.find('a') == 2
 assert 'rrarrrrrrrrra'.find('a', 4) == 12
@@ -72,10 +72,10 @@ assert 'rrarrrrrrrrra'.find('a', 4, None) == 12
 assert 'rrarrrrrrrrra'.find('a', None, 6) == 2
 assert ''.find('') == 0
 assert ''.find('', 1, 1) == -1
-assert ''.find('', sys.maxint, 0) == -1
+assert ''.find('', sys.maxsize, 0) == -1
 assert ''.find('xx') == -1
 assert ''.find('xx', 1, 1) == -1
-assert ''.find('xx', sys.maxint, 0) == -1
+assert ''.find('xx', sys.maxsize, 0) == -1
 assert 'ab'.find('xxx', sys.maxsize + 1, 0) == -1
 # TODO: Support unicode substring.
 # assert "foobar".find(u"bar") == 3
@@ -124,7 +124,7 @@ class IntIndexType(object):
 
 class LongIndexType(object):
   def __index__(self):
-    return 2L
+    return 2
 
 class IntIntType(object):
   def __int__(self):
@@ -132,10 +132,10 @@ class IntIntType(object):
 
 class LongIntType(object):
   def __int__(self):
-    return 2L
+    return 2
 
 assert "bar"[1] == "a"
-assert "bar"[long(1)] == "a"
+assert "bar"[int(1)] == "a"
 assert "baz"[-1] == "z"
 assert "baz"[IntIndexType()] == "z"
 assert "baz"[LongIndexType()] == "z"
@@ -173,7 +173,7 @@ except ValueError:
 # Test Mod
 assert "%s" % 42 == "42"
 assert "%f" % 3.14 == "3.140000"
-assert "abc %d" % 123L == "abc 123"
+assert "abc %d" % 123 == "abc 123"
 assert "%d" % 3.14 == "3"
 assert "%%" % tuple() == "%"
 assert "%r" % "abc" == "'abc'"
@@ -303,14 +303,14 @@ class A(object):
     return 3
 class AL(object):
   def __int__(self):
-    return 3L
+    return 3
 
 class B(object):
   def __index__(self):
     return 3
 class BL(object):
   def __index__(self):
-    return 3L
+    return 3
 
 assert 'aaaaa'.replace('a', 'b', A()) == 'bbbaa'
 assert 'aaaaa'.replace('a', 'b', AL()) == 'bbbaa'

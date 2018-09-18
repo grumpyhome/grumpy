@@ -186,6 +186,6 @@ def TestRunAll():
 
 if __name__ == '__main__':
   # Using keys() avoids "dictionary changed size during iteration" error.
-  for test_name in globals().keys():
+  for test_name in list(globals().keys()):
     if test_name.startswith('Test'):
       globals()[test_name]()

@@ -247,11 +247,11 @@ def _compile(*key):
             raise ValueError('Cannot process flags argument with a compiled pattern')
         return pattern
     if not sre_compile.isstring(pattern):
-        raise TypeError, "first argument must be string or compiled pattern"
+        raise TypeError("first argument must be string or compiled pattern")
     try:
         p = sre_compile.compile(pattern, flags)
-    except error, v:
-        raise error, v # invalid expression
+    except error as v:
+        raise error(v) # invalid expression
     if not bypass_cache:
         if len(_cache) >= _MAXCACHE:
             _cache.clear()
@@ -272,8 +272,8 @@ def _compile_repl(*key):
     repl, pattern = key
     try:
         p = sre_parse.parse_template(repl, pattern)
-    except error, v:
-        raise error, v # invalid expression
+    except error as v:
+        raise error(v) # invalid expression
     if len(_cache_repl) >= _MAXCACHE:
         _cache_repl.clear()
     _cache_repl[key] = p
@@ -296,12 +296,12 @@ def _subx(pattern, template):
 
 # register myself for pickling
 
-import copy_reg
+import copyreg
 
 def _pickle(p):
     return _compile, (p.pattern, p.flags)
 
-copy_reg.pickle(_pattern_type, _pickle, _compile)
+copyreg.pickle(_pattern_type, _pickle, _compile)
 
 # --------------------------------------------------------------------
 # experimental stuff (see python-dev discussions for details)

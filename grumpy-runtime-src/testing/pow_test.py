@@ -29,20 +29,20 @@ assert 2 ** 0 == 1, "2 ** 0"
 assert 2 ** 1 == 2, "2 ** 1"
 assert 2 ** 2 == 4, "2 ** 2"
 
-assert 2L ** -2 == 0.25, "2L ** -2"
-assert 2L ** -1 == 0.5, "2L ** -1"
-assert 2L ** 0 == 1, "2L ** 0"
-assert 2L ** 1 == 2, "2L ** 1"
-assert 2L ** 2 == 4, "2L ** 2"
+assert 2 ** -2 == 0.25, "2L ** -2"
+assert 2 ** -1 == 0.5, "2L ** -1"
+assert 2 ** 0 == 1, "2L ** 0"
+assert 2 ** 1 == 2, "2L ** 1"
+assert 2 ** 2 == 4, "2L ** 2"
 
 # Test the rpow operator on long
-assert 2 ** -2L == 0.25, "2 ** -2L"
-assert 2 ** -1L == 0.5, "2 ** -1L"
-assert 2 ** 0L == 1, "2 ** 0L"
-assert 2 ** 1L == 2, "2 ** 1L"
-assert 2 ** 2L == 4, "2 ** 2L"
+assert 2 ** -2 == 0.25, "2 ** -2L"
+assert 2 ** -1 == 0.5, "2 ** -1L"
+assert 2 ** 0 == 1, "2 ** 0L"
+assert 2 ** 1 == 2, "2 ** 1L"
+assert 2 ** 2 == 4, "2 ** 2L"
 
-for zero in (0, 0L, 0.0):
+for zero in (0, 0, 0.0):
     try:
         result = zero ** -2
         assert "0 ** -2"
@@ -61,7 +61,7 @@ for zero in (0, 0L, 0.0):
 
     assert 2 ** zero == 1
     assert (-2.0) ** zero == 1
-    assert 3L ** zero == 1
+    assert 3 ** zero == 1
 
 assert (-2) ** -2 == 0.25, '(-2) ** -2'
 assert (-2) ** -1 == -0.5, '(-2) ** -1'

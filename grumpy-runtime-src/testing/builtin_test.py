@@ -20,9 +20,9 @@ assert abs(1) == 1
 assert abs(-1) == 1
 assert isinstance(abs(-1), int)
 
-assert abs(long(2)) == 2
-assert abs(long(-2)) == 2
-assert isinstance(abs(long(-2)), long)
+assert abs(int(2)) == 2
+assert abs(int(-2)) == 2
+assert isinstance(abs(int(-2)), int)
 
 assert abs(3.4) == 3.4
 assert abs(-3.4) == 3.4
@@ -313,51 +313,51 @@ assert sorted({"foo": 1, "bar": 2}) == ["bar", "foo"]
 
 # Test zip
 
-assert zip('abc', (0, 1, 2)) == [('a', 0), ('b', 1), ('c', 2)]
-assert list(zip('abc', range(6))) == zip('abc', range(6))
-assert list(zip('abcdef', range(3))) == zip('abcdef', range(3))
-assert list(zip('abcdef')) == zip('abcdef')
-assert list(zip()) == zip()
-assert [tuple(list(pair)) for pair in zip('abc', 'def')] == zip('abc', 'def')
-assert [pair for pair in zip('abc', 'def')] == zip('abc', 'def')
-assert zip({'b': 1, 'a': 2}) == [('a',), ('b',)]
-assert zip(range(5)) == [(0,), (1,), (2,), (3,), (4,)]
-assert zip(xrange(5)) == [(0,), (1,), (2,), (3,), (4,)]
-assert zip([1, 2, 3], [1], [4, 5, 6]) == [(1, 1, 4)]
-assert zip([1], [1, 2, 3], [4, 5, 6]) == [(1, 1, 4)]
-assert zip([4, 5, 6], [1], [1, 2, 3]) == [(4, 1, 1)]
-assert zip([1], [1, 2, 3], [4]) == [(1, 1, 4)]
-assert zip([1, 2], [1, 2, 3], [4]) == [(1, 1, 4)]
-assert zip([1, 2, 3, 4], [1, 2, 3], [4]) == [(1, 1, 4)]
-assert zip([1], [1, 2], [4, 2, 4]) == [(1, 1, 4)]
-assert zip([1, 2, 3], [1, 2], [4]) == [(1, 1, 4)]
-assert zip([1, 2, 3], [1, 2], [4], []) == []
-assert zip([], [1], [1, 2], [1, 2, 3]) == []
+assert list(zip('abc', (0, 1, 2))) == [('a', 0), ('b', 1), ('c', 2)]
+assert list(zip('abc', list(range(6)))) == list(zip('abc', list(range(6))))
+assert list(zip('abcdef', list(range(3)))) == list(zip('abcdef', list(range(3))))
+assert list(zip('abcdef')) == list(zip('abcdef'))
+assert list(zip()) == list(zip())
+assert [tuple(list(pair)) for pair in zip('abc', 'def')] == list(zip('abc', 'def'))
+assert [pair for pair in zip('abc', 'def')] == list(zip('abc', 'def'))
+assert list(zip({'b': 1, 'a': 2})) == [('a',), ('b',)]
+assert list(zip(list(range(5)))) == [(0,), (1,), (2,), (3,), (4,)]
+assert list(zip(list(range(5)))) == [(0,), (1,), (2,), (3,), (4,)]
+assert list(zip([1, 2, 3], [1], [4, 5, 6])) == [(1, 1, 4)]
+assert list(zip([1], [1, 2, 3], [4, 5, 6])) == [(1, 1, 4)]
+assert list(zip([4, 5, 6], [1], [1, 2, 3])) == [(4, 1, 1)]
+assert list(zip([1], [1, 2, 3], [4])) == [(1, 1, 4)]
+assert list(zip([1, 2], [1, 2, 3], [4])) == [(1, 1, 4)]
+assert list(zip([1, 2, 3, 4], [1, 2, 3], [4])) == [(1, 1, 4)]
+assert list(zip([1], [1, 2], [4, 2, 4])) == [(1, 1, 4)]
+assert list(zip([1, 2, 3], [1, 2], [4])) == [(1, 1, 4)]
+assert list(zip([1, 2, 3], [1, 2], [4], [])) == []
+assert list(zip([], [1], [1, 2], [1, 2, 3])) == []
 try:
-  zip([1, 2, 3], [1, 2], [4], None)
+  list(zip([1, 2, 3], [1, 2], [4], None))
   raise AssertionError
 except TypeError:
   pass
 
 # Test map
 
-assert map(str, []) == []
-assert map(str, [1, 2, 3]) == ["1", "2", "3"]
-assert map(str, (1, 2, 3)) == ["1", "2", "3"]
+assert list(map(str, [])) == []
+assert list(map(str, [1, 2, 3])) == ["1", "2", "3"]
+assert list(map(str, (1, 2, 3))) == ["1", "2", "3"]
 # assert map(str, (1.0, 2.0, 3.0)) == ["1", "2", "3"]
-assert map(str, range(3)) == ["0", "1", "2"]
-assert map(str, xrange(3)) == ["0", "1", "2"]
-assert map(int, ["1", "2", "3"]) == [1, 2, 3]
-assert map(int, "123") == [1, 2, 3]
-assert map(int, {"1": "a", "2": "b"}) == [1, 2]
-assert map(int, {1: "a", 2: "b"}) == [1, 2]
-assert map(lambda a, b: (str(a), float(b or 0) + 0.1),
-           [1, 2, 3], [1, 2]) == [('1', 1.1), ('2', 2.1), ('3', 0.1)]
-assert map(None, [1, 2, 3]) == [1, 2, 3]
+assert list(map(str, list(range(3)))) == ["0", "1", "2"]
+assert list(map(str, range(3))) == ["0", "1", "2"]
+assert list(map(int, ["1", "2", "3"])) == [1, 2, 3]
+assert list(map(int, "123")) == [1, 2, 3]
+assert list(map(int, {"1": "a", "2": "b"})) == [1, 2]
+assert list(map(int, {1: "a", 2: "b"})) == [1, 2]
+assert list(map(lambda a, b: (str(a), float(b or 0) + 0.1),
+           [1, 2, 3], [1, 2])) == [('1', 1.1), ('2', 2.1), ('3', 0.1)]
+assert list([1, 2, 3]) == [1, 2, 3]
 a = [1, 2, 3]
-assert map(None, a) == a
-assert map(None, a) is not a
-assert map(None, (1, 2, 3)) == [1, 2, 3]
+assert list(a) == a
+assert list(a) is not a
+assert list((1, 2, 3)) == [1, 2, 3]
 
 # divmod(v, w)
 
@@ -372,14 +372,14 @@ assert isinstance(divmod(12, 7), tuple)
 assert isinstance(divmod(12, 7)[0], int)
 assert isinstance(divmod(12, 7)[1], int)
 
-assert divmod(long(7), long(3)) == (2L, 1L)
-assert divmod(long(3), long(-7)) == (-1L, -4L)
-assert divmod(long(sys.maxsize), long(-sys.maxsize)) == (-1L, 0L)
-assert divmod(long(-sys.maxsize), long(1)) == (-sys.maxsize, 0L)
-assert divmod(long(-sys.maxsize), long(-1)) == (sys.maxsize, 0L)
-assert isinstance(divmod(long(7), long(3)), tuple)
-assert isinstance(divmod(long(7), long(3))[0], long)
-assert isinstance(divmod(long(7), long(3))[1], long)
+assert divmod(int(7), int(3)) == (2, 1)
+assert divmod(int(3), int(-7)) == (-1, -4)
+assert divmod(int(sys.maxsize), int(-sys.maxsize)) == (-1, 0)
+assert divmod(int(-sys.maxsize), int(1)) == (-sys.maxsize, 0)
+assert divmod(int(-sys.maxsize), int(-1)) == (sys.maxsize, 0)
+assert isinstance(divmod(int(7), int(3)), tuple)
+assert isinstance(divmod(int(7), int(3))[0], int)
+assert isinstance(divmod(int(7), int(3))[1], int)
 
 assert divmod(3.25, 1.0) == (3.0, 0.25)
 assert divmod(-3.25, 1.0) == (-4.0, 0.75)
@@ -400,7 +400,7 @@ else:
 # internal exception state. See:
 # https://github.com/google/grumpy/issues/305
 sys.exc_clear()
-zip((1, 3), (2, 4))
+list(zip((1, 3), (2, 4)))
 assert not any(sys.exc_info())
-map(int, (1, 2, 3))
+list(map(int, (1, 2, 3)))
 assert not any(sys.exc_info())

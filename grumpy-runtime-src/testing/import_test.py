@@ -14,4 +14,4 @@
 
 import sys
 
-print sys.maxint
+print(sys.maxsize)

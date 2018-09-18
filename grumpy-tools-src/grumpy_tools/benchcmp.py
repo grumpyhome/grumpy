@@ -16,7 +16,7 @@
 
 """Runs two benchmark programs and compares their results."""
 
-from __future__ import print_function
+
 
 import argparse
 import subprocess
@@ -38,7 +38,7 @@ def main(args):
   results1 = _RunBenchmark(args.prog1)
   benchmarks = set(results1.keys())
   results2 = {}
-  for _ in xrange(args.runs - 1):
+  for _ in range(args.runs - 1):
     _MergeResults(results1, _RunBenchmark(args.prog1), benchmarks)
     _MergeResults(results2, _RunBenchmark(args.prog2), benchmarks)
   _MergeResults(results2, _RunBenchmark(args.prog2), benchmarks)
@@ -48,7 +48,7 @@ def main(args):
 
 def _MergeResults(merged, results, benchmarks):
   benchmarks = set(benchmarks)
-  for k, v in results.iteritems():
+  for k, v in results.items():
     if k not in benchmarks:
       _Die('unmatched benchmark: {}', k)
     merged[k] = max(merged.get(k, 0), v)

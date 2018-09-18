@@ -37,7 +37,7 @@ printable = digits + letters + punctuation + whitespace
 # Use str to convert Unicode literal in case of -U
 # TODO: use map once implemented
 # l = map(chr, xrange(256))
-l = [chr(x) for x in xrange(256)]
+l = [chr(x) for x in range(256)]
 _idmap = str('').join(l)
 del l
 
@@ -69,12 +69,12 @@ def maketrans(fromstr, tostr):
 
     """
     if len(fromstr) != len(tostr):
-        raise ValueError, "maketrans arguments must have same length"
+        raise ValueError("maketrans arguments must have same length")
     global _idmapL
     if not _idmapL:
         _idmapL = list(_idmap)
     L = _idmapL[:]
-    fromstr = map(ord, fromstr)
+    fromstr = list(map(ord, fromstr))
     for i in range(len(fromstr)):
         L[fromstr[i]] = tostr[i]
     return ''.join(L)
@@ -134,9 +134,8 @@ class _TemplateMetaclass(type):
         cls.pattern = _re.compile(pattern, _re.IGNORECASE | _re.VERBOSE)
 
 
-class Template(object):
+class Template(object, metaclass=_TemplateMetaclass):
     """A string class for supporting $-substitutions."""
-    __metaclass__ = _TemplateMetaclass
 
     delimiter = '$'
     idpattern = r'[_a-z][_a-z0-9]*'
@@ -391,7 +390,7 @@ def rfind(s, *args):
 # for a bit of speed
 _float = float
 _int = int
-_long = long
+_long = int
 
 # Convert string to float
 def atof(s):
@@ -477,7 +476,7 @@ def zfill(x, width):
     of the specified width.  The string x is never truncated.
 
     """
-    if not isinstance(x, basestring):
+    if not isinstance(x, str):
         x = repr(x)
     return x.zfill(width)
 
@@ -612,7 +611,7 @@ class Formatter(object):
 
 
     def get_value(self, key, args, kwargs):
-        if isinstance(key, (int, long)):
+        if isinstance(key, int):
             return args[key]
         else:
             return kwargs[key]

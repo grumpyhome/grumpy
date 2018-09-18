@@ -19,14 +19,14 @@ class GeneratorContextManager(object):
 
     def __enter__(self):
         try:
-            return self.gen.next()
+            return next(self.gen)
         except StopIteration:
             raise RuntimeError("generator didn't yield")
 
     def __exit__(self, t, value, tb):
         if t is None:
             try:
-                self.gen.next()
+                next(self.gen)
             except StopIteration:
                 return
             else:
@@ -40,7 +40,7 @@ class GeneratorContextManager(object):
                 # self.gen.throw(t, value, traceback)
                 # raise RuntimeError("generator didn't stop after throw()")
                 raise t(value)
-            except StopIteration, exc:
+            except StopIteration as exc:
                 # Suppress the exception *unless* it's the same exception that
                 # was passed to throw().  This prevents a StopIteration
                 # raised inside the "with" statement from being suppressed
@@ -132,7 +132,7 @@ def nested(*managers):
             # Don't rely on sys.exc_info() still containing
             # the right information. Another exception may
             # have been raised and caught by an exit method
-            raise exc[0], exc[1], exc[2]
+            raise exc[0](exc[1]).with_traceback(exc[2])
 
 
 class closing(object):

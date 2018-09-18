@@ -37,7 +37,7 @@ def TestCycle():
 
 
 def TestDropwhile():
-  r = range(10)
+  r = list(range(10))
   cases = [
     ((lambda x: x < 5, r), (5, 6, 7, 8, 9)),
     ((lambda x: True, r), ()),
@@ -49,7 +49,7 @@ def TestDropwhile():
 
 
 def TestChain():
-  r = range(10)
+  r = list(range(10))
   cases = [
     ([r], tuple(r)),
     ([r, r], tuple(r) + tuple(r)),
@@ -61,7 +61,7 @@ def TestChain():
 
 
 def TestFromIterable():
-  r = range(10)
+  r = list(range(10))
   cases = [
     ([r], tuple(r)),
     ([r, r], tuple(r) + tuple(r)),
@@ -73,7 +73,7 @@ def TestFromIterable():
 
 
 def TestIFilter():
-  r = range(10)
+  r = list(range(10))
   cases = [
     ((lambda x: x < 5, r), (0, 1, 2, 3, 4)),
     ((lambda x: False, r), ()),
@@ -81,12 +81,12 @@ def TestIFilter():
     ((None, r), (1, 2, 3, 4, 5, 6, 7, 8, 9))
   ]
   for args, want in cases:
-    got = tuple(itertools.ifilter(*args))
+    got = tuple(filter(*args))
     assert got == want, 'tuple(ifilter%s) == %s, want %s' % (args, got, want)
 
 
 def TestIFilterFalse():
-  r = range(10)
+  r = list(range(10))
   cases = [
     ((lambda x: x < 5, r), (5, 6, 7, 8, 9)),
     ((lambda x: False, r), tuple(r)),
@@ -94,12 +94,12 @@ def TestIFilterFalse():
     ((None, r), (0,))
   ]
   for args, want in cases:
-    got = tuple(itertools.ifilterfalse(*args))
+    got = tuple(itertools.filterfalse(*args))
     assert got == want, 'tuple(ifilterfalse%s) == %s, want %s' % (args, got, want)
 
 
 def TestISlice():
-  r = range(10)
+  r = list(range(10))
   cases = [
       ((r, 5), (0, 1, 2, 3, 4)),
       ((r, 25, 30), ()),
@@ -112,12 +112,12 @@ def TestISlice():
 
 def TestIZipLongest():
   cases = [
-    (('abc', range(6)), (('a', 0), ('b', 1), ('c', 2), (None, 3), (None, 4), (None, 5))),
-    ((range(6), 'abc'), ((0, 'a'), (1, 'b'), (2, 'c'), (3, None), (4, None), (5, None))),
-    (([1, None, 3], 'ab', range(1)), ((1, 'a', 0), (None, 'b', None), (3, None, None))),
+    (('abc', list(range(6))), (('a', 0), ('b', 1), ('c', 2), (None, 3), (None, 4), (None, 5))),
+    ((list(range(6)), 'abc'), ((0, 'a'), (1, 'b'), (2, 'c'), (3, None), (4, None), (5, None))),
+    (([1, None, 3], 'ab', list(range(1))), ((1, 'a', 0), (None, 'b', None), (3, None, None))),
   ]
   for args, want in cases:
-    got = tuple(itertools.izip_longest(*args))
+    got = tuple(itertools.zip_longest(*args))
     assert got == want, 'tuple(izip_longest%s) == %s, want %s' % (args, got, want)
 
 
@@ -136,10 +136,10 @@ def TestPermutations():
   cases = [
     (('AB',), (('A', 'B'), ('B', 'A'))),
     (('ABC', 2), (('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'C'), ('C', 'A'), ('C', 'B'))),
-    ((range(3),), ((0, 1, 2), (0, 2, 1), (1, 0, 2), (1, 2, 0), (2, 0, 1), (2, 1, 0))),
+    ((list(range(3)),), ((0, 1, 2), (0, 2, 1), (1, 0, 2), (1, 2, 0), (2, 0, 1), (2, 1, 0))),
     (([],), ((),)),
     (([], 0), ((),)),
-    ((range(3), 4), ()),
+    ((list(range(3)), 4), ()),
   ]
   for args, want in cases:
     got = tuple(itertools.permutations(*args))
@@ -148,7 +148,7 @@ def TestPermutations():
 
 def TestCombinations():
   cases = [
-    ((range(4), 3), ((0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3))),
+    ((list(range(4)), 3), ((0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3))),
   ]
   for args, want in cases:
     got = tuple(itertools.combinations(*args))
@@ -178,7 +178,7 @@ def TestGroupBy():
 
 
 def TestTakewhile():
-  r = range(10)
+  r = list(range(10))
   cases = [
     ((lambda x: x % 2 == 0, r), (0,)),
     ((lambda x: True, r), tuple(r)),

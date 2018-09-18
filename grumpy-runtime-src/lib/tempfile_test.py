@@ -50,7 +50,7 @@ def TestMkdTempOSError():
     except OSError:
       pass
     else:
-      raise AssertionError, 'Should not be able to touch 0o500 paths'
+      raise AssertionError('Should not be able to touch 0o500 paths')
   os.rmdir(tempdir)
 
 
