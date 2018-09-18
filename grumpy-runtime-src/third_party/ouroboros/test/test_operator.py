@@ -158,7 +158,7 @@ class OperatorTestCase(unittest.TestCase):
 
     def test_getitem(self):
         #operator = self.module
-        a = range(10)
+        a = list(range(10))
         self.assertRaises(TypeError, operator.getitem)
         self.assertRaises(TypeError, operator.getitem, a, None)
         self.assertTrue(operator.getitem(a, 2) == 2)
@@ -240,8 +240,8 @@ class OperatorTestCase(unittest.TestCase):
         #operator = self.module
         self.assertRaises(TypeError, operator.contains)
         self.assertRaises(TypeError, operator.contains, None, None)
-        self.assertTrue(operator.contains(range(4), 2))
-        self.assertFalse(operator.contains(range(4), 5))
+        self.assertTrue(operator.contains(list(range(4)), 2))
+        self.assertFalse(operator.contains(list(range(4)), 5))
 
     def test_setitem(self):
         #operator = self.module
@@ -377,7 +377,7 @@ class OperatorTestCase(unittest.TestCase):
                   [('orange', 1), ('banana', 2), ('apple', 3), ('pear', 5)])
 
         # multiple gets
-        data = list(map(str, range(20)))
+        data = list(map(str, list(range(20))))
         self.assertEqual(operator.itemgetter(2,10,5)(data), ('2', '10', '5'))
         self.assertRaises(TypeError, operator.itemgetter(2, 'x', 5), data)
 

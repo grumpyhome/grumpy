@@ -5,9 +5,9 @@ from test import test_support
 import rfc822
 
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except ImportError:
-    from StringIO import StringIO
+    from io import StringIO
 
 
 class MessageTestCase(unittest.TestCase):
@@ -26,7 +26,7 @@ class MessageTestCase(unittest.TestCase):
     def test_setdefault(self):
         msg = self.create_message(
             'To: "last, first" <userid@foo.net>\n\ntest\n')
-        self.assertTrue(not msg.has_key("New-Header"))
+        self.assertTrue("New-Header" not in msg)
         self.assertTrue(msg.setdefault("New-Header", "New-Value") == "New-Value")
         self.assertTrue(msg.setdefault("New-Header", "Different-Value")
                      == "New-Value")
@@ -43,7 +43,7 @@ class MessageTestCase(unittest.TestCase):
             try:
                 mn, ma = results[i][0], results[i][1]
             except IndexError:
-                print 'extra parsed address:', repr(n), repr(a)
+                print('extra parsed address:', repr(n), repr(a))
                 continue
             i = i + 1
             self.assertEqual(mn, n,
@@ -53,7 +53,7 @@ class MessageTestCase(unittest.TestCase):
             if mn == n and ma == a:
                 pass
             else:
-                print 'not found:', repr(n), repr(a)
+                print('not found:', repr(n), repr(a))
 
         out = m.getdate('date')
         if out:

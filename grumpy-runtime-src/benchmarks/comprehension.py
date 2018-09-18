@@ -37,7 +37,7 @@ def BenchmarkListCompCreate(b):
 
 def BenchmarkDictCompCreate(b):
   for _ in range(b.N):
-    {x: x for x in range(1000)}  # pylint: disable=expression-not-assigned
+    {x: x for x in list(range(1000))}  # pylint: disable=expression-not-assigned
 
 
 if __name__ == '__main__':

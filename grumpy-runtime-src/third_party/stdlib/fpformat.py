@@ -140,6 +140,6 @@ def test():
     try:
         while 1:
             x, digs = eval(input('Enter (x, digs): '))
-            print(x, fix(x, digs), sci(x, digs))
+            print((x, fix(x, digs), sci(x, digs)))
     except (EOFError, KeyboardInterrupt):
         pass

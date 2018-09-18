@@ -191,7 +191,7 @@ def heapify(x):
     # or i < (n-1)/2.  If n is even = 2*j, this is (2*j-1)/2 = j-1/2 so
     # j-1 is the largest, which is n//2 - 1.  If n is odd = 2*j+1, this is
     # (2*j+1-1)/2 = j so j-1 is the largest, and that's again n//2-1.
-    for i in reversed(range(n//2)):
+    for i in reversed(list(range(n//2))):
         _siftup(x, i)
 
 def _heappushpop_max(heap, item):
@@ -429,13 +429,13 @@ def nsmallest(n, iterable, key=None):
 
     # When key is none, use simpler decoration
     if key is None:
-        it = zip(iterable, count())                        # decorate
+        it = list(zip(iterable, count()))                        # decorate
         result = _nsmallest(n, it)
         return list(map(itemgetter(0), result))                   # undecorate
 
     # General case, slowest method
     in1, in2 = tee(iterable)
-    it = zip(map(key, in1), count(), in2)                 # decorate
+    it = list(zip(list(map(key, in1)), count(), in2))                 # decorate
     result = _nsmallest(n, it)
     return list(map(itemgetter(2), result))                       # undecorate
 
@@ -467,13 +467,13 @@ def nlargest(n, iterable, key=None):
 
     # When key is none, use simpler decoration
     if key is None:
-        it = zip(iterable, count(0,-1))                    # decorate
+        it = list(zip(iterable, count(0,-1)))                    # decorate
         result = _nlargest(n, it)
         return list(map(itemgetter(0), result))                   # undecorate
 
     # General case, slowest method
     in1, in2 = tee(iterable)
-    it = zip(map(key, in1), count(0,-1), in2)             # decorate
+    it = list(zip(list(map(key, in1)), count(0,-1), in2))             # decorate
     result = _nlargest(n, it)
     return list(map(itemgetter(2), result))                       # undecorate
 

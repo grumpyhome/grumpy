@@ -95,7 +95,7 @@ class Dialect(object):
 
             # Can we reuse this instance?
             if (isinstance(dialect, Dialect)
-                and all(value is None for value in iter(kwargs.values()))):
+                and all(value is None for value in iter(list(kwargs.values())))):
                 return dialect
 
         self = object.__new__(cls)

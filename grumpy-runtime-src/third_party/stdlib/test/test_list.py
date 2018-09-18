@@ -31,7 +31,7 @@ class ListTest(list_tests.CommonTest):
             # thread for the details:
 
             #     http://sources.redhat.com/ml/newlib/2002/msg00369.html
-            self.assertRaises(MemoryError, list, xrange(sys.maxint // 2))
+            self.assertRaises(MemoryError, list, range(sys.maxsize // 2))
 
         # This code used to segfault in Py2.4a3
         x = []

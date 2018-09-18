@@ -86,7 +86,7 @@ def _glob_deep(directory, pattern, rmtree=None):
                 filename = os.path.join(root, basename)
                 for filtered_name in blacklisted:
                     if filtered_name in filename:
-                        print('Trying to rmtree', filename)
+                        print(('Trying to rmtree', filename))
                         shutil.rmtree(filename, ignore_errors=True)
                         continue  # Skip this blacklisted one.
                 yield filename

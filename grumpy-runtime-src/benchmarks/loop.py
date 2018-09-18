@@ -29,7 +29,7 @@ def BenchmarkWhileCounter(b):
 
 
 def BenchmarkWhileXRange(b):
-  i = iter(range(b.N))
+  i = iter(list(range(b.N)))
   try:
     while True:
       next(i)

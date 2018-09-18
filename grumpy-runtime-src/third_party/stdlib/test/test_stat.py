@@ -155,10 +155,10 @@ class TestFilemode(unittest.TestCase):
 
     @unittest.skip('grumpy')
     def test_module_attributes(self):
-        for key, value in self.stat_struct.items():
+        for key, value in list(self.stat_struct.items()):
             modvalue = getattr(stat, key)
             self.assertEqual(value, modvalue, key)
-        for key, value in self.permission_bits.items():
+        for key, value in list(self.permission_bits.items()):
             modvalue = getattr(stat, key)
             self.assertEqual(value, modvalue, key)
         for key in self.file_flags:

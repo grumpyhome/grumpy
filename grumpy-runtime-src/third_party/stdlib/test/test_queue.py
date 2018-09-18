@@ -1,6 +1,6 @@
 # Some simple queue module tests, plus some failure conditions
 # to ensure the Queue locks remain stable.
-import Queue
+import queue
 import time
 import unittest
 from test import test_support
@@ -90,7 +90,7 @@ class BaseQueueTest(BlockingTestMixin):
 
     def simple_queue_test(self, q):
         if not q.empty():
-            raise RuntimeError, "Call this function with an empty queue"
+            raise RuntimeError("Call this function with an empty queue")
         # I guess we better check things actually queue correctly a little :)
         q.put(111)
         q.put(333)
@@ -112,12 +112,12 @@ class BaseQueueTest(BlockingTestMixin):
         try:
             q.put(full, block=0)
             self.fail("Didn't appear to block with a full queue")
-        except Queue.Full:
+        except queue.Full:
             pass
         try:
             q.put(full, timeout=0.01)
             self.fail("Didn't appear to time-out with a full queue")
-        except Queue.Full:
+        except queue.Full:
             pass
         # Test a blocking put
         self.do_blocking_test(q.put, (full,), q.get, ())
@@ -129,12 +129,12 @@ class BaseQueueTest(BlockingTestMixin):
         try:
             q.get(block=0)
             self.fail("Didn't appear to block with an empty queue")
-        except Queue.Empty:
+        except queue.Empty:
             pass
         try:
             q.get(timeout=0.01)
             self.fail("Didn't appear to time-out with an empty queue")
-        except Queue.Empty:
+        except queue.Empty:
             pass
         # Test a blocking get
         self.do_blocking_test(q.get, (), q.put, ('empty',))
@@ -155,7 +155,7 @@ class BaseQueueTest(BlockingTestMixin):
         self.cum = 0
         for i in (0,1):
             threading.Thread(target=self.worker, args=(q,)).start()
-        for i in xrange(100):
+        for i in range(100):
             q.put(i)
         q.join()
         self.assertEqual(self.cum, sum(range(100)),
@@ -196,13 +196,13 @@ class BaseQueueTest(BlockingTestMixin):
 
 
 class QueueTest(BaseQueueTest, unittest.TestCase):
-    type2test = Queue.Queue
+    type2test = queue.Queue
 
 class LifoQueueTest(BaseQueueTest, unittest.TestCase):
-    type2test = Queue.LifoQueue
+    type2test = queue.LifoQueue
 
 class PriorityQueueTest(BaseQueueTest, unittest.TestCase):
-    type2test = Queue.PriorityQueue
+    type2test = queue.PriorityQueue
 
 
 
@@ -210,27 +210,27 @@ class PriorityQueueTest(BaseQueueTest, unittest.TestCase):
 class FailingQueueException(Exception):
     pass
 
-class FailingQueue(Queue.Queue):
+class FailingQueue(queue.Queue):
     def __init__(self, *args):
         self.fail_next_put = False
         self.fail_next_get = False
-        Queue.Queue.__init__(self, *args)
+        queue.Queue.__init__(self, *args)
     def _put(self, item):
         if self.fail_next_put:
             self.fail_next_put = False
-            raise FailingQueueException, "You Lose"
-        return Queue.Queue._put(self, item)
+            raise FailingQueueException("You Lose")
+        return queue.Queue._put(self, item)
     def _get(self):
         if self.fail_next_get:
             self.fail_next_get = False
-            raise FailingQueueException, "You Lose"
-        return Queue.Queue._get(self)
+            raise FailingQueueException("You Lose")
+        return queue.Queue._get(self)
 
 class FailingQueueTest(BlockingTestMixin, unittest.TestCase):
 
     def failing_queue_test(self, q):
         if not q.empty():
-            raise RuntimeError, "Call this function with an empty queue"
+            raise RuntimeError("Call this function with an empty queue")
         for i in range(QUEUE_SIZE-1):
             q.put(i)
         # Test a failing non-blocking put.

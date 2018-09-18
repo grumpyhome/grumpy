@@ -7,7 +7,7 @@ import unittest, string, sys
 import _struct as struct
 from test import test_support
 # from UserList import UserList
-import UserList as _UserList
+import collections as _UserList
 UserList = _UserList.UserList
 
 class Sequence(object):
@@ -16,7 +16,7 @@ class Sequence(object):
     def __getitem__(self, i): return self.seq[i]
 
 class BadSeq1(Sequence):
-    def __init__(self): self.seq = [7, 'hello', 123L]
+    def __init__(self): self.seq = [7, 'hello', 123]
 
 class BadSeq2(Sequence):
     def __init__(self): self.seq = ['a', 'b', 'c']
@@ -44,7 +44,7 @@ class CommonTest(unittest.TestCase):
         elif isinstance(obj, dict):
             return dict([
                (self.fixtype(key), self.fixtype(value))
-               for (key, value) in obj.iteritems()
+               for (key, value) in obj.items()
             ])
         else:
             return obj
@@ -802,7 +802,7 @@ class CommonTest(unittest.TestCase):
 #        self.checkraises(TypeError, 'hello', 'replace', 42, 'h')
 #        self.checkraises(TypeError, 'hello', 'replace', 'h', 42)
 
-    @unittest.skipIf(sys.maxint > (1 << 32) or struct.calcsize('P') != 4,
+    @unittest.skipIf(sys.maxsize > (1 << 32) or struct.calcsize('P') != 4,
                      'only applies to 32-bit platforms')
     def test_replace_overflow(self):
         # Check for overflow checking on 32 bit machines
@@ -1039,13 +1039,13 @@ class MixinStrUnicodeUserStringTest(NonStringModuleTest):
         self.checkequal(False, '', '__contains__', 'asdf')
 
     def test_subscript(self):
-        self.checkequal(u'a', 'abc', '__getitem__', 0)
-        self.checkequal(u'c', 'abc', '__getitem__', -1)
-        self.checkequal(u'a', 'abc', '__getitem__', 0L)
-        self.checkequal(u'abc', 'abc', '__getitem__', slice(0, 3))
-        self.checkequal(u'abc', 'abc', '__getitem__', slice(0, 1000))
-        self.checkequal(u'a', 'abc', '__getitem__', slice(0, 1))
-        self.checkequal(u'', 'abc', '__getitem__', slice(0, 0))
+        self.checkequal('a', 'abc', '__getitem__', 0)
+        self.checkequal('c', 'abc', '__getitem__', -1)
+        self.checkequal('a', 'abc', '__getitem__', 0)
+        self.checkequal('abc', 'abc', '__getitem__', slice(0, 3))
+        self.checkequal('abc', 'abc', '__getitem__', slice(0, 1000))
+        self.checkequal('a', 'abc', '__getitem__', slice(0, 1))
+        self.checkequal('', 'abc', '__getitem__', slice(0, 0))
 
         self.checkraises(TypeError, 'abc', '__getitem__', 'def')
 
@@ -1071,7 +1071,7 @@ class MixinStrUnicodeUserStringTest(NonStringModuleTest):
                 # Skip step 0 (invalid)
                 for step in indices[1:]:
                     L = list(s)[start:stop:step]
-                    self.checkequal(u"".join(L), s, '__getitem__',
+                    self.checkequal("".join(L), s, '__getitem__',
                                     slice(start, stop, step))
 
     def test_mul(self):
@@ -1098,11 +1098,11 @@ class MixinStrUnicodeUserStringTest(NonStringModuleTest):
         self.checkequal('abc', 'a', 'join', ('abc',))
         self.checkequal('z', 'a', 'join', UserList(['z']))
         if test_support.have_unicode:
-            self.checkequal(unicode('a.b.c'), unicode('.'), 'join', ['a', 'b', 'c'])
-            self.checkequal(unicode('a.b.c'), '.', 'join', [unicode('a'), 'b', 'c'])
-            self.checkequal(unicode('a.b.c'), '.', 'join', ['a', unicode('b'), 'c'])
-            self.checkequal(unicode('a.b.c'), '.', 'join', ['a', 'b', unicode('c')])
-            self.checkraises(TypeError, '.', 'join', ['a', unicode('b'), 3])
+            self.checkequal(str('a.b.c'), str('.'), 'join', ['a', 'b', 'c'])
+            self.checkequal(str('a.b.c'), '.', 'join', [str('a'), 'b', 'c'])
+            self.checkequal(str('a.b.c'), '.', 'join', ['a', str('b'), 'c'])
+            self.checkequal(str('a.b.c'), '.', 'join', ['a', 'b', str('c')])
+            self.checkraises(TypeError, '.', 'join', ['a', str('b'), 3])
         for i in [5, 25, 125]:
             self.checkequal(((('a' * i) + '-') * i)[:-1], '-', 'join',
                  ['a' * i] * i)
@@ -1115,12 +1115,12 @@ class MixinStrUnicodeUserStringTest(NonStringModuleTest):
         self.checkraises(TypeError, ' ', 'join')
         self.checkraises(TypeError, ' ', 'join', None)
         self.checkraises(TypeError, ' ', 'join', 7)
-        self.checkraises(TypeError, ' ', 'join', Sequence([7, 'hello', 123L]))
+        self.checkraises(TypeError, ' ', 'join', Sequence([7, 'hello', 123]))
         try:
             def f():
                 yield 4 + ""
             self.fixtype(' ').join(f())
-        except TypeError, e:
+        except TypeError as e:
             if '+' not in str(e):
                 self.fail('join() ate exception message')
         else:
@@ -1140,11 +1140,11 @@ class MixinStrUnicodeUserStringTest(NonStringModuleTest):
             # unicode raises ValueError, str raises OverflowError
             self.checkraises((ValueError, OverflowError), '%c', '__mod__', ordinal)
 
-        longvalue = sys.maxint + 10L
+        longvalue = sys.maxsize + 10
         slongvalue = str(longvalue)
         if slongvalue[-1] in ("L","l"): slongvalue = slongvalue[:-1]
         self.checkequal(' 42', '%3ld', '__mod__', 42)
-        self.checkequal('42', '%d', '__mod__', 42L)
+        self.checkequal('42', '%d', '__mod__', 42)
         self.checkequal('42', '%d', '__mod__', 42.0)
         self.checkequal(slongvalue, '%d', '__mod__', longvalue)
         self.checkcall('%d', '__mod__', float(longvalue))
@@ -1197,10 +1197,10 @@ class MixinStrUnicodeUserStringTest(NonStringModuleTest):
 
     def test_floatformatting(self):
         # float formatting
-        for prec in xrange(100):
+        for prec in range(100):
             format = '%%.%if' % prec
             value = 0.01
-            for x in xrange(60):
+            for x in range(60):
                 value = value * 3.14159265359 / 3.0 * 10.0
                 self.checkcall(format, "__mod__", value)
 
@@ -1239,7 +1239,7 @@ class MixinStrUnicodeUserStringTest(NonStringModuleTest):
         self.checkraises(TypeError, S, 'partition', None)
 
         # mixed use of str and unicode
-        self.assertEqual('a/b/c'.partition(u'/'), ('a', '/', 'b/c'))
+        self.assertEqual('a/b/c'.partition('/'), ('a', '/', 'b/c'))
 
     def test_rpartition(self):
 
@@ -1257,7 +1257,7 @@ class MixinStrUnicodeUserStringTest(NonStringModuleTest):
         self.checkraises(TypeError, S, 'rpartition', None)
 
         # mixed use of str and unicode
-        self.assertEqual('a/b/c'.rpartition(u'/'), ('a/b', '/', 'c'))
+        self.assertEqual('a/b/c'.rpartition('/'), ('a/b', '/', 'c'))
 
     def test_none_arguments(self):
         # issue 11828
@@ -1301,19 +1301,19 @@ class MixinStrUnicodeUserStringTest(NonStringModuleTest):
         # issue 11828
         s = 'hello'
         x = 'x'
-        self.assertRaisesRegexp(TypeError, r'\bfind\b', s.find,
+        self.assertRaisesRegex(TypeError, r'\bfind\b', s.find,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'\brfind\b', s.rfind,
+        self.assertRaisesRegex(TypeError, r'\brfind\b', s.rfind,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'\bindex\b', s.index,
+        self.assertRaisesRegex(TypeError, r'\bindex\b', s.index,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'\brindex\b', s.rindex,
+        self.assertRaisesRegex(TypeError, r'\brindex\b', s.rindex,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'^count\(', s.count,
+        self.assertRaisesRegex(TypeError, r'^count\(', s.count,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'^startswith\(', s.startswith,
+        self.assertRaisesRegex(TypeError, r'^startswith\(', s.startswith,
                                 x, None, None, None)
-        self.assertRaisesRegexp(TypeError, r'^endswith\(', s.endswith,
+        self.assertRaisesRegex(TypeError, r'^endswith\(', s.endswith,
                                 x, None, None, None)
 
 class MixinStrStringUserStringTest(object):
@@ -1322,7 +1322,7 @@ class MixinStrStringUserStringTest(object):
 
     def test_maketrans(self):
         self.assertEqual(
-           ''.join(map(chr, xrange(256))).replace('abc', 'xyz'),
+           ''.join(map(chr, range(256))).replace('abc', 'xyz'),
            string.maketrans('abc', 'xyz')
         )
         self.assertRaises(ValueError, string.maketrans, 'abc', 'xyzw')
@@ -1394,7 +1394,7 @@ class MixinStrUnicodeTest(object):
         self.assertTrue(s1 is s2)
 
         # Should also test mixed-type join.
-        if t is unicode:
+        if t is str:
             s1 = subclass("abcd")
             s2 = "".join([s1])
             self.assertTrue(s1 is not s2)
@@ -1406,14 +1406,14 @@ class MixinStrUnicodeTest(object):
 
         elif t is str:
             s1 = subclass("abcd")
-            s2 = u"".join([s1])
+            s2 = "".join([s1])
             self.assertTrue(s1 is not s2)
-            self.assertTrue(type(s2) is unicode) # promotes!
+            self.assertTrue(type(s2) is str) # promotes!
 
             s1 = t("abcd")
-            s2 = u"".join([s1])
+            s2 = "".join([s1])
             self.assertTrue(s1 is not s2)
-            self.assertTrue(type(s2) is unicode) # promotes!
+            self.assertTrue(type(s2) is str) # promotes!
 
         else:
             self.fail("unexpected type for MixinStrUnicodeTest %r" % t)

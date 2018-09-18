@@ -21,7 +21,7 @@ import UserDict
 # import struct
 # import sysconfig
 try:
-    import thread
+    import _thread
 except ImportError:
     thread = None
 
@@ -564,7 +564,7 @@ def unlink(filename):
 # is_jython = sys.platform.startswith('java')
 
 try:
-    unicode
+    str
     have_unicode = True
 except NameError:
     have_unicode = False
@@ -985,7 +985,7 @@ class EnvironmentVarGuard(UserDict.DictMixin):
             del self._environ[envvar]
 
     def keys(self):
-        return self._environ.keys()
+        return list(self._environ.keys())
 
     def set(self, envvar, value):
         self[envvar] = value
@@ -997,7 +997,7 @@ class EnvironmentVarGuard(UserDict.DictMixin):
         return self
 
     def __exit__(self, *ignore_exc):
-        for (k, v) in self._changed.items():
+        for (k, v) in list(self._changed.items()):
             if v is None:
                 if k in self._environ:
                     del self._environ[k]
@@ -1524,7 +1524,7 @@ def run_unittest(*classes):
 
 def threading_setup():
     if thread:
-        return (thread._count(),)
+        return (_thread._count(),)
     else:
         return (1,)
 
@@ -1534,7 +1534,7 @@ def threading_cleanup(nb_threads):
 
     _MAX_COUNT = 10
     for count in range(_MAX_COUNT):
-        n = thread._count()
+        n = _thread._count()
         if n == nb_threads:
             break
         time.sleep(0.1)

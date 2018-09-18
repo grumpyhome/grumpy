@@ -855,7 +855,7 @@ class TestCase(object):
         """Checks whether actual is a superset of expected."""
         missing = []
         mismatched = []
-        for key, value in expected.items():
+        for key, value in list(expected.items()):
             if key not in actual:
                 missing.append(key)
             elif value != actual[key]:

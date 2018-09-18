@@ -136,7 +136,7 @@ def dump(obj, fp, skipkeys=False, ensure_ascii=True, check_circular=True,
     will be skipped instead of raising a ``TypeError``.
 
     If ``ensure_ascii`` is true (the default), all non-ASCII characters in the
-    output are escaped with ``\uXXXX`` sequences, and the result is a ``str``
+    output are escaped with ``\\uXXXX`` sequences, and the result is a ``str``
     instance consisting of ASCII characters only.  If ``ensure_ascii`` is
     ``False``, some chunks written to ``fp`` may be ``unicode`` instances.
     This usually happens because the input contains unicode strings or the

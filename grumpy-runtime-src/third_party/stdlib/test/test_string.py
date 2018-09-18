@@ -4,7 +4,7 @@ import string
 Template = string.Template
 from test import test_support, string_tests
 # from UserList import UserList
-import UserList as _UserList
+import collections as _UserList
 UserList = _UserList.UserList
 
 class StringTest(
@@ -39,11 +39,11 @@ class StringTest(
         self.checkequal('abc', ('abc',), 'join', 'a')
         self.checkequal('z', UserList(['z']), 'join', 'a')
         if test_support.have_unicode:
-            self.checkequal(unicode('a.b.c'), ['a', 'b', 'c'], 'join', unicode('.'))
-            self.checkequal(unicode('a.b.c'), [unicode('a'), 'b', 'c'], 'join', '.')
-            self.checkequal(unicode('a.b.c'), ['a', unicode('b'), 'c'], 'join', '.')
-            self.checkequal(unicode('a.b.c'), ['a', 'b', unicode('c')], 'join', '.')
-            self.checkraises(TypeError, ['a', unicode('b'), 3], 'join', '.')
+            self.checkequal(str('a.b.c'), ['a', 'b', 'c'], 'join', str('.'))
+            self.checkequal(str('a.b.c'), [str('a'), 'b', 'c'], 'join', '.')
+            self.checkequal(str('a.b.c'), ['a', str('b'), 'c'], 'join', '.')
+            self.checkequal(str('a.b.c'), ['a', 'b', str('c')], 'join', '.')
+            self.checkraises(TypeError, ['a', str('b'), 3], 'join', '.')
         for i in [5, 25, 125]:
             self.checkequal(
                 ((('a' * i) + '-') * i)[:-1],
@@ -58,7 +58,7 @@ class StringTest(
             def f():
                 yield 4 + ""
             self.fixtype(' ').join(f())
-        except TypeError, e:
+        except TypeError as e:
             if '+' not in str(e):
                 self.fail('join() ate exception message')
         else:
@@ -84,7 +84,7 @@ class ModuleTest(unittest.TestCase):
         self.assertRaises(ValueError, string.atoi, " x1 ")
 
     def test_atol(self):
-        self.assertEqual(string.atol("  1  "), 1L)
+        self.assertEqual(string.atol("  1  "), 1)
         self.assertRaises(ValueError, string.atol, "  1x ")
         self.assertRaises(ValueError, string.atol, "  x1 ")
 
@@ -182,7 +182,7 @@ class ModuleTest(unittest.TestCase):
             def check_unused_args(self, used_args, args, kwargs):
                 # Track which arguments actually got used
                 unused_args = set(kwargs.keys())
-                unused_args.update(range(0, len(args)))
+                unused_args.update(list(range(0, len(args))))
 
                 for arg in used_args:
                     unused_args.remove(arg)
@@ -388,8 +388,8 @@ class TestTemplate(unittest.TestCase):
 
     def test_unicode_values(self):
         s = Template('$who likes $what')
-        d = dict(who=u't\xffm', what=u'f\xfe\fed')
-        self.assertEqual(s.substitute(d), u't\xffm likes f\xfe\x0ced')
+        d = dict(who='t\xffm', what='f\xfe\fed')
+        self.assertEqual(s.substitute(d), 't\xffm likes f\xfe\x0ced')
 
     def test_keyword_arguments(self):
         eq = self.assertEqual

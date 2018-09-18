@@ -501,8 +501,8 @@ class Counter(dict):
         '''
         # Emulate Bag.sortedByCount from Smalltalk
         if n is None:
-            return sorted(iter(self.items()), key=_itemgetter(1), reverse=True)
-        return _heapq.nlargest(n, iter(self.items()), key=_itemgetter(1))
+            return sorted(iter(list(self.items())), key=_itemgetter(1), reverse=True)
+        return _heapq.nlargest(n, iter(list(self.items())), key=_itemgetter(1))
 
     def elements(self):
         '''Iterator over elements repeating each as many times as its count.
@@ -524,7 +524,7 @@ class Counter(dict):
 
         '''
         # Emulate Bag.do from Smalltalk and Multiset.begin from C++.
-        return _chain.from_iterable(_starmap(_repeat, iter(self.items())))
+        return _chain.from_iterable(_starmap(_repeat, iter(list(self.items()))))
 
     # Override dict methods where necessary
 
@@ -567,7 +567,7 @@ class Counter(dict):
             if isinstance(iterable, Mapping):
                 if self:
                     self_get = self.get
-                    for elem, count in iterable.items():
+                    for elem, count in list(iterable.items()):
                         self[elem] = self_get(elem, 0) + count
                 else:
                     super(Counter, self).update(iterable) # fast path when counter is empty

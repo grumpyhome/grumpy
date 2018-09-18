@@ -28,7 +28,7 @@ MINYEAR, MAXYEAR, timedelta, tzinfo, time, date, datetime = \
 
 # An arbitrary collection of objects of non-datetime types, for testing
 # mixed-type comparisons.
-OTHERSTUFF = (10, 10L, 34.5, "abc", {}, [], ())
+OTHERSTUFF = (10, 10, 34.5, "abc", {}, [], ())
 
 
 #############################################################################
@@ -145,8 +145,8 @@ class HarmlessMixedComparison(object):
         self.assertFalse(() == me)
         self.assertTrue(() != me)
 
-        self.assertIn(me, [1, 20L, [], me])
-        self.assertIn([], [me, 1, 20L, []])
+        self.assertIn(me, [1, 20, [], me])
+        self.assertIn([], [me, 1, 20, []])
 
     def test_harmful_mixed_comparison(self):
         me = self.theclass(1, 1, 1)
@@ -215,13 +215,13 @@ class TestTimeDelta(HarmlessMixedComparison, unittest.TestCase):
         eq(td(0, 0, 60*1000000), b)
         eq(a*10, td(70))
         eq(a*10, 10*a)
-        eq(a*10L, 10*a)
+        eq(a*10, 10*a)
         eq(b*10, td(0, 600))
         eq(10*b, td(0, 600))
-        eq(b*10L, td(0, 600))
+        eq(b*10, td(0, 600))
         eq(c*10, td(0, 0, 10000))
         eq(10*c, td(0, 0, 10000))
-        eq(c*10L, td(0, 0, 10000))
+        eq(c*10, td(0, 0, 10000))
         eq(a*-1, -a)
         eq(b*-2, -b-b)
         eq(c*-2, -c+-c)
@@ -246,7 +246,7 @@ class TestTimeDelta(HarmlessMixedComparison, unittest.TestCase):
         a = timedelta(42)
 
         # Add/sub ints, longs, floats should be illegal
-        for i in 1, 1L, 1.0:
+        for i in 1, 1, 1.0:
             self.assertRaises(TypeError, lambda: a+i)
             self.assertRaises(TypeError, lambda: a-i)
             self.assertRaises(TypeError, lambda: i+a)
@@ -263,7 +263,7 @@ class TestTimeDelta(HarmlessMixedComparison, unittest.TestCase):
 
         # Division of int by timedelta doesn't make sense.
         # Division by zero doesn't make sense.
-        for zero in 0, 0L:
+        for zero in 0, 0:
             self.assertRaises(TypeError, lambda: zero // a)
             self.assertRaises(ZeroDivisionError, lambda: a // zero)
 
@@ -586,7 +586,7 @@ class TestDate(HarmlessMixedComparison, unittest.TestCase):
 
         # Check first and last days of year spottily across the whole
         # range of years supported.
-        for year in xrange(MINYEAR, MAXYEAR+1, 7):
+        for year in range(MINYEAR, MAXYEAR+1, 7):
             # Verify (year, 1, 1) -> ordinal -> y, m, d is identity.
             d = self.theclass(year, 1, 1)
             n = d.toordinal()
@@ -603,7 +603,7 @@ class TestDate(HarmlessMixedComparison, unittest.TestCase):
         dim = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
         for year, isleap in (2000, True), (2002, False):
             n = self.theclass(year, 1, 1).toordinal()
-            for month, maxday in zip(range(1, 13), dim):
+            for month, maxday in zip(list(range(1, 13)), dim):
                 if month == 2 and isleap:
                     maxday += 1
                 for day in range(1, maxday+1):
@@ -690,7 +690,7 @@ class TestDate(HarmlessMixedComparison, unittest.TestCase):
         b = self.theclass(1956, 1, 31)
 
         diff = a-b
-        self.assertEqual(diff.days, 46*365 + len(range(1956, 2002, 4)))
+        self.assertEqual(diff.days, 46*365 + len(list(range(1956, 2002, 4))))
         self.assertEqual(diff.seconds, 0)
         self.assertEqual(diff.microseconds, 0)
 
@@ -715,7 +715,7 @@ class TestDate(HarmlessMixedComparison, unittest.TestCase):
         self.assertEqual(a - (a - day), day)
 
         # Add/sub ints, longs, floats should be illegal
-        for i in 1, 1L, 1.0:
+        for i in 1, 1, 1.0:
             self.assertRaises(TypeError, lambda: a+i)
             self.assertRaises(TypeError, lambda: a-i)
             self.assertRaises(TypeError, lambda: i+a)
@@ -850,7 +850,7 @@ class TestDate(HarmlessMixedComparison, unittest.TestCase):
             320  348  376
             325  353  381
         """
-        iso_long_years = map(int, ISO_LONG_YEARS_TABLE.split())
+        iso_long_years = list(map(int, ISO_LONG_YEARS_TABLE.split()))
         iso_long_years.sort()
         L = []
         for i in range(400):
@@ -881,7 +881,7 @@ class TestDate(HarmlessMixedComparison, unittest.TestCase):
         self.assertRaises(TypeError, t.strftime, 42) # arg wrong type
 
         # test that unicode input is allowed (issue 2782)
-        self.assertEqual(t.strftime(u"%m"), "03")
+        self.assertEqual(t.strftime("%m"), "03")
 
         # A naive object replaces %z and %Z w/ empty strings.
         self.assertEqual(t.strftime("'%z' '%Z'"), "'' ''")
@@ -1366,7 +1366,7 @@ class TestDateTime(TestDate):
         a = self.theclass(2002, 1, 31)
         b = self.theclass(1956, 1, 31)
         diff = a-b
-        self.assertEqual(diff.days, 46*365 + len(range(1956, 2002, 4)))
+        self.assertEqual(diff.days, 46*365 + len(list(range(1956, 2002, 4))))
         self.assertEqual(diff.seconds, 0)
         self.assertEqual(diff.microseconds, 0)
         a = self.theclass(2002, 3, 2, 17, 6)
@@ -1412,7 +1412,7 @@ class TestDateTime(TestDate):
         self.assertEqual(a - (week + day + hour + millisec),
                          (((a - week) - day) - hour) - millisec)
         # Add/sub ints, longs, floats should be illegal
-        for i in 1, 1L, 1.0:
+        for i in 1, 1, 1.0:
             self.assertRaises(TypeError, lambda: a+i)
             self.assertRaises(TypeError, lambda: a-i)
             self.assertRaises(TypeError, lambda: i+a)
