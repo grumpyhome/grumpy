@@ -16,7 +16,7 @@
 
 """Tests Package, Block, BlockVisitor and related classes."""
 
-from __future__ import unicode_literals
+
 
 import textwrap
 import unittest
@@ -61,29 +61,29 @@ class BlockTest(unittest.TestCase):
         module_block, 'keyword_func', block_vars, False)
     class1_block = block.ClassBlock(module_block, 'Class1', set())
     class2_block = block.ClassBlock(func1_block, 'Class2', set())
-    self.assertRegexpMatches(self._ResolveName(module_block, 'foo'),
+    self.assertRegex(self._ResolveName(module_block, 'foo'),
                              r'ResolveGlobal\b.*foo')
-    self.assertRegexpMatches(self._ResolveName(module_block, 'bar'),
+    self.assertRegex(self._ResolveName(module_block, 'bar'),
                              r'ResolveGlobal\b.*bar')
-    self.assertRegexpMatches(self._ResolveName(module_block, 'baz'),
+    self.assertRegex(self._ResolveName(module_block, 'baz'),
                              r'ResolveGlobal\b.*baz')
-    self.assertRegexpMatches(self._ResolveName(func1_block, 'foo'),
+    self.assertRegex(self._ResolveName(func1_block, 'foo'),
                              r'CheckLocal\b.*foo')
-    self.assertRegexpMatches(self._ResolveName(func1_block, 'bar'),
+    self.assertRegex(self._ResolveName(func1_block, 'bar'),
                              r'ResolveGlobal\b.*bar')
-    self.assertRegexpMatches(self._ResolveName(func1_block, 'baz'),
+    self.assertRegex(self._ResolveName(func1_block, 'baz'),
                              r'ResolveGlobal\b.*baz')
-    self.assertRegexpMatches(self._ResolveName(func2_block, 'foo'),
+    self.assertRegex(self._ResolveName(func2_block, 'foo'),
                              r'CheckLocal\b.*foo')
-    self.assertRegexpMatches(self._ResolveName(func2_block, 'bar'),
+    self.assertRegex(self._ResolveName(func2_block, 'bar'),
                              r'CheckLocal\b.*bar')
-    self.assertRegexpMatches(self._ResolveName(func2_block, 'baz'),
+    self.assertRegex(self._ResolveName(func2_block, 'baz'),
                              r'ResolveGlobal\b.*baz')
-    self.assertRegexpMatches(self._ResolveName(class1_block, 'foo'),
+    self.assertRegex(self._ResolveName(class1_block, 'foo'),
                              r'ResolveClass\(.*, nil, .*foo')
-    self.assertRegexpMatches(self._ResolveName(class2_block, 'foo'),
+    self.assertRegex(self._ResolveName(class2_block, 'foo'),
                              r'ResolveClass\(.*, µfoo, .*foo')
-    self.assertRegexpMatches(self._ResolveName(keyword_block, 'case'),
+    self.assertRegex(self._ResolveName(keyword_block, 'case'),
                              r'CheckLocal\b.*µcase, "case"')
 
   def _ResolveName(self, b, name):
@@ -97,42 +97,42 @@ class BlockVisitorTest(unittest.TestCase):
   def testAssignSingle(self):
     visitor = block.BlockVisitor()
     visitor.visit(_ParseStmt('foo = 3'))
-    self.assertEqual(visitor.vars.keys(), ['foo'])
-    self.assertRegexpMatches(visitor.vars['foo'].init_expr, r'UnboundLocal')
+    self.assertEqual(list(visitor.vars.keys()), ['foo'])
+    self.assertRegex(visitor.vars['foo'].init_expr, r'UnboundLocal')
 
   def testAssignMultiple(self):
     visitor = block.BlockVisitor()
     visitor.visit(_ParseStmt('foo = bar = 123'))
     self.assertEqual(sorted(visitor.vars.keys()), ['bar', 'foo'])
-    self.assertRegexpMatches(visitor.vars['foo'].init_expr, r'UnboundLocal')
-    self.assertRegexpMatches(visitor.vars['bar'].init_expr, r'UnboundLocal')
+    self.assertRegex(visitor.vars['foo'].init_expr, r'UnboundLocal')
+    self.assertRegex(visitor.vars['bar'].init_expr, r'UnboundLocal')
 
   def testAssignTuple(self):
     visitor = block.BlockVisitor()
     visitor.visit(_ParseStmt('foo, bar = "a", "b"'))
     self.assertEqual(sorted(visitor.vars.keys()), ['bar', 'foo'])
-    self.assertRegexpMatches(visitor.vars['foo'].init_expr, r'UnboundLocal')
-    self.assertRegexpMatches(visitor.vars['bar'].init_expr, r'UnboundLocal')
+    self.assertRegex(visitor.vars['foo'].init_expr, r'UnboundLocal')
+    self.assertRegex(visitor.vars['bar'].init_expr, r'UnboundLocal')
 
   def testAssignNested(self):
     visitor = block.BlockVisitor()
     visitor.visit(_ParseStmt('foo, (bar, baz) = "a", ("b", "c")'))
     self.assertEqual(sorted(visitor.vars.keys()), ['bar', 'baz', 'foo'])
-    self.assertRegexpMatches(visitor.vars['foo'].init_expr, r'UnboundLocal')
-    self.assertRegexpMatches(visitor.vars['bar'].init_expr, r'UnboundLocal')
-    self.assertRegexpMatches(visitor.vars['baz'].init_expr, r'UnboundLocal')
+    self.assertRegex(visitor.vars['foo'].init_expr, r'UnboundLocal')
+    self.assertRegex(visitor.vars['bar'].init_expr, r'UnboundLocal')
+    self.assertRegex(visitor.vars['baz'].init_expr, r'UnboundLocal')
 
   def testAugAssignSingle(self):
     visitor = block.BlockVisitor()
     visitor.visit(_ParseStmt('foo += 3'))
-    self.assertEqual(visitor.vars.keys(), ['foo'])
-    self.assertRegexpMatches(visitor.vars['foo'].init_expr, r'UnboundLocal')
+    self.assertEqual(list(visitor.vars.keys()), ['foo'])
+    self.assertRegex(visitor.vars['foo'].init_expr, r'UnboundLocal')
 
   def testVisitClassDef(self):
     visitor = block.BlockVisitor()
     visitor.visit(_ParseStmt('class Foo(object): pass'))
-    self.assertEqual(visitor.vars.keys(), ['Foo'])
-    self.assertRegexpMatches(visitor.vars['Foo'].init_expr, r'UnboundLocal')
+    self.assertEqual(list(visitor.vars.keys()), ['Foo'])
+    self.assertRegex(visitor.vars['Foo'].init_expr, r'UnboundLocal')
 
   def testExceptHandler(self):
     visitor = block.BlockVisitor()
@@ -144,34 +144,34 @@ class BlockVisitorTest(unittest.TestCase):
         except TypeError as bar:
           pass""")))
     self.assertEqual(sorted(visitor.vars.keys()), ['bar', 'foo'])
-    self.assertRegexpMatches(visitor.vars['foo'].init_expr, r'UnboundLocal')
-    self.assertRegexpMatches(visitor.vars['bar'].init_expr, r'UnboundLocal')
+    self.assertRegex(visitor.vars['foo'].init_expr, r'UnboundLocal')
+    self.assertRegex(visitor.vars['bar'].init_expr, r'UnboundLocal')
 
   def testFor(self):
     visitor = block.BlockVisitor()
     visitor.visit(_ParseStmt('for i in foo: pass'))
-    self.assertEqual(visitor.vars.keys(), ['i'])
-    self.assertRegexpMatches(visitor.vars['i'].init_expr, r'UnboundLocal')
+    self.assertEqual(list(visitor.vars.keys()), ['i'])
+    self.assertRegex(visitor.vars['i'].init_expr, r'UnboundLocal')
 
   def testFunctionDef(self):
     visitor = block.BlockVisitor()
     visitor.visit(_ParseStmt('def foo(): pass'))
-    self.assertEqual(visitor.vars.keys(), ['foo'])
-    self.assertRegexpMatches(visitor.vars['foo'].init_expr, r'UnboundLocal')
+    self.assertEqual(list(visitor.vars.keys()), ['foo'])
+    self.assertRegex(visitor.vars['foo'].init_expr, r'UnboundLocal')
 
   def testImport(self):
     visitor = block.BlockVisitor()
     visitor.visit(_ParseStmt('import foo.bar, baz'))
     self.assertEqual(sorted(visitor.vars.keys()), ['baz', 'foo'])
-    self.assertRegexpMatches(visitor.vars['foo'].init_expr, r'UnboundLocal')
-    self.assertRegexpMatches(visitor.vars['baz'].init_expr, r'UnboundLocal')
+    self.assertRegex(visitor.vars['foo'].init_expr, r'UnboundLocal')
+    self.assertRegex(visitor.vars['baz'].init_expr, r'UnboundLocal')
 
   def testImportFrom(self):
     visitor = block.BlockVisitor()
     visitor.visit(_ParseStmt('from foo.bar import baz, qux'))
     self.assertEqual(sorted(visitor.vars.keys()), ['baz', 'qux'])
-    self.assertRegexpMatches(visitor.vars['baz'].init_expr, r'UnboundLocal')
-    self.assertRegexpMatches(visitor.vars['qux'].init_expr, r'UnboundLocal')
+    self.assertRegex(visitor.vars['baz'].init_expr, r'UnboundLocal')
+    self.assertRegex(visitor.vars['qux'].init_expr, r'UnboundLocal')
 
   def testGlobal(self):
     visitor = block.BlockVisitor()
@@ -183,13 +183,13 @@ class BlockVisitorTest(unittest.TestCase):
   def testGlobalIsParam(self):
     visitor = block.BlockVisitor()
     visitor.vars['foo'] = block.Var('foo', block.Var.TYPE_PARAM, arg_index=0)
-    self.assertRaisesRegexp(util.ParseError, 'is parameter and global',
+    self.assertRaisesRegex(util.ParseError, 'is parameter and global',
                             visitor.visit, _ParseStmt('global foo'))
 
   def testGlobalUsedPriorToDeclaration(self):
     node = pythonparser.parse('foo = 42\nglobal foo')
     visitor = block.BlockVisitor()
-    self.assertRaisesRegexp(util.ParseError, 'used prior to global declaration',
+    self.assertRaisesRegex(util.ParseError, 'used prior to global declaration',
                             visitor.generic_visit, node)
 
 
@@ -202,14 +202,14 @@ class FunctionBlockVisitorTest(unittest.TestCase):
     self.assertIn('baz', visitor.vars)
     self.assertIn('args', visitor.vars)
     self.assertIn('kwargs', visitor.vars)
-    self.assertRegexpMatches(visitor.vars['bar'].init_expr, r'Args\[0\]')
-    self.assertRegexpMatches(visitor.vars['baz'].init_expr, r'Args\[1\]')
-    self.assertRegexpMatches(visitor.vars['args'].init_expr, r'Args\[2\]')
-    self.assertRegexpMatches(visitor.vars['kwargs'].init_expr, r'Args\[3\]')
+    self.assertRegex(visitor.vars['bar'].init_expr, r'Args\[0\]')
+    self.assertRegex(visitor.vars['baz'].init_expr, r'Args\[1\]')
+    self.assertRegex(visitor.vars['args'].init_expr, r'Args\[2\]')
+    self.assertRegex(visitor.vars['kwargs'].init_expr, r'Args\[3\]')
 
   def testArgsDuplicate(self):
     func = _ParseStmt('def foo(bar, baz, bar=None): pass')
-    self.assertRaisesRegexp(util.ParseError, 'duplicate argument',
+    self.assertRaisesRegex(util.ParseError, 'duplicate argument',
                             block.FunctionBlockVisitor, func)
 
   def testYield(self):
@@ -222,7 +222,7 @@ class FunctionBlockVisitorTest(unittest.TestCase):
     visitor.visit(_ParseStmt('foo = (yield)'))
     self.assertTrue(visitor.is_generator)
     self.assertEqual(sorted(visitor.vars.keys()), ['foo'])
-    self.assertRegexpMatches(visitor.vars['foo'].init_expr, r'UnboundLocal')
+    self.assertRegex(visitor.vars['foo'].init_expr, r'UnboundLocal')
 
 
 def _MakeModuleBlock():

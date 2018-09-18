@@ -16,17 +16,15 @@
 
 """Classes representing generated expressions."""
 
-from __future__ import unicode_literals
+
 
 import abc
 
 from grumpy_tools.compiler import util
 
 
-class GeneratedExpr(object):
+class GeneratedExpr(object, metaclass=abc.ABCMeta):
   """GeneratedExpr is a generated Go expression in transcompiled output."""
-
-  __metaclass__ = abc.ABCMeta
 
   def __enter__(self):
     return self

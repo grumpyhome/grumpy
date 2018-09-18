@@ -1,4 +1,4 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+
 import sys
 from . import source as pythonparser_source, lexer as pythonparser_lexer, parser as pythonparser_parser, diagnostic as pythonparser_diagnostic
 

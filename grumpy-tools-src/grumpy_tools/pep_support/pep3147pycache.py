@@ -1,5 +1,5 @@
 # coding: utf-8
-from __future__ import unicode_literals
+
 
 import os
 import sys
@@ -174,7 +174,7 @@ def make_transpiled_module_folders(script_path, module_name):
         'transpiled_base_folder': get_transpiled_base_folder(script_path, module_name),
         'transpiled_module_folder': get_transpiled_module_folder(script_path, module_name),
     }
-    for role, folder in needed_folders.items():
+    for role, folder in list(needed_folders.items()):
         if os.path.isfile(folder):  # 1. Need a folder. Remove the file
             os.unlink(folder)
         if not os.path.exists(folder):  # 2. Create the needed folder

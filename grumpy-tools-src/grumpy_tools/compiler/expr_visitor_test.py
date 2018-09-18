@@ -16,7 +16,7 @@
 
 """Tests for ExprVisitor."""
 
-from __future__ import unicode_literals
+
 
 import subprocess
 import textwrap

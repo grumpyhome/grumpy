@@ -16,7 +16,7 @@
 
 """Visitor class for traversing Python statements."""
 
-from __future__ import unicode_literals
+
 
 import string
 import textwrap
@@ -104,7 +104,7 @@ class StatementVisitor(algorithm.Visitor):
     block_visitor = block.BlockVisitor()
     for child in node.body:
       block_visitor.visit(child)
-    global_vars = {v.name for v in block_visitor.vars.values()
+    global_vars = {v.name for v in list(block_visitor.vars.values())
                    if v.type == block.Var.TYPE_GLOBAL}
     # Visit all the statements inside body of the class definition.
     body_visitor = StatementVisitor(block.ClassBlock(
@@ -537,7 +537,7 @@ class StatementVisitor(algorithm.Visitor):
           filename=util.go_str(self.block.root.filename), args=func_args.expr,
           flags=' | '.join(flags) if flags else 0)
       with self.writer.indent_block():
-        for var in func_block.vars.values():
+        for var in list(func_block.vars.values()):
           if var.type != block.Var.TYPE_GLOBAL:
             fmt = 'var {0} *πg.Object = {1}; _ = {0}'
             self.writer.write(fmt.format(

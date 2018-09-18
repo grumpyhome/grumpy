@@ -16,7 +16,7 @@
 
 """Visitor class for traversing Python expressions."""
 
-from __future__ import unicode_literals
+
 
 import contextlib
 import textwrap
@@ -289,7 +289,7 @@ class ExprVisitor(algorithm.Visitor):
   def visit_Num(self, node):
     if isinstance(node.n, int):
       expr_str = 'NewInt({})'.format(node.n)
-    elif isinstance(node.n, long):
+    elif isinstance(node.n, int):
       a = abs(node.n)
       gobytes = ''
       while a:
@@ -331,7 +331,7 @@ class ExprVisitor(algorithm.Visitor):
     return result
 
   def visit_Str(self, node):
-    if isinstance(node.s, unicode):
+    if isinstance(node.s, str):
       expr_str = 'πg.NewUnicode({}).ToObject()'.format(
           util.go_str(node.s.encode('utf-8')))
     else:

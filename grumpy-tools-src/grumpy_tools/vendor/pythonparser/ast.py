@@ -23,7 +23,7 @@ In particular this affects:
       :class:`arg` in ``vararg`` and ``kwarg`` slots.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+
 
 # Location mixins
 
@@ -53,8 +53,7 @@ class commonloc(object):
                     return repr(loc)
             except:
                 return "(!!!MISSING!!!)"
-        fields = ", ".join(map(lambda name: "%s=%s" % (name, value(name)),
-                           self._reprfields()))
+        fields = ", ".join(["%s=%s" % (name, value(name)) for name in self._reprfields()])
         return "%s(%s)" % (self.__class__.__name__, fields)
 
     @property
