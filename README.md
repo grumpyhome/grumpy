@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/alanjds/grumpy.svg?branch=master)](https://travis-ci.org/alanjds/grumpy)
 [![Join the chat at https://gitter.im/grumpy-devel/Lobby](https://badges.gitter.im/grumpy-devel/Lobby.svg)](https://gitter.im/grumpy-devel/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## Overview
 
@@ -68,7 +69,7 @@ many Grumpy will be compiled and stored inside your Python installation.
 
 You need Golang preinstalled anyway for the installation to be successful.
 
-```
+```sh
 pip2 install -U grumpy-runtime -I --no-cache
 (wait about 5 minutes)
 echo "print 'hello, world'" | grumpy run
@@ -80,7 +81,7 @@ The simplest way to execute a Grumpy program is to use `make run`, which wraps a
 shell script called grumprun that takes Python code on stdin and builds and runs
 the code under Grumpy:
 
-```
+```sh
 cd grumpy-tools-src
 python2 setup.py develop
 cd ../grumpy-runtime-src
@@ -100,7 +101,7 @@ source code, making it similar to the PYTHONPATH.
 The first step is to set up the shell so that the Grumpy toolchain and libraries
 can be found. From the root directory of the Grumpy source distribution run:
 
-```
+```sh
 cd grumpy-tools-src
 python2 setup.py develop
 cd ../grumpy-runtime-src
@@ -113,21 +114,21 @@ export PYTHONPATH=$PWD/build/lib/python2.7/site-packages
 You will know things are working if you see the expected output from this
 command:
 
-```
+```sh
 cd grumpy-runtime-src
 echo 'import sys; print sys.version' | grumprun
 ```
 
 Next, we will write our simple Python module into the \_\_python\_\_ directory:
 
-```
+```sh
 cd grumpy-runtime-src
 echo 'def hello(): print "hello, world"' > $GOPATH/src/__python__/hello.py
 ```
 
 To build a Go package from our Python script, run the following:
 
-```
+```sh
 cd grumpy-runtime-src
 mkdir -p $GOPATH/src/__python__/hello
 grumpc -modname=hello $GOPATH/src/__python__/hello.py > \
@@ -138,7 +139,7 @@ You should now be able to build a Go program that imports the package
 "\_\_python\_\_/hello". We can also import this module into Python programs
 that are built using grumprun:
 
-```
+```sh
 cd grumpy-runtime-src
 echo 'from hello import hello; hello()' | grumprun
 ```

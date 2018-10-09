@@ -629,6 +629,8 @@ class StatementVisitor(algorithm.Visitor):
           self.writer.write('{} = {}[{}]'.format(
               mod.name, mod_slice.expr, binding.value))
           self.block.bind_var(self.writer, binding.alias, mod.expr)
+        elif binding.bind_type == imputil.Import.STAR:
+          self.writer.write_checked_call1('πg.LoadMembers(πF, {}[0])', mod_slice.name)
         else:
           self.writer.write('{} = {}[{}]'.format(
               mod.name, mod_slice.expr, imp.name.count('.')))

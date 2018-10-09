@@ -333,18 +333,18 @@ class StatementVisitorTest(unittest.TestCase):
         from "__go__/time" import Duration
         print Duration""")))
 
-  def testImportWildcardMemberRaises(self):
-    regexp = 'wildcard member import is not implemented'
-    self.assertRaisesRegex(util.ImportError, regexp, _ParseAndVisit,
-                            'from foo import *')
-    self.assertRaisesRegex(util.ImportError, regexp, _ParseAndVisit,
-                            'from "__go__/foo" import *')
-
   def testPrintStatement(self):
     self.assertEqual((0, 'abc 123\nfoo bar\n'), _GrumpRun(textwrap.dedent("""\
         print 'abc',
         print '123'
         print 'foo', 'bar'""")))
+
+  def testImportWildcard(self):
+    result = _GrumpRun(textwrap.dedent("""\
+        from time import *
+        print sleep"""))
+    self.assertEqual(0, result[0])
+    self.assertIn('<function sleep at', result[1])
 
   def testPrintFunction(self):
     want = "abc\n123\nabc 123\nabcx123\nabc 123 "

@@ -184,7 +184,6 @@ func TestImportModule(t *testing.T) {
 		}
 	}
 }
-
 func TestModuleGetNameAndFilename(t *testing.T) {
 	fun := wrapFuncForTest(func(f *Frame, m *Module) (*Tuple, *BaseException) {
 		name, raised := m.GetName(f)

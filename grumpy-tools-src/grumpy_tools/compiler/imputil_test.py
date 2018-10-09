@@ -174,9 +174,8 @@ class ImportVisitorTest(unittest.TestCase):
     imp.add_binding(imputil.Import.MEMBER, 'baz', 'bar')
     self._check_imports('from foo import bar as baz', [imp])
 
-  def testImportFromWildcardRaises(self):
-    self.assertRaises(util.ImportError, self.importer.visit,
-                      pythonparser.parse('from foo import *').body[0])
+  # def testImportFromWildcardRaises(self):
+  #   self._check_imports('from foo import *', [])
 
   def testImportFromFuture(self):
     self._check_imports('from __future__ import print_function', [])
