@@ -46,6 +46,7 @@ func callableIteratorIter(f *Frame, o *Object) (*Object, *BaseException) {
 func callableIteratorNext(f *Frame, o *Object) (item *Object, raised *BaseException) {
 	i := toCallableIteratorUnsafe(o)
 	i.mutex.Lock()
+	defer i.mutex.Unlock()
 	if i.callable == nil {
 		raised = f.Raise(StopIterationType.ToObject(), nil, nil)
 	} else if item, raised = i.callable.Call(f, Args{}, nil); raised == nil {
@@ -56,7 +57,6 @@ func callableIteratorNext(f *Frame, o *Object) (item *Object, raised *BaseExcept
 			raised = f.Raise(StopIterationType.ToObject(), nil, nil)
 		}
 	}
-	i.mutex.Unlock()
 	return item, raised
 }
 
