@@ -97,7 +97,6 @@ please see the official go installation documentation to install Go: https://gol
 
 If you wish to build Go from source see the documentation here: https://golang.org/doc/install/source
 
-### End Pre-requisites
 
 The commands ahead assumes that you have Golang installed and a recent
 version of Python 2, `setuptools` and `pip`.
