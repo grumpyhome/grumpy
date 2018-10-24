@@ -59,19 +59,15 @@ There are three basic categories of incomplete functionality:
 
 ### Pre-requisites
 Python 2.7
-
 pip 
-
 setuptools
-
 Go 1.10+ 
-
 
 ### Mac Python 2.7 installation instructions 
 OSX users can go to https://www.python.org/downloads/release/python-2713/ 
 
 Once you've succesfull installed Python2.7 please ensure that pip is also 
-instaleld on your system by running the "python -m pip --version" command. 
+installed on your system by running the command "python -m pip --version". 
 If pip is not installed please follow the instructions found here 
 https://pip.pypa.io/en/stable/installing/#
 
@@ -85,15 +81,15 @@ then it's already installed. If it returns python3+ then run the command
 
 Next ensure that pip is installed by running "python -m pip --version" 
 or, "python2 -m pip version". If it returns pip [version number] then 
-pip is already installed. If it doesn't run the command "sudo apt install python-pip"
+pip is already installed. If it doesn't run the command "sudo apt install python-pip".
+Note: Again, replace apt with the appropriate package tool.
 
 Once pip has been succesfully installed run the command "python -m pip install --upgrade pip setuptools"
 ### GO Lang installation instructions 
-
 Note: Please download Go 1.10+
 Go lang can be downloaded here: https://golang.org/dl/ 
 
-please see the official go installation documentation to install Go: https://golang.org/doc/install
+Please see the official go installation documentation to install Go: https://golang.org/doc/install
 
 If you wish to build Go from source see the documentation here: https://golang.org/doc/install/source
 
