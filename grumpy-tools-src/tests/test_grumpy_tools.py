@@ -46,7 +46,6 @@ def test_command_line_interface(capfd):
 def test_run_input_inline(capfd):
     runner = CliRunner()
     result = runner.invoke(cli.main, ['run', '-c', "print('Hello World')",])
-    # import wdb; wdb.set_trace()
     out, err = capfd.readouterr()
     assert out == 'Hello World\n', (err, result.output)
     assert result.exit_code == 0

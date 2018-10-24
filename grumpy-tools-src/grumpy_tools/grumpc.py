@@ -101,6 +101,9 @@ def _collect_deps(script, modname, pep3147_folders, from_cache=False, update_cac
 def _recursively_transpile(import_objects):
   for imp_obj in import_objects:
     if not imp_obj.is_native:
+      if not imp_obj.script:
+        continue  # Let the ImportError raise on run time
+
       # Recursively compile the discovered imports
       # TODO: Fix cyclic imports?
       name = imp_obj.name[1:] if imp_obj.name.startswith('.') else imp_obj.name

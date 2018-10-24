@@ -61,6 +61,17 @@ func (l *List) Append(o *Object) {
 	l.mutex.Unlock()
 }
 
+// Reverse the list in place.
+func (l *List) Reverse() {
+	l.mutex.Lock()
+	halfLen := len(l.elems) / 2
+	for i := 0; i < halfLen; i++ {
+		j := len(l.elems) - i - 1
+		l.elems[i], l.elems[j] = l.elems[j], l.elems[i]
+	}
+	l.mutex.Unlock()
+}
+
 // DelItem removes the index'th element of l.
 func (l *List) DelItem(f *Frame, index int) *BaseException {
 	l.mutex.Lock()
@@ -485,13 +496,7 @@ func listReverse(f *Frame, args Args, _ KWArgs) (*Object, *BaseException) {
 		return nil, raised
 	}
 	l := toListUnsafe(args[0])
-	l.mutex.Lock()
-	halfLen := len(l.elems) / 2
-	for i := 0; i < halfLen; i++ {
-		j := len(l.elems) - i - 1
-		l.elems[i], l.elems[j] = l.elems[j], l.elems[i]
-	}
-	l.mutex.Unlock()
+	l.Reverse()
 	return None, nil
 }
 

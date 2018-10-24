@@ -626,6 +626,32 @@ func TestIter(t *testing.T) {
 	}
 }
 
+func TestIterCallable(t *testing.T) {
+	fun := newBuiltinFunction("TestIterCallable", func(f *Frame, args Args, _ KWArgs) (*Object, *BaseException) {
+		if argc := len(args); argc != 2 {
+			return nil, f.RaiseType(SystemErrorType, fmt.Sprintf("IterCallable expected 2 arg, got %d", argc))
+		}
+		i, raised := IterCallable(f, args[0], args[1])
+		if raised != nil {
+			return nil, raised
+		}
+		return Next(f, i)
+	}).ToObject()
+	foo := newBuiltinFunction("foo", func(f *Frame, _ Args, _ KWArgs) (*Object, *BaseException) {
+		return NewInt(23).ToObject(), nil
+	}).ToObject()
+	cases := []invokeTestCase{
+		{args: wrapArgs(foo, 23), wantExc: mustCreateException(StopIterationType, "")},
+		{args: wrapArgs(foo, 1), want: NewInt(23).ToObject()},
+		{args: wrapArgs(123, 1), wantExc: mustCreateException(TypeErrorType, "iter(v, w): v must be callable")},
+	}
+	for _, cas := range cases {
+		if err := runInvokeTestCase(fun, &cas); err != "" {
+			t.Error(err)
+		}
+	}
+}
+
 func TestNeg(t *testing.T) {
 	cases := []invokeTestCase{
 		{args: wrapArgs(42), want: NewInt(-42).ToObject()},

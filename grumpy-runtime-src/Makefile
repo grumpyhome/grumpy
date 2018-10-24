@@ -237,7 +237,7 @@ gofmt: build/gofmt.diff
 	@if [ -s $< ]; then echo 'gofmt found errors, run: gofmt -w $(ROOT_DIR)/runtime/*.go'; false; fi
 
 $(GOLINT_BIN):
-	@go get -u github.com/golang/lint/golint
+	@go get -u golang.org/x/lint/golint
 
 golint: $(GOLINT_BIN)
 	@$(GOLINT_BIN) -set_exit_status runtime
