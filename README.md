@@ -59,68 +59,43 @@ There are three basic categories of incomplete functionality:
 
 ### Pre-requisites
 Python 2.7
-    *pip 
-    *setuptools
+
+pip 
+
+setuptools
+
 Go 1.10+ 
 
-### Windows Python 2.7 installation instructions
-
-Windows users can download Python2.7 from https://www.python.org/downloads/release/python-2715/
-once downloaded run the installer and follow along with the prompts. After installing Python 2.7 
-open the command line and type "python -m pip install --upgrade setuptools pip".
 
 ### Mac Python 2.7 installation instructions 
 OSX users can go to https://www.python.org/downloads/release/python-2713/ 
-locate the appropriate installer for your system, run the installer and 
-follow along with the prompt. Once installed open a terminal and run the command 
-"python -m pip --version" if this command returns "pip [somenumber] then pip installed 
-and you can run the command "python -m pip install --upgrade pip setuptools". If the 
-command does not return that or states that pip isn't installed on your system run 
-the command "sudo easy_install pip" then run the command "python -m pip install --upgrade pip setuptools".
+
+Once you've succesfull installed Python2.7 please ensure that pip is also 
+instaleld on your system by running the "python -m pip --version" command. 
+If pip is not installed please follow the instructions found here 
+https://pip.pypa.io/en/stable/installing/#
+
+Once pip has succesfully been installed please run the following command  
+"python -m pip install --upgrade pip setuptools".
 
 ### Linux Python 2.7 installation instructions 
-Almost all linux operating systems come bundled with Python 2.7 with the exception of 
-a few such as Arch linux (in some cases). To check your version of python run the command(s)
-"python --version" if this command returns python 3+ then run the command "python2 --version"
-if this command returns python 2.7+ then you already have python installed on your system. 
-If python 2.7 is already installed on your system run the command "python -m pip --version" 
-or "python2 -m pip --version", which you determined above. If it reutnrs a version number for pip 
-you can skip the following step, otherwise run the command "sudo apt install python-pip". Replace apt 
-with your respective package tool.
+Run the command "python --version" if this command returns Python2.7 
+then it's already installed. If it returns python3+ then run the command 
+"sudo apt install python2.7" Note: Replace "apt" with your package tool.
 
-Once that's done run the command "python (or python2) -m pip install --upgrade pip setuptools".
+Next ensure that pip is installed by running "python -m pip --version" 
+or, "python2 -m pip version". If it returns pip [version number] then 
+pip is already installed. If it doesn't run the command "sudo apt install python-pip"
 
-If you do not have Python 2.7+ on your system, it's sugessted that you follow this guide to setup 
-python 2 in a virtual environment https://virtualenv.pypa.io/en/stable/installation/ . If you'd 
-prefer to just install it normally run the command "sudo apt install python2.7 python-pip" 
-Note: replace apt with your respective package tool Ie, sudo pacman -Syu python2.7, 
-sudo yum install python2.7 etc..
+Once pip has been succesfully installed run the command "python -m pip install --upgrade pip setuptools"
+### GO Lang installation instructions 
 
-Then run the command "python -m pip install --upgrade pip setuptools".
+Note: Please download Go 1.10+
+Go lang can be downloaded here: https://golang.org/dl/ 
 
-### Windows GO lang installation instructions 
+please see the official go installation documentation to install Go: https://golang.org/doc/install
 
-Windows users can go to https://golang.org/dl/ locate the appropriate installer for your 
-system, select a Go version >= 1.10, download the installer then simply follow the prompts.
-
-
-### OSX GO Lang installation instructions 
-
-OSX users can go to https://golang.org/dl/ locate the appropriate instaler for your system 
-download the installer and follow the prompts. 
-
-Once installed set your environment variable for go export GOPATH=$HOME/go
-
-You can also download the archive and extract it to /sr/local by running the command 
-"tar -C /usr/local -xzf go.archive.file.tar.gz" You still have to set the environment variable 
-by running the command "export GOPATH=$HOME/go/bin"
-
-### Linux Go Lang installation instructions 
-Linux users can go to https://golang.org/dl/ to get the appropriate archive. 
-Locate the appropriate archive file, download it, then run the command  
-"tar -C /usr/local -xzf go.archive.file.tar.gz"
-
-Then run the command "export PATH=$PATH:/usr/local/go/bin" to set your envrionment variable. 
+If you wish to build Go from source see the documentation here: https://golang.org/doc/install/source
 
 ### End Pre-requisites
 
