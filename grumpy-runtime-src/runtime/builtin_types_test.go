@@ -93,11 +93,6 @@ func TestBuiltinFuncs(t *testing.T) {
 			return nil, f.RaiseType(RuntimeErrorType, "foo")
 		}).ToObject(),
 	}))
-	addType := newTestClass("Add", []*Type{ObjectType}, newStringDict(map[string]*Object{
-		"__add__": newBuiltinFunction("__add__", func(f *Frame, _ Args, _ KWArgs) (*Object, *BaseException) {
-			return NewInt(1).ToObject(), nil
-		}).ToObject(),
-	}))
 	badIterType := newTestClass("BadIterType", []*Type{ObjectType}, newStringDict(map[string]*Object{
 		"__iter__": newBuiltinFunction("__iter__", func(f *Frame, args Args, kwargs KWArgs) (*Object, *BaseException) {
 			return newObject(badNextType), nil
