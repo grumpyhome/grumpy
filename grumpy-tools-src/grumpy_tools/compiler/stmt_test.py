@@ -16,7 +16,7 @@
 
 """Tests for StatementVisitor."""
 
-from __future__ import unicode_literals
+
 
 import re
 import subprocess
@@ -154,7 +154,7 @@ class StatementVisitorTest(unittest.TestCase):
         foo()""")))
 
   def testDeleteNonexistentLocal(self):
-    self.assertRaisesRegexp(
+    self.assertRaisesRegex(
         util.ParseError, 'cannot delete nonexistent local',
         _ParseAndVisit, 'def foo():\n  del bar')
 
@@ -208,12 +208,12 @@ class StatementVisitorTest(unittest.TestCase):
           print 'bar'""")))
 
   def testForElseBreakNotNested(self):
-    self.assertRaisesRegexp(
+    self.assertRaisesRegex(
         util.ParseError, "'continue' not in loop",
         _ParseAndVisit, 'for i in (1,):\n  pass\nelse:\n  continue')
 
   def testForElseContinueNotNested(self):
-    self.assertRaisesRegexp(
+    self.assertRaisesRegex(
         util.ParseError, "'continue' not in loop",
         _ParseAndVisit, 'for i in (1,):\n  pass\nelse:\n  continue')
 
@@ -275,7 +275,7 @@ class StatementVisitorTest(unittest.TestCase):
         print list(gen())""")))
 
   def testFunctionDefGeneratorReturnValue(self):
-    self.assertRaisesRegexp(
+    self.assertRaisesRegex(
         util.ParseError, 'returning a value in a generator function',
         _ParseAndVisit, 'def foo():\n  yield 1\n  return 2')
 
@@ -323,7 +323,7 @@ class StatementVisitorTest(unittest.TestCase):
 
   def testImportFutureLateRaises(self):
     regexp = 'from __future__ imports must occur at the beginning of the file'
-    self.assertRaisesRegexp(util.ImportError, regexp, _ParseAndVisit,
+    self.assertRaisesRegex(util.ImportError, regexp, _ParseAndVisit,
                             'foo = bar\nfrom __future__ import print_function')
 
   def testFutureUnicodeLiterals(self):
@@ -551,13 +551,13 @@ class StatementVisitorTest(unittest.TestCase):
         'exc', 'tb', handlers), [1, 2])
     expected = re.compile(r'ResolveGlobal\(.*foo.*\bIsInstance\(.*'
                           r'goto Label1.*goto Label2', re.DOTALL)
-    self.assertRegexpMatches(visitor.writer.getvalue(), expected)
+    self.assertRegex(visitor.writer.getvalue(), expected)
 
   def testWriteExceptDispatcherBareExceptionNotLast(self):
     visitor = stmt.StatementVisitor(_MakeModuleBlock())
     handlers = [ast.ExceptHandler(type=None),
                 ast.ExceptHandler(type=ast.Name(id='foo'))]
-    self.assertRaisesRegexp(util.ParseError, r"default 'except:' must be last",
+    self.assertRaisesRegex(util.ParseError, r"default 'except:' must be last",
                             visitor._write_except_dispatcher,  # pylint: disable=protected-access
                             'exc', 'tb', handlers)
 
@@ -571,7 +571,7 @@ class StatementVisitorTest(unittest.TestCase):
         r'ResolveGlobal\(.*foo.*\bif .*\bIsInstance\(.*\{.*goto Label1.*'
         r'ResolveGlobal\(.*bar.*\bif .*\bIsInstance\(.*\{.*goto Label2.*'
         r'\bRaise\(exc\.ToObject\(\), nil, tb\.ToObject\(\)\)', re.DOTALL)
-    self.assertRegexpMatches(visitor.writer.getvalue(), expected)
+    self.assertRegex(visitor.writer.getvalue(), expected)
 
 
 def _MakeModuleBlock():

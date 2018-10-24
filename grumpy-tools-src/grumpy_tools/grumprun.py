@@ -29,7 +29,7 @@ import subprocess
 import sys
 import tempfile
 import logging
-from StringIO import StringIO
+from io import StringIO
 
 from .compiler import imputil
 from .pep_support.pep3147pycache import make_transpiled_module_folders

@@ -20,4 +20,4 @@ assert list(c for c in 'abc') == ['a', 'b', 'c']
 assert [c for c in 'abc'] == ['a', 'b', 'c']
 assert [i + j for i in range(2) for j in range(2)] == [0, 1, 1, 2]
 assert [c for c in 'foobar' if c in 'aeiou'] == ['o', 'o', 'a']
-assert {i: str(i) for i in range(2)} == {0: '0', 1: '1'}
+assert {i: str(i) for i in list(range(2))} == {0: '0', 1: '1'}

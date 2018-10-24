@@ -65,7 +65,7 @@ class CommonTest(seq_tests.CommonTest):
 #            os.remove(test_support.TESTFN)
 
     def test_set_subscript(self):
-        a = self.type2test(range(20))
+        a = self.type2test(list(range(20)))
         self.assertRaises(ValueError, a.__setitem__, slice(0, 10, 0), [1,2,3])
         self.assertRaises(TypeError, a.__setitem__, slice(0, 10), 1)
         self.assertRaises(ValueError, a.__setitem__, slice(0, 10, 2), [1,2])
@@ -103,16 +103,16 @@ class CommonTest(seq_tests.CommonTest):
         self.assertRaises(TypeError, a.__setitem__)
 
         a = self.type2test([0,1,2,3,4])
-        a[0L] = 1
-        a[1L] = 2
-        a[2L] = 3
+        a[0] = 1
+        a[1] = 2
+        a[2] = 3
         self.assertEqual(a, self.type2test([1,2,3,3,4]))
         a[0] = 5
         a[1] = 6
         a[2] = 7
         self.assertEqual(a, self.type2test([5,6,7,3,4]))
-        a[-2L] = 88
-        a[-1L] = 99
+        a[-2] = 88
+        a[-1] = 99
         self.assertEqual(a, self.type2test([5,6,7,88,99]))
         a[-2] = 8
         a[-1] = 9
@@ -195,8 +195,8 @@ class CommonTest(seq_tests.CommonTest):
         self.assertEqual(a, self.type2test([]))
 
         a = self.type2test([0, 1])
-        del a[1L:2L]
-        del a[0L:1L]
+        del a[1:2]
+        del a[0:1]
         self.assertEqual(a, self.type2test([]))
 
         a = self.type2test([0, 1])
@@ -204,7 +204,7 @@ class CommonTest(seq_tests.CommonTest):
         self.assertEqual(a, self.type2test([1]))
 
         a = self.type2test([0, 1])
-        del a[-2L:-1L]
+        del a[-2:-1]
         self.assertEqual(a, self.type2test([1]))
 
         a = self.type2test([0, 1])
@@ -213,8 +213,8 @@ class CommonTest(seq_tests.CommonTest):
         self.assertEqual(a, self.type2test([]))
 
         a = self.type2test([0, 1])
-        del a[1L:]
-        del a[:1L]
+        del a[1:]
+        del a[:1]
         self.assertEqual(a, self.type2test([]))
 
         a = self.type2test([0, 1])
@@ -222,7 +222,7 @@ class CommonTest(seq_tests.CommonTest):
         self.assertEqual(a, self.type2test([0]))
 
         a = self.type2test([0, 1])
-        del a[-1L:]
+        del a[-1:]
         self.assertEqual(a, self.type2test([0]))
 
         a = self.type2test([0, 1])
@@ -442,7 +442,7 @@ class CommonTest(seq_tests.CommonTest):
         # The following dumps core in unpatched Python 1.5:
         def myComparison(x,y):
             return cmp(x%3, y%7)
-        z = self.type2test(range(12))
+        z = self.type2test(list(range(12)))
         z.sort(myComparison)
 
         self.assertRaises(TypeError, z.sort, 2)

@@ -22,42 +22,42 @@ import weetest
 def BenchmarkCallNoArgs(b):
   def Foo():
     pass
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     Foo()
 
 
 def BenchmarkCallPositionalArgs(b):
   def Foo(a, b, c):
     pass
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     Foo(1, 2, 3)
 
 
 def BenchmarkCallKeywords(b):
   def Foo(a, b, c):
     pass
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     Foo(a=1, b=2, c=3)
 
 
 def BenchmarkCallDefaults(b):
   def Foo(a=1, b=2, c=3):
     pass
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     Foo()
 
 
 def BenchmarkCallVarArgs(b):
   def Foo(*args):
     pass
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     Foo(1, 2, 3)
 
 
 def BenchmarkCallKwargs(b):
   def Foo(**kwargs):
     pass
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     Foo(a=1, b=2, c=3)
 
 

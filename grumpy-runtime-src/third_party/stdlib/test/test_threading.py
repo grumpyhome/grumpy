@@ -8,7 +8,7 @@ import random
 import re
 import sys
 #thread = test.test_support.import_module('thread')
-import thread
+import _thread
 #threading = test.test_support.import_module('threading')
 import threading
 import time
@@ -45,26 +45,26 @@ class TestThread(threading.Thread):
     def run(self):
         delay = random.random() / 10000.0
         if verbose:
-            print 'task %s will run for %s usec' % (
-                self.name, delay * 1e6)
+            print('task %s will run for %s usec' % (
+                self.name, delay * 1e6))
 
         with self.sema:
             with self.mutex:
                 self.nrunning.inc()
                 if verbose:
-                    print self.nrunning.get(), 'tasks are running'
+                    print(self.nrunning.get(), 'tasks are running')
                 self.testcase.assertLessEqual(self.nrunning.get(), 3)
 
             time.sleep(delay)
             if verbose:
-                print 'task', self.name, 'done'
+                print('task', self.name, 'done')
 
             with self.mutex:
                 self.nrunning.dec()
                 self.testcase.assertGreaterEqual(self.nrunning.get(), 0)
                 if verbose:
-                    print '%s is finished. %d tasks are running' % (
-                        self.name, self.nrunning.get())
+                    print('%s is finished. %d tasks are running' % (
+                        self.name, self.nrunning.get()))
 
 class BaseTestCase(unittest.TestCase):
     def setUp(self):
@@ -95,19 +95,19 @@ class ThreadTests(BaseTestCase):
             t = TestThread("<thread %d>"%i, self, sema, mutex, numrunning)
             threads.append(t)
             self.assertIsNone(t.ident)
-            self.assertRegexpMatches(repr(t), r'^<TestThread\(.*, initial\)>$')
+            self.assertRegex(repr(t), r'^<TestThread\(.*, initial\)>$')
             t.start()
 
         if verbose:
-            print 'waiting for all tasks to complete'
+            print('waiting for all tasks to complete')
         for t in threads:
             t.join(NUMTASKS)
             self.assertFalse(t.is_alive())
             self.assertNotEqual(t.ident, 0)
             self.assertIsNotNone(t.ident)
-            self.assertRegexpMatches(repr(t), r'^<TestThread\(.*, \w+ -?\d+\)>$')
+            self.assertRegex(repr(t), r'^<TestThread\(.*, \w+ -?\d+\)>$')
         if verbose:
-            print 'all tasks done'
+            print('all tasks done')
         self.assertEqual(numrunning.get(), 0)
 
     def test_ident_of_no_threading_threads(self):
@@ -118,7 +118,7 @@ class ThreadTests(BaseTestCase):
             done.set()
         done = threading.Event()
         ident = []
-        thread.start_new_thread(f, ())
+        _thread.start_new_thread(f, ())
         done.wait()
         self.assertIsNotNone(ident[0])
         # Kill the "immortal" _DummyThread
@@ -127,10 +127,10 @@ class ThreadTests(BaseTestCase):
     # run with a small(ish) thread stack size (256kB)
     def test_various_ops_small_stack(self):
         if verbose:
-            print 'with 256kB thread stack size...'
+            print('with 256kB thread stack size...')
         try:
             threading.stack_size(262144)
-        except thread.error:
+        except _thread.error:
             self.skipTest('platform does not support changing thread stack size')
         self.test_various_ops()
         threading.stack_size(0)
@@ -138,10 +138,10 @@ class ThreadTests(BaseTestCase):
     # run with a large thread stack size (1MB)
     def test_various_ops_large_stack(self):
         if verbose:
-            print 'with 1MB thread stack size...'
+            print('with 1MB thread stack size...')
         try:
             threading.stack_size(0x100000)
-        except thread.error:
+        except _thread.error:
             self.skipTest('platform does not support changing thread stack size')
         self.test_various_ops()
         threading.stack_size(0)
@@ -156,7 +156,7 @@ class ThreadTests(BaseTestCase):
 
         mutex = threading.Lock()
         mutex.acquire()
-        tid = thread.start_new_thread(f, (mutex,))
+        tid = _thread.start_new_thread(f, (mutex,))
         # Wait for the thread to finish.
         mutex.acquire()
         self.assertIn(tid, threading._active)
@@ -181,7 +181,7 @@ class ThreadTests(BaseTestCase):
         exception = ctypes.py_object(AsyncExc)
 
         # First check it works when setting the exception from the same thread.
-        tid = thread.get_ident()
+        tid = _thread.get_ident()
 
         try:
             result = set_async_exc(ctypes.c_long(tid), exception)
@@ -210,7 +210,7 @@ class ThreadTests(BaseTestCase):
 
         class Worker(threading.Thread):
             def run(self):
-                self.id = thread.get_ident()
+                self.id = _thread.get_ident()
                 self.finished = False
 
                 try:
@@ -225,32 +225,32 @@ class ThreadTests(BaseTestCase):
         t.daemon = True # so if this fails, we don't hang Python at shutdown
         t.start()
         if verbose:
-            print "    started worker thread"
+            print("    started worker thread")
 
         # Try a thread id that doesn't make sense.
         if verbose:
-            print "    trying nonsensical thread id"
+            print("    trying nonsensical thread id")
         result = set_async_exc(ctypes.c_long(-1), exception)
         self.assertEqual(result, 0)  # no thread states modified
 
         # Now raise an exception in the worker thread.
         if verbose:
-            print "    waiting for worker thread to get started"
+            print("    waiting for worker thread to get started")
         ret = worker_started.wait()
         self.assertTrue(ret)
         if verbose:
-            print "    verifying worker hasn't exited"
+            print("    verifying worker hasn't exited")
         self.assertFalse(t.finished)
         if verbose:
-            print "    attempting to raise asynch exception in worker"
+            print("    attempting to raise asynch exception in worker")
         result = set_async_exc(ctypes.c_long(t.id), exception)
         self.assertEqual(result, 1) # one thread state modified
         if verbose:
-            print "    waiting for worker to say it caught the exception"
+            print("    waiting for worker to say it caught the exception")
         worker_saw_exception.wait(timeout=10)
         self.assertTrue(t.finished)
         if verbose:
-            print "    all OK -- joining worker"
+            print("    all OK -- joining worker")
         if t.finished:
             t.join()
         # else the thread is still running, and we have no way to kill it
@@ -258,12 +258,12 @@ class ThreadTests(BaseTestCase):
     def test_limbo_cleanup(self):
         # Issue 7481: Failure to start thread should cleanup the limbo map.
         def fail_new_thread(*args):
-            raise thread.error()
+            raise _thread.error()
         _start_new_thread = threading._start_new_thread
         threading._start_new_thread = fail_new_thread
         try:
             t = threading.Thread(target=lambda: None)
-            self.assertRaises(thread.error, t.start)
+            self.assertRaises(_thread.error, t.start)
             self.assertFalse(
                 t in threading._limbo,
                 "Failed to cleanup _limbo map on failure of Thread.start().")
@@ -377,7 +377,7 @@ class ThreadTests(BaseTestCase):
         enum = threading.enumerate
         old_interval = sys.getcheckinterval()
         try:
-            for i in xrange(1, 100):
+            for i in range(1, 100):
                 # Try a couple times at each thread-switching interval
                 # to get more interleavings.
                 sys.setcheckinterval(i // 5)
@@ -786,8 +786,8 @@ class ThreadingExceptionTests(BaseTestCase):
     # multiple times.
     def test_start_thread_again(self):
         thread = threading.Thread()
-        thread.start()
-        self.assertRaises(RuntimeError, thread.start)
+        _thread.start()
+        self.assertRaises(RuntimeError, _thread.start)
 
     def test_joining_current_thread(self):
         current_thread = threading.current_thread()
@@ -795,11 +795,11 @@ class ThreadingExceptionTests(BaseTestCase):
 
     def test_joining_inactive_thread(self):
         thread = threading.Thread()
-        self.assertRaises(RuntimeError, thread.join)
+        self.assertRaises(RuntimeError, _thread.join)
 
     def test_daemonize_active_thread(self):
         thread = threading.Thread()
-        thread.start()
+        _thread.start()
         self.assertRaises(RuntimeError, setattr, thread, "daemon", True)
 
     @unittest.skip('grumpy')

@@ -298,8 +298,8 @@ def _check_int_field(value):
         else:
             if isinstance(value, int):
                 return int(value)
-            elif isinstance(value, long):
-                return int(long(value))
+            elif isinstance(value, int):
+                return int(int(value))
             raise TypeError('__int__ method should return an integer')
         raise TypeError('an integer is required')
     raise TypeError('integer argument expected, got float')
@@ -421,7 +421,7 @@ def _normalize_date(year, month, day, ignore_overflow=False):
     return year, month, day
 
 def _accum(tag, sofar, num, factor, leftover):
-    if isinstance(num, (int, long)):
+    if isinstance(num, int):
         prod = num * factor
         rsum = sofar + prod
         return rsum, leftover
@@ -431,7 +431,7 @@ def _accum(tag, sofar, num, factor, leftover):
         rsum = sofar + prod
         if fracpart == 0.0:
             return rsum, leftover
-        assert isinstance(factor, (int, long))
+        assert isinstance(factor, int)
         fracpart, intpart = _math.modf(factor * fracpart)
         rsum += int(intpart)
         return rsum, leftover + fracpart
@@ -594,7 +594,7 @@ class timedelta(object):
             return self
 
     def __mul__(self, other):
-        if not isinstance(other, (int, long)):
+        if not isinstance(other, int):
             return NotImplemented
         usec = self._to_microseconds()
         return timedelta._from_microseconds(usec * other)
@@ -602,7 +602,7 @@ class timedelta(object):
     __rmul__ = __mul__
 
     def __div__(self, other):
-        if not isinstance(other, (int, long)):
+        if not isinstance(other, int):
             return NotImplemented
         usec = self._to_microseconds()
         # return timedelta._from_microseconds(usec // other)
@@ -657,7 +657,7 @@ class timedelta(object):
             self._hashcode = hash(self._getstate())
         return self._hashcode
 
-    def __nonzero__(self):
+    def __bool__(self):
         return (self._days != 0 or
                 self._seconds != 0 or
                 self._microseconds != 0)
@@ -787,7 +787,7 @@ class date(object):
     #     return _wrap_strftime(self, format, self.timetuple())
 
     def __format__(self, fmt):
-        if not isinstance(fmt, (str, unicode)):
+        if not isinstance(fmt, str):
             raise ValueError("__format__ expects str or unicode, not %s" %
                              fmt.__class__.__name__)
         if len(fmt) != 0:
@@ -1285,7 +1285,7 @@ class time(object):
     #     return _wrap_strftime(self, format, timetuple)
 
     def __format__(self, fmt):
-        if not isinstance(fmt, (str, unicode)):
+        if not isinstance(fmt, str):
             raise ValueError("__format__ expects str or unicode, not %s" %
                              fmt.__class__.__name__)
         if len(fmt) != 0:
@@ -1367,7 +1367,7 @@ class time(object):
         return time.__new__(type(self),
                             hour, minute, second, microsecond, tzinfo)
 
-    def __nonzero__(self):
+    def __bool__(self):
         if self.second or self.microsecond:
             return True
         offset = self._utcoffset() or 0

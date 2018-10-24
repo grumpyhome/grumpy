@@ -84,7 +84,7 @@ a.extend(tuple())
 assert a == [3, 2, 4, 1]
 a.extend((6, 7))
 assert a == [3, 2, 4, 1, 6, 7]
-a.extend(range(3))
+a.extend(list(range(3)))
 assert a == [3, 2, 4, 1, 6, 7, 0, 1, 2]
 
 try:

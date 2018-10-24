@@ -29,9 +29,9 @@ def _AssertEqual(a, b):
 
 def TestAbspath():
   _AssertEqual(path.abspath('/a/b/c'), '/a/b/c')
-  _AssertEqual(path.abspath(u'/a/b/c'), u'/a/b/c')
+  _AssertEqual(path.abspath('/a/b/c'), '/a/b/c')
   _AssertEqual(path.abspath('/a/b/c/'), '/a/b/c')
-  _AssertEqual(path.abspath(u'/a/b/c/'), u'/a/b/c')
+  _AssertEqual(path.abspath('/a/b/c/'), '/a/b/c')
   _AssertEqual(path.abspath('a/b/c'), path.normpath(os.getcwd() + '/a/b/c'))
 
 
@@ -108,11 +108,11 @@ def TestNormPath():
   _AssertEqual(path.normpath('abc/../123'), '123')
   _AssertEqual(path.normpath('../abc/123'), '../abc/123')
   _AssertEqual(path.normpath('x/y/./z'), 'x/y/z')
-  _AssertEqual(path.normpath(u'abc/'), u'abc')
-  _AssertEqual(path.normpath(u'/a//b'), u'/a/b')
-  _AssertEqual(path.normpath(u'abc/../123'), u'123')
-  _AssertEqual(path.normpath(u'../abc/123'), u'../abc/123')
-  _AssertEqual(path.normpath(u'x/y/./z'), u'x/y/z')
+  _AssertEqual(path.normpath('abc/'), 'abc')
+  _AssertEqual(path.normpath('/a//b'), '/a/b')
+  _AssertEqual(path.normpath('abc/../123'), '123')
+  _AssertEqual(path.normpath('../abc/123'), '../abc/123')
+  _AssertEqual(path.normpath('x/y/./z'), 'x/y/z')
 
 
 def TestSplit():

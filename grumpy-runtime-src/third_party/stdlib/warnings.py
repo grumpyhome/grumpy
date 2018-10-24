@@ -41,7 +41,7 @@ showwarning = _show_warning
 def formatwarning(message, category, filename, lineno, line=None):
     """Function to format a warning the standard way."""
     try:
-        unicodetype = unicode
+        unicodetype = str
     except NameError:
         unicodetype = ()
     try:
@@ -53,13 +53,13 @@ def formatwarning(message, category, filename, lineno, line=None):
     if line:
         line = line.strip()
         if isinstance(s, unicodetype) and isinstance(line, str):
-            line = unicode(line, 'latin1')
+            line = str(line, 'latin1')
         s += "  %s\n" % line
     if isinstance(s, unicodetype) and isinstance(filename, str):
         enc = sys.getfilesystemencoding()
         if enc:
             try:
-                filename = unicode(filename, enc)
+                filename = str(filename, enc)
             except UnicodeDecodeError:
                 pass
     s = "%s:%s" % (filename, s)
@@ -79,10 +79,10 @@ def filterwarnings(action, message="", category=Warning, module="", lineno=0,
     """
     assert action in ("error", "ignore", "always", "default", "module",
                       "once"), "invalid action: %r" % (action,)
-    assert isinstance(message, basestring), "message must be a string"
+    assert isinstance(message, str), "message must be a string"
     assert isinstance(category, type), "category must be a class"
     assert issubclass(category, Warning), "category must be a Warning subclass"
-    assert isinstance(module, basestring), "module must be a string"
+    assert isinstance(module, str), "module must be a string"
     assert isinstance(lineno, int) and lineno >= 0, \
            "lineno must be an int >= 0"
     item = (action, re.compile(message, re.I), category,
@@ -125,8 +125,8 @@ def _processoptions(args):
     for arg in args:
         try:
             _setoption(arg)
-        except _OptionError, msg:
-            print >>sys.stderr, "Invalid -W option ignored:", msg
+        except _OptionError as msg:
+            print("Invalid -W option ignored:", msg, file=sys.stderr)
 
 # Helper for _processoptions()
 def _setoption(arg):

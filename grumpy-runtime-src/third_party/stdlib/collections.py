@@ -35,8 +35,8 @@ _starmap = itertools.starmap
 _imap = itertools.imap
 
 #try:
-import thread
-_get_ident = thread.get_ident
+import _thread
+_get_ident = _thread.get_ident
 #except ImportError:
 #    from dummy_thread import get_ident as _get_ident
 
@@ -197,7 +197,7 @@ class OrderedDict(dict):
         try:
             if not self:
                 return '%s()' % (self.__class__.__name__,)
-            return '%s(%r)' % (self.__class__.__name__, self.items())
+            return '%s(%r)' % (self.__class__.__name__, list(self.items()))
         finally:
             del _repr_running[call_key]
 
@@ -501,8 +501,8 @@ class Counter(dict):
         '''
         # Emulate Bag.sortedByCount from Smalltalk
         if n is None:
-            return sorted(self.iteritems(), key=_itemgetter(1), reverse=True)
-        return _heapq.nlargest(n, self.iteritems(), key=_itemgetter(1))
+            return sorted(iter(list(self.items())), key=_itemgetter(1), reverse=True)
+        return _heapq.nlargest(n, iter(list(self.items())), key=_itemgetter(1))
 
     def elements(self):
         '''Iterator over elements repeating each as many times as its count.
@@ -524,7 +524,7 @@ class Counter(dict):
 
         '''
         # Emulate Bag.do from Smalltalk and Multiset.begin from C++.
-        return _chain.from_iterable(_starmap(_repeat, self.iteritems()))
+        return _chain.from_iterable(_starmap(_repeat, iter(list(self.items()))))
 
     # Override dict methods where necessary
 
@@ -567,7 +567,7 @@ class Counter(dict):
             if isinstance(iterable, Mapping):
                 if self:
                     self_get = self.get
-                    for elem, count in iterable.iteritems():
+                    for elem, count in list(iterable.items()):
                         self[elem] = self_get(elem, 0) + count
                 else:
                     super(Counter, self).update(iterable) # fast path when counter is empty
@@ -605,7 +605,7 @@ class Counter(dict):
         if iterable is not None:
             self_get = self.get
             if isinstance(iterable, Mapping):
-                for elem, count in iterable.items():
+                for elem, count in list(iterable.items()):
                     self[elem] = self_get(elem, 0) - count
             else:
                 for elem in iterable:
@@ -650,11 +650,11 @@ class Counter(dict):
         if not isinstance(other, Counter):
             return NotImplemented
         result = Counter()
-        for elem, count in self.items():
+        for elem, count in list(self.items()):
             newcount = count + other[elem]
             if newcount > 0:
                 result[elem] = newcount
-        for elem, count in other.items():
+        for elem, count in list(other.items()):
             if elem not in self and count > 0:
                 result[elem] = count
         return result
@@ -669,11 +669,11 @@ class Counter(dict):
         if not isinstance(other, Counter):
             return NotImplemented
         result = Counter()
-        for elem, count in self.items():
+        for elem, count in list(self.items()):
             newcount = count - other[elem]
             if newcount > 0:
                 result[elem] = newcount
-        for elem, count in other.items():
+        for elem, count in list(other.items()):
             if elem not in self and count < 0:
                 result[elem] = 0 - count
         return result
@@ -688,12 +688,12 @@ class Counter(dict):
         if not isinstance(other, Counter):
             return NotImplemented
         result = Counter()
-        for elem, count in self.items():
+        for elem, count in list(self.items()):
             other_count = other[elem]
             newcount = other_count if count < other_count else count
             if newcount > 0:
                 result[elem] = newcount
-        for elem, count in other.items():
+        for elem, count in list(other.items()):
             if elem not in self and count > 0:
                 result[elem] = count
         return result
@@ -708,7 +708,7 @@ class Counter(dict):
         if not isinstance(other, Counter):
             return NotImplemented
         result = Counter()
-        for elem, count in self.items():
+        for elem, count in list(self.items()):
             other_count = other[elem]
             newcount = count if count < other_count else other_count
             if newcount > 0:

@@ -3,7 +3,7 @@ The :mod:`Diagnostic` module concerns itself with processing
 and presentation of diagnostic messages.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+
 from functools import reduce
 from contextlib import contextmanager
 import sys, re
@@ -48,8 +48,7 @@ class Diagnostic:
         if notes is None:
             notes = []
 
-        if len(set(map(lambda x: x.source_buffer,
-                       [location] + highlights))) > 1:
+        if len(set([x.source_buffer for x in [location] + highlights])) > 1:
             raise ValueError("location and highlights must refer to the same source buffer")
 
         self.level, self.reason, self.arguments = \

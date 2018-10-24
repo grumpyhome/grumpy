@@ -32,39 +32,39 @@ class DictTest(unittest.TestCase):
     @unittest.expectedFailure
     def test_keys(self):
         d = {}
-        self.assertEqual(d.keys(), [])
+        self.assertEqual(list(d.keys()), [])
         d = {'a': 1, 'b': 2}
-        k = d.keys()
+        k = list(d.keys())
         # self.assertEqual(set(k), {'a', 'b'})
         self.assertIn('a', k)
         self.assertIn('b', k)
-        self.assertTrue(d.has_key('a'))
-        self.assertTrue(d.has_key('b'))
+        self.assertTrue('a' in d)
+        self.assertTrue('b' in d)
         self.assertRaises(TypeError, d.keys, None)
 
     def test_values(self):
         d = {}
-        self.assertEqual(d.values(), [])
+        self.assertEqual(list(d.values()), [])
         d = {1:2}
-        self.assertEqual(d.values(), [2])
+        self.assertEqual(list(d.values()), [2])
 
         self.assertRaises(TypeError, d.values, None)
 
     def test_items(self):
         d = {}
-        self.assertEqual(d.items(), [])
+        self.assertEqual(list(d.items()), [])
 
         d = {1:2}
-        self.assertEqual(d.items(), [(1, 2)])
+        self.assertEqual(list(d.items()), [(1, 2)])
 
         self.assertRaises(TypeError, d.items, None)
 
     @unittest.expectedFailure
     def test_has_key(self):
         d = {}
-        self.assertFalse(d.has_key('a'))
+        self.assertFalse('a' in d)
         d = {'a': 1, 'b': 2}
-        k = d.keys()
+        k = list(d.keys())
         k.sort()
         self.assertEqual(k, ['a', 'b'])
 
@@ -150,7 +150,7 @@ class DictTest(unittest.TestCase):
             def __init__(self):
                 self.d = {1:1, 2:2, 3:3}
             def keys(self):
-                return self.d.keys()
+                return list(self.d.keys())
             def __getitem__(self, i):
                 return self.d[i]
         d.clear()
@@ -172,7 +172,7 @@ class DictTest(unittest.TestCase):
                         self.i = 1
                     def __iter__(self):
                         return self
-                    def next(self):
+                    def __next__(self):
                         if self.i:
                             self.i = 0
                             return 'a'
@@ -189,7 +189,7 @@ class DictTest(unittest.TestCase):
                         self.i = ord('a')
                     def __iter__(self):
                         return self
-                    def next(self):
+                    def __next__(self):
                         if self.i <= ord('z'):
                             rtn = chr(self.i)
                             self.i += 1
@@ -203,7 +203,7 @@ class DictTest(unittest.TestCase):
         class badseq(object):
             def __iter__(self):
                 return self
-            def next(self):
+            def __next__(self):
                 raise Exc()
 
         self.assertRaises(Exc, {}.update, badseq())
@@ -246,7 +246,7 @@ class DictTest(unittest.TestCase):
         class BadSeq(object):
             def __iter__(self):
                 return self
-            def next(self):
+            def __next__(self):
                 raise Exc()
 
         self.assertRaises(Exc, dict.fromkeys, BadSeq())
@@ -258,13 +258,13 @@ class DictTest(unittest.TestCase):
         self.assertRaises(Exc, baddict2.fromkeys, [1])
 
         # test fast path for dictionary inputs
-        d = dict(zip(range(6), range(6)))
-        self.assertEqual(dict.fromkeys(d, 0), dict(zip(range(6), [0]*6)))
+        d = dict(list(zip(list(range(6)), list(range(6)))))
+        self.assertEqual(dict.fromkeys(d, 0), dict(list(zip(list(range(6)), [0]*6))))
 
         class baddict3(dict):
             def __new__(cls):
                 return d
-        d = {i : i for i in range(10)}
+        d = {i : i for i in list(range(10))}
         res = d.copy()
         res.update(a=None, b=None, c=None)
         # self.assertEqual(baddict3.fromkeys({"a", "b", "c"}), res)
@@ -379,7 +379,7 @@ class DictTest(unittest.TestCase):
 
         # verify longs/ints get same value when key > 32 bits
         # (for 64-bit archs).  See SF bug #689659.
-        x = 4503599627370496L
+        x = 4503599627370496
         y = 4503599627370496
         h = {x: 'anything', y: 'something else'}
         self.assertEqual(h[x], h[y])
@@ -434,7 +434,7 @@ class DictTest(unittest.TestCase):
     @unittest.expectedFailure
     def test_le(self):
         self.assertFalse({} < {})
-        self.assertFalse({1: 2} < {1L: 2L})
+        self.assertFalse({1: 2} < {1: 2})
 
         class Exc(Exception): pass
 
@@ -467,7 +467,7 @@ class DictTest(unittest.TestCase):
         self.assertEqual(d[1], 2)
         self.assertEqual(d[3], 4)
         self.assertNotIn(2, d)
-        self.assertNotIn(2, d.keys())
+        self.assertNotIn(2, list(d.keys()))
         self.assertEqual(d[2], 42)
 
         class E(dict):

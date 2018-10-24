@@ -5,9 +5,9 @@ to be used, test_main() can be called with the module to use as the thread
 implementation as its sole argument.
 
 """
-import dummy_thread as _thread
+import _dummy_thread as _thread
 import time
-import Queue
+import queue
 import random
 import unittest
 from test import test_support
@@ -73,13 +73,13 @@ class LockTests(unittest.TestCase):
         start_time = int(time.time())
         _thread.start_new_thread(delay_unlock,(self.lock, DELAY))
         if test_support.verbose:
-            print
-            print "*** Waiting for thread to release the lock "\
-            "(approx. %s sec.) ***" % DELAY
+            print()
+            print("*** Waiting for thread to release the lock "\
+            "(approx. %s sec.) ***" % DELAY)
         self.lock.acquire()
         end_time = int(time.time())
         if test_support.verbose:
-            print "done"
+            print("done")
         self.assertGreaterEqual(end_time - start_time, DELAY,
                         "Blocking by unconditional acquiring failed.")
 
@@ -125,7 +125,7 @@ class ThreadTests(unittest.TestCase):
             """Use to test _thread.start_new_thread() passes args properly."""
             queue.put((arg1, arg2))
 
-        testing_queue = Queue.Queue(1)
+        testing_queue = queue.Queue(1)
         _thread.start_new_thread(arg_tester, (testing_queue, True, True))
         result = testing_queue.get()
         self.assertTrue(result[0] and result[1],
@@ -149,12 +149,12 @@ class ThreadTests(unittest.TestCase):
             queue.put(_thread.get_ident())
 
         thread_count = 5
-        testing_queue = Queue.Queue(thread_count)
+        testing_queue = queue.Queue(thread_count)
         if test_support.verbose:
-            print
-            print "*** Testing multiple thread creation "\
-            "(will take approx. %s to %s sec.) ***" % (DELAY, thread_count)
-        for count in xrange(thread_count):
+            print()
+            print("*** Testing multiple thread creation "\
+            "(will take approx. %s to %s sec.) ***" % (DELAY, thread_count))
+        for count in range(thread_count):
             if DELAY:
                 local_delay = round(random.random(), 1)
             else:
@@ -163,7 +163,7 @@ class ThreadTests(unittest.TestCase):
                                      (testing_queue, local_delay))
         time.sleep(DELAY)
         if test_support.verbose:
-            print 'done'
+            print('done')
         self.assertEqual(testing_queue.qsize(), thread_count,
                         "Not all %s threads executed properly after %s sec." %
                         (thread_count, DELAY))
@@ -174,8 +174,8 @@ def test_main(imported_module=None):
         _thread = imported_module
         DELAY = 2
     if test_support.verbose:
-        print
-        print "*** Using %s as _thread module ***" % _thread
+        print()
+        print("*** Using %s as _thread module ***" % _thread)
     test_support.run_unittest(LockTests, MiscTests, ThreadTests)
 
 if __name__ == '__main__':

@@ -57,7 +57,7 @@ class BaseTestSuite(object):
         self._tests.append(test)
 
     def addTests(self, tests):
-        if isinstance(tests, basestring):
+        if isinstance(tests, str):
             raise TypeError("tests must be an iterable of tests, not a string")
         for test in tests:
             self.addTest(test)
@@ -183,7 +183,7 @@ class TestSuite(BaseTestSuite):
             _call_if_exists(result, '_setupStdout')
             try:
                 setUpModule()
-            except Exception, e:
+            except Exception as e:
                 if isinstance(result, _DebugResult):
                     raise
                 result._moduleSetUpFailed = True
@@ -242,7 +242,7 @@ class TestSuite(BaseTestSuite):
             _call_if_exists(result, '_setupStdout')
             try:
                 tearDownClass()
-            except Exception, e:
+            except Exception as e:
                 if isinstance(result, _DebugResult):
                     raise
                 className = util.strclass(previousClass)

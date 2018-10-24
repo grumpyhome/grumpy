@@ -21,19 +21,19 @@ import weetest
 
 def BenchmarkListGetItem(b):
   l = [1, 3, 9]
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     l[2]
 
 
 def BenchmarkListContains3(b):
   l = [1, 3, 9]
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     9 in l
 
 
 def BenchmarkListContains10(b):
-  l = range(10)
-  for _ in xrange(b.N):
+  l = list(range(10))
+  for _ in range(b.N):
     9 in l
 
 

@@ -105,10 +105,10 @@ class Message(rfc822.Message):
 # -----------------
 
 #try:
-import thread
+import _thread
 #except ImportError:
 #    import dummy_thread as thread
-_counter_lock = thread.allocate_lock()
+_counter_lock = _thread.allocate_lock()
 del thread
 
 _counter = 0
@@ -170,8 +170,7 @@ def decode(input, output, encoding):
     if encoding in decodetab:
         pipethrough(input, decodetab[encoding], output)
     else:
-        raise ValueError, \
-              'unknown Content-Transfer-Encoding: %s' % encoding
+        raise ValueError('unknown Content-Transfer-Encoding: %s' % encoding)
 
 def encode(input, output, encoding):
     """Encode common content-transfer-encodings (base64, quopri, uuencode)."""
@@ -189,8 +188,7 @@ def encode(input, output, encoding):
     if encoding in encodetab:
         pipethrough(input, encodetab[encoding], output)
     else:
-        raise ValueError, \
-              'unknown Content-Transfer-Encoding: %s' % encoding
+        raise ValueError('unknown Content-Transfer-Encoding: %s' % encoding)
 
 # The following is no longer used for standard encodings
 

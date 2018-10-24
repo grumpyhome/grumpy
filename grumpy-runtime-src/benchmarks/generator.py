@@ -19,7 +19,7 @@ import weetest
 
 def BenchmarkGeneratorIterate(b):
   def Gen(n):
-    for i in xrange(n):
+    for i in range(n):
       yield i
   for _ in Gen(b.N):
     pass
@@ -28,7 +28,7 @@ def BenchmarkGeneratorIterate(b):
 def BenchmarkGeneratorCreate(b):
   def Gen():
     yield 1
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     Gen()
 
 

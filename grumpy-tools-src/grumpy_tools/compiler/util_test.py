@@ -16,7 +16,7 @@
 
 """Tests Writer and other utils."""
 
-from __future__ import unicode_literals
+
 
 import unittest
 

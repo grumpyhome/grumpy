@@ -111,7 +111,7 @@ def qux():
 
 
 def BenchmarkCallSimple(b):
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     # 20 calls
     foo(1, 2, 3, 4)
     foo(1, 2, 3, 4)

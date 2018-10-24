@@ -38,7 +38,7 @@ __all__ = ["StringIO"]
 
 def _complain_ifclosed(closed):
     if closed:
-        raise ValueError, "I/O operation on closed file"
+        raise ValueError("I/O operation on closed file")
 
 class StringIO(object):
     """class StringIO([buffer])
@@ -54,7 +54,7 @@ class StringIO(object):
     """
     def __init__(self, buf = ''):
         # Force self.buf to be a string or unicode
-        if not isinstance(buf, basestring):
+        if not isinstance(buf, str):
             buf = str(buf)
         self.buf = buf
         self.len = len(buf)
@@ -66,7 +66,7 @@ class StringIO(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         """A file object is its own iterator, for example iter(f) returns f
         (unless f is closed). When a file is used as an iterator, typically
         in a for loop (for example, for line in f: print line), the next()
@@ -214,7 +214,7 @@ class StringIO(object):
         _complain_ifclosed(self.closed)
         if not s: return
         # Force s to be a string or unicode
-        if not isinstance(s, basestring):
+        if not isinstance(s, str):
             s = str(s)
         spos = self.pos
         slen = self.len
@@ -289,36 +289,36 @@ def test():
         f.write(line)
     f.writelines(lines[-2:])
     if f.getvalue() != text:
-        raise RuntimeError, 'write failed'
+        raise RuntimeError('write failed')
     length = f.tell()
-    print 'File length =', length
+    print(('File length =', length))
     f.seek(len(lines[0]))
     f.write(lines[1])
     f.seek(0)
-    print 'First line =', repr(f.readline())
-    print 'Position =', f.tell()
+    print(('First line =', repr(f.readline())))
+    print(('Position =', f.tell()))
     line = f.readline()
-    print 'Second line =', repr(line)
+    print(('Second line =', repr(line)))
     f.seek(-len(line), 1)
     line2 = f.read(len(line))
     if line != line2:
-        raise RuntimeError, 'bad result after seek back'
+        raise RuntimeError('bad result after seek back')
     f.seek(len(line2), 1)
     list = f.readlines()
     line = list[-1]
     f.seek(f.tell() - len(line))
     line2 = f.read()
     if line != line2:
-        raise RuntimeError, 'bad result after seek back from EOF'
-    print 'Read', len(list), 'more lines'
-    print 'File length =', f.tell()
+        raise RuntimeError('bad result after seek back from EOF')
+    print(('Read', len(list), 'more lines'))
+    print(('File length =', f.tell()))
     if f.tell() != length:
-        raise RuntimeError, 'bad length'
+        raise RuntimeError('bad length')
     f.truncate(length/2)
     f.seek(0, 2)
-    print 'Truncated length =', f.tell()
+    print(('Truncated length =', f.tell()))
     if f.tell() != length/2:
-        raise RuntimeError, 'truncate did not adjust length'
+        raise RuntimeError('truncate did not adjust length')
     f.close()
 
 if __name__ == '__main__':

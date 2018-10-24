@@ -3,7 +3,7 @@ The :mod:`Diagnostic` module provides several commonly useful
 algorithms that operate on abstract syntax trees.
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+
 from . import ast
 
 class Visitor:
@@ -78,7 +78,7 @@ class Transformer:
     def visit(self, obj):
         """Visit a node or a list of nodes. Other values are ignored"""
         if isinstance(obj, list):
-            return list(filter(lambda x: x is not None, map(self.visit, obj)))
+            return list([x for x in map(self.visit, obj) if x is not None])
         elif isinstance(obj, ast.AST):
             return self._visit_one(obj)
         else:

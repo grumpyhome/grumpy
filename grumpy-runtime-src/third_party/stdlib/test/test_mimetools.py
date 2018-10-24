@@ -2,12 +2,12 @@ import unittest
 from test import test_support
 
 import string
-import StringIO
+import io
 
 #mimetools = test_support.import_module("mimetools", deprecated=True)
 import mimetools
 
-msgtext1 = mimetools.Message(StringIO.StringIO(
+msgtext1 = mimetools.Message(io.StringIO(
 """Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Transfer-Encoding: 8bit
 
@@ -20,24 +20,24 @@ class MimeToolsTest(unittest.TestCase):
         start = string.ascii_letters + "=" + string.digits + "\n"
         for enc in ['7bit','8bit','base64','quoted-printable',
                     'uuencode', 'x-uuencode', 'uue', 'x-uue']:
-            i = StringIO.StringIO(start)
-            o = StringIO.StringIO()
+            i = io.StringIO(start)
+            o = io.StringIO()
             mimetools.encode(i, o, enc)
-            i = StringIO.StringIO(o.getvalue())
-            o = StringIO.StringIO()
+            i = io.StringIO(o.getvalue())
+            o = io.StringIO()
             mimetools.decode(i, o, enc)
             self.assertEqual(o.getvalue(), start)
 
     @unittest.expectedFailure
     def test_boundary(self):
         s = set([""])
-        for i in xrange(100):
+        for i in range(100):
             nb = mimetools.choose_boundary()
             self.assertNotIn(nb, s)
             s.add(nb)
 
     def test_message(self):
-        msg = mimetools.Message(StringIO.StringIO(msgtext1))
+        msg = mimetools.Message(io.StringIO(msgtext1))
         self.assertEqual(msg.gettype(), "text/plain")
         self.assertEqual(msg.getmaintype(), "text")
         self.assertEqual(msg.getsubtype(), "plain")

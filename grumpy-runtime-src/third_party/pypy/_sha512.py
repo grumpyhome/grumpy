@@ -32,10 +32,10 @@ def sha_transform(sha_info):
     W = []
 
     d = sha_info['data']
-    for i in xrange(0,16):
+    for i in range(0,16):
         W.append( (d[8*i]<<56) + (d[8*i+1]<<48) + (d[8*i+2]<<40) + (d[8*i+3]<<32) + (d[8*i+4]<<24) + (d[8*i+5]<<16) + (d[8*i+6]<<8) + d[8*i+7])
 
-    for i in xrange(16,80):
+    for i in range(16,80):
         W.append( (Gamma1(W[i - 2]) + W[i - 7] + Gamma0(W[i - 15]) + W[i - 16]) & 0xffffffffffffffff )
 
     ss = sha_info['digest'][:]
@@ -154,7 +154,7 @@ def sha384_init():
 def getbuf(s):
     if isinstance(s, str):
         return s
-    elif isinstance(s, unicode):
+    elif isinstance(s, str):
         return str(s)
     else:
         return buffer(s)

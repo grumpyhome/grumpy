@@ -16,12 +16,12 @@
 
 """Utilities for generating Go code."""
 
-from __future__ import unicode_literals
+
 
 import codecs
 import contextlib
 import string
-import StringIO
+import io
 import textwrap
 
 try:
@@ -65,7 +65,7 @@ class Writer(object):
   """Utility class for writing blocks of Go code to a file-like object."""
 
   def __init__(self, out=None):
-    self.out = codecs.getwriter('utf8')(out or StringIO.StringIO())
+    self.out = codecs.getwriter('utf8')(out or io.StringIO())
     self.indent_level = 0
 
   def getvalue(self):
@@ -139,17 +139,17 @@ class Writer(object):
 
 def go_str(value):
   """Returns value as a valid Go string literal."""
-  io = StringIO.StringIO()
-  io.write('"')
+  output = io.StringIO()
+  output.write('"')
   for c in value:
     if c in _ESCAPES:
-      io.write(_ESCAPES[c])
+      output.write(_ESCAPES[c])
     elif c in _SIMPLE_CHARS:
-      io.write(c)
+      output.write(c)
     else:
-      io.write(r'\x{:02x}'.format(ord(c)))
-  io.write('"')
-  return io.getvalue()
+      output.write(r'\x{:02x}'.format(ord(c)))
+  output.write('"')
+  return output.getvalue()
 
 
 def adjust_local_name(name):

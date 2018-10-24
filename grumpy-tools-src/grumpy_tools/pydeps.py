@@ -15,7 +15,7 @@
 # limitations under the License.
 
 """Outputs names of modules imported by a script."""
-from __future__ import absolute_import
+
 
 import os
 import sys
@@ -45,7 +45,7 @@ def main(script=None, modname=None, package_dir='', with_imports=False):
 
         parts = imp.name.split('.')
         # Iterate over all packages and the leaf module.
-        for i in xrange(len(parts)):
+        for i in range(len(parts)):
           name = '.'.join(parts[:i+1])
           if name and name not in names:
             names.add(name)

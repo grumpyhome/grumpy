@@ -6,7 +6,7 @@ import re
 # Re test suite and benchmark suite v1.5
 
 # The 3 possible outcomes for each pattern
-[SUCCEED, FAIL, SYNTAX_ERROR] = range(3)
+[SUCCEED, FAIL, SYNTAX_ERROR] = list(range(3))
 
 # Benchmark suite (needs expansion)
 #

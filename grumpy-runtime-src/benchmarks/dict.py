@@ -20,43 +20,43 @@ import weetest
 
 
 def BenchmarkDictCreate(b):  
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     d = {'one': 1, 'two': 2, 'three': 3}
 
 
 def BenchmarkDictCreateFunc(b):  
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     d = dict(one=1, two=2, three=3)
 
     
 def BenchmarkDictGetItem(b):
   d = {42: 123}
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     d[42]
 
 
 def BenchmarkDictStringOnlyGetItem(b):
   d = {'foo': 123}
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     d['foo']
 
 
 def BenchmarkDictSetItem(b):
   d = {}
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     d[42] = 123
 
 
 def BenchmarkDictStringOnlySetItem(b):
   d = {}
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     d['foo'] = 123
 
 
 def BenchmarkHashStrCached(b):
   """Hashes the same value repeatedly to exercise any hash caching logic."""
   h = hash  # Prevent builtins lookup each iteration.
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     h('foobarfoobarfoobar')
 
 

@@ -17,7 +17,7 @@
 """Functionality for importing modules in Grumpy."""
 
 
-from __future__ import unicode_literals
+
 
 import collections
 import functools
@@ -236,7 +236,7 @@ def calculate_transitive_deps(modname, script, gopath):
       package_dir, filename = os.path.split(imp.script)
       if filename == '__init__.py':
         package_dir = os.path.dirname(package_dir)
-      for i in xrange(len(parts) - 1, 0, -1):
+      for i in range(len(parts) - 1, 0, -1):
         modname = '.'.join(parts[:i])
         script = os.path.join(package_dir, '__init__.py')
         calc(modname, script)

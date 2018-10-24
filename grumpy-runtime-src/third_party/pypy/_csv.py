@@ -66,7 +66,7 @@ __all__ = [
     'undefined', 'unregister_dialect', 'writer'
 ]
 
-QUOTE_MINIMAL, QUOTE_ALL, QUOTE_NONNUMERIC, QUOTE_NONE = range(4)
+QUOTE_MINIMAL, QUOTE_ALL, QUOTE_NONNUMERIC, QUOTE_NONE = list(range(4))
 _dialects = {}
 _field_limit = 128 * 1024 # max parsed field size
 
@@ -90,12 +90,12 @@ class Dialect(object):
                                 (name,))
 
         if dialect is not None:
-            if isinstance(dialect, basestring):
+            if isinstance(dialect, str):
                 dialect = get_dialect(dialect)
 
             # Can we reuse this instance?
             if (isinstance(dialect, Dialect)
-                and all(value is None for value in kwargs.itervalues())):
+                and all(value is None for value in iter(list(kwargs.values())))):
                 return dialect
 
         self = object.__new__(cls)
@@ -176,7 +176,7 @@ def _call_dialect(dialect_inst, kwargs):
 def register_dialect(name, dialect=None, **kwargs):
     """Create a mapping from a string name to a dialect class.
     dialect = csv.register_dialect(name, dialect)"""
-    if not isinstance(name, basestring):
+    if not isinstance(name, str):
         raise TypeError("dialect name must be a string or unicode")
 
     dialect = _call_dialect(dialect, kwargs)
@@ -212,7 +212,7 @@ class Reader(object):
 
     (START_RECORD, START_FIELD, ESCAPED_CHAR, IN_FIELD,
      IN_QUOTED_FIELD, ESCAPE_IN_QUOTED_FIELD, QUOTE_IN_QUOTED_FIELD,
-     EAT_CRNL) = range(8)
+     EAT_CRNL) = list(range(8))
 
     def __init__(self, iterator, dialect=None, **kwargs):
         self.dialect = _call_dialect(dialect, kwargs)
@@ -230,7 +230,7 @@ class Reader(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         self._parse_reset()
         while True:
             try:
@@ -574,7 +574,7 @@ def field_size_limit(limit=undefined):
     old_limit = _field_limit
 
     if limit is not undefined:
-        if not isinstance(limit, (int, long)):
+        if not isinstance(limit, int):
             raise TypeError("int expected, got %s" %
                             (limit.__class__.__name__,))
         _field_limit = limit

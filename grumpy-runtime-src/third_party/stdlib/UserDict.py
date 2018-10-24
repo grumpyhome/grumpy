@@ -53,12 +53,12 @@ class UserDict(object):
             self.data = data
         c.update(self)
         return c
-    def keys(self): return self.data.keys()
-    def items(self): return self.data.items()
-    def iteritems(self): return self.data.iteritems()
-    def iterkeys(self): return self.data.iterkeys()
-    def itervalues(self): return self.data.itervalues()
-    def values(self): return self.data.values()
+    def keys(self): return list(self.data.keys())
+    def items(self): return list(self.data.items())
+    def iteritems(self): return iter(list(self.data.items()))
+    def iterkeys(self): return iter(list(self.data.keys()))
+    def itervalues(self): return iter(list(self.data.values()))
+    def values(self): return list(self.data.values())
     def has_key(self, key): return key in self.data
     def update(*args, **kwargs):
         if not args:
@@ -84,7 +84,7 @@ class UserDict(object):
         elif isinstance(dict, type({})) or not hasattr(dict, 'items'):
             self.data.update(dict)
         else:
-            for k, v in dict.items():
+            for k, v in list(dict.items()):
                 self[k] = v
         if len(kwargs):
             self.data.update(kwargs)
@@ -128,7 +128,7 @@ class DictMixin(object):
 
     # second level definitions support higher levels
     def __iter__(self):
-        for k in self.keys():
+        for k in list(self.keys()):
             yield k
     def has_key(self, key):
         try:
@@ -137,7 +137,7 @@ class DictMixin(object):
             return False
         return True
     def __contains__(self, key):
-        return self.has_key(key)
+        return key in self
 
     # third level takes advantage of second level definitions
     def iteritems(self):
@@ -148,14 +148,14 @@ class DictMixin(object):
 
     # fourth level uses definitions from lower levels
     def itervalues(self):
-        for _, v in self.iteritems():
+        for _, v in list(self.items()):
             yield v
     def values(self):
-        return [v for _, v in self.iteritems()]
+        return [v for _, v in list(self.items())]
     def items(self):
-        return list(self.iteritems())
+        return list(self.items())
     def clear(self):
-        for key in self.keys():
+        for key in list(self.keys()):
             del self[key]
     def setdefault(self, key, default=None):
         try:
@@ -165,8 +165,8 @@ class DictMixin(object):
         return default
     def pop(self, key, *args):
         if len(args) > 1:
-            raise TypeError, "pop expected at most 2 arguments, got "\
-                              + repr(1 + len(args))
+            raise TypeError("pop expected at most 2 arguments, got "\
+                              + repr(1 + len(args)))
         try:
             value = self[key]
         except KeyError:
@@ -177,9 +177,9 @@ class DictMixin(object):
         return value
     def popitem(self):
         try:
-            k, v = self.iteritems().next()
+            k, v = next(iter(list(self.items())))
         except StopIteration:
-            raise KeyError, 'container is empty'
+            raise KeyError('container is empty')
         del self[k]
         return (k, v)
     def update(self, other=None, **kwargs):
@@ -187,10 +187,10 @@ class DictMixin(object):
         if other is None:
             pass
         elif hasattr(other, 'iteritems'):  # iteritems saves memory and lookups
-            for k, v in other.iteritems():
+            for k, v in list(other.items()):
                 self[k] = v
         elif hasattr(other, 'keys'):
-            for k in other.keys():
+            for k in list(other.keys()):
                 self[k] = other[k]
         else:
             for k, v in other:
@@ -203,12 +203,12 @@ class DictMixin(object):
         except KeyError:
             return default
     def __repr__(self):
-        return repr(dict(self.iteritems()))
+        return repr(dict(iter(list(self.items()))))
     def __cmp__(self, other):
         if other is None:
             return 1
         if isinstance(other, DictMixin):
-            other = dict(other.iteritems())
-        return cmp(dict(self.iteritems()), other)
+            other = dict(iter(list(other.items())))
+        return cmp(dict(iter(list(self.items()))), other)
     def __len__(self):
-        return len(self.keys())
+        return len(list(self.keys()))

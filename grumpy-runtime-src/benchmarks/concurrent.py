@@ -41,10 +41,10 @@ def _MakeParallelBenchmark(p, work_func, *args):
     e = threading.Event()
     def Target():
       e.wait()
-      for _ in xrange(b.N / p):
+      for _ in range(b.N / p):
         work_func(*args)
     threads = []
-    for _ in xrange(p):
+    for _ in range(p):
       t = threading.Thread(target=Target)
       t.start()
       threads.append(t)
@@ -56,7 +56,7 @@ def _MakeParallelBenchmark(p, work_func, *args):
 
 
 def _RegisterBenchmarks():
-  for p in xrange(1, 13):
+  for p in range(1, 13):
     for work_func, arg in _WORKLOADS:
       name = 'Benchmark' + work_func.__name__
       if p > 1:

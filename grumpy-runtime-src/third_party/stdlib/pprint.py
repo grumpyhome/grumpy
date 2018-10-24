@@ -36,8 +36,8 @@ saferepr()
 
 import sys as _sys
 import warnings
-import StringIO
-_StringIO = StringIO.StringIO
+import io
+_StringIO = io.StringIO
 
 # try:
 #     from cStringIO import StringIO as _StringIO
@@ -157,7 +157,7 @@ class PrettyPrinter(object):
             if length:
                 context[objid] = 1
                 indent = indent + self._indent_per_level
-                items = _sorted(o.items())
+                items = _sorted(list(o.items()))
                 key, ent = items[0]
                 rep = self._repr(key, context, level)
                 write(rep)
@@ -284,7 +284,7 @@ def _safe_repr(o, context, maxlevels, level):
         append = components.append
         level += 1
         saferepr = _safe_repr
-        for k, v in _sorted(o.items()):
+        for k, v in _sorted(list(o.items())):
             krepr, kreadable, krecur = saferepr(k, context, maxlevels, level)
             vrepr, vreadable, vrecur = saferepr(v, context, maxlevels, level)
             append("%s: %s" % (krepr, vrepr))

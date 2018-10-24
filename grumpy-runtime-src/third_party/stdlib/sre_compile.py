@@ -25,7 +25,7 @@ assert _sre.MAGIC == MAGIC, "SRE module mismatch"
 if _sre.CODESIZE == 2:
     MAXCODE = 65535
 else:
-    MAXCODE = 0xFFFFFFFFL
+    MAXCODE = 0xFFFFFFFF
 
 _LITERAL_CODES = set([LITERAL, NOT_LITERAL])
 _REPEATING_CODES = set([REPEAT, MIN_REPEAT, MAX_REPEAT])
@@ -118,7 +118,7 @@ def _compile(code, pattern, flags):
                 emit(OPCODES[ANY])
         elif op in REPEATING_CODES:
             if flags & SRE_FLAG_TEMPLATE:
-                raise error, "internal: unsupported template operator"
+                raise error("internal: unsupported template operator")
                 emit(OPCODES[REPEAT])
                 skip = _len(code); emit(0)
                 emit(av[0])
@@ -167,7 +167,7 @@ def _compile(code, pattern, flags):
             else:
                 lo, hi = av[1].getwidth()
                 if lo != hi:
-                    raise error, "look-behind requires fixed-width pattern"
+                    raise error("look-behind requires fixed-width pattern")
                 emit(lo) # look behind
             _compile(code, av[1], flags)
             emit(OPCODES[SUCCESS])
@@ -228,7 +228,7 @@ def _compile(code, pattern, flags):
             else:
                 code[skipyes] = _len(code) - skipyes + 1
         else:
-            raise ValueError, ("unsupported operand type", op)
+            raise ValueError("unsupported operand type", op)
 
 def _compile_charset(charset, flags, code, fixup=None, fixes=None):
     # compile charset subprogram
@@ -257,7 +257,7 @@ def _compile_charset(charset, flags, code, fixup=None, fixes=None):
             else:
                 emit(CHCODES[av])
         else:
-            raise error, "internal: unsupported set operator"
+            raise error("internal: unsupported set operator")
     emit(OPCODES[FAILURE])
 
 def _optimize_charset(charset, fixup, fixes, isunicode):
@@ -279,9 +279,9 @@ def _optimize_charset(charset, fixup, fixes, isunicode):
                     else:
                         charmap[av] = 1
                 elif op is RANGE:
-                    r = range(av[0], av[1]+1)
+                    r = list(range(av[0], av[1]+1))
                     if fixup:
-                        r = map(fixup, r)
+                        r = list(map(fixup, r))
                     if fixup and fixes:
                         for i in r:
                             charmap[i] = 1
@@ -409,7 +409,7 @@ def _optimize_charset(charset, fixup, fixes, isunicode):
     return out
 
 def _fixup_range(lo, hi, ranges, fixup):
-    for i in map(fixup, range(lo, hi+1)):
+    for i in map(fixup, list(range(lo, hi+1))):
         for k, (lo, hi) in enumerate(ranges):
             if i < lo:
                 if l == lo - 1:
@@ -567,7 +567,7 @@ def _compile_info(code, pattern, flags):
         code += (prefix)
         # generate overlap table
         table = [-1] + ([0]*len(prefix))
-        for i in xrange(len(prefix)):
+        for i in range(len(prefix)):
             table[i+1] = table[i]+1
             while table[i+1] > 0 and prefix[i] != prefix[table[i+1]-1]:
                 table[i+1] = table[table[i+1]-1]+1
@@ -578,11 +578,11 @@ def _compile_info(code, pattern, flags):
     code[skip] = len(code) - skip
 
 try:
-    unicode
+    str
 except NameError:
     STRING_TYPES = (type(""),)
 else:
-    STRING_TYPES = (type(""), type(unicode("")))
+    STRING_TYPES = (type(""), type(str("")))
 
 def isstring(obj):
     for tp in STRING_TYPES:
@@ -627,7 +627,7 @@ def compile(p, flags=0):
     # map in either direction
     groupindex = p.pattern.groupdict
     indexgroup = [None] * p.pattern.groups
-    for k, i in groupindex.items():
+    for k, i in list(groupindex.items()):
         indexgroup[i] = k
 
     return _sre.compile(

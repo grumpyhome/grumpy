@@ -127,13 +127,13 @@ class _Mismatch(tuple):
     def _asdict(self):
         'Return a new OrderedDict which maps field names to their values'
         # return OrderedDict(zip(self._fields, self))
-        return dict(zip(self._fields, self))
+        return dict(list(zip(self._fields, self)))
 
     def _replace(_self, **kwds):
         'Return a new Mismatch object replacing specified fields with new values'
-        result = _self._make(map(kwds.pop, ('actual', 'expected', 'value'), _self))
+        result = _self._make(list(map(kwds.pop, ('actual', 'expected', 'value'), _self)))
         if kwds:
-            raise ValueError('Got unexpected field names: %r' % kwds.keys())
+            raise ValueError('Got unexpected field names: %r' % list(kwds.keys()))
         return result
 
     def __getnewargs__(self):
@@ -199,12 +199,12 @@ def _count_diff_hashable(actual, expected):
     # elements must be hashable
     s, t = _ordered_count(actual), _ordered_count(expected)
     result = []
-    for elem, cnt_s in s.items():
+    for elem, cnt_s in list(s.items()):
         cnt_t = t.get(elem, 0)
         if cnt_s != cnt_t:
             diff = _Mismatch(cnt_s, cnt_t, elem)
             result.append(diff)
-    for elem, cnt_t in t.items():
+    for elem, cnt_t in list(t.items()):
         if elem not in s:
             diff = _Mismatch(0, cnt_t, elem)
             result.append(diff)

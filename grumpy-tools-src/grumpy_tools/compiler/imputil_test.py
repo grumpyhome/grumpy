@@ -16,7 +16,7 @@
 
 """Tests ImportVisitor and related classes."""
 
-from __future__ import unicode_literals
+
 
 import copy
 import os
@@ -254,7 +254,7 @@ class ImportVisitorTest(unittest.TestCase):
                      [imp.__dict__ for imp in got])
 
   def _materialize_tree(self, dirname, spec):
-    for name, sub_spec in spec.iteritems():
+    for name, sub_spec in spec.items():
       if name.endswith('/'):
         subdir = os.path.join(dirname, name[:-1])
         os.mkdir(subdir)
@@ -297,7 +297,7 @@ class MakeFutureFeaturesTest(unittest.TestCase):
       source, want_regexp = tc
       mod = pythonparser.parse(source)
       node = mod.body[0]
-      self.assertRaisesRegexp(util.ParseError, want_regexp,
+      self.assertRaisesRegex(util.ParseError, want_regexp,
                               imputil._make_future_features, node)  # pylint: disable=protected-access
 
 
@@ -337,12 +337,12 @@ class ParseFutureFeaturesTest(unittest.TestCase):
   def testUnimplementedFutureRaises(self):
     mod = pythonparser.parse('from __future__ import division')
     msg = 'future feature division not yet implemented by grumpy'
-    self.assertRaisesRegexp(util.ParseError, msg,
+    self.assertRaisesRegex(util.ParseError, msg,
                             imputil.parse_future_features, mod)
 
   def testUndefinedFutureRaises(self):
     mod = pythonparser.parse('from __future__ import foo')
-    self.assertRaisesRegexp(
+    self.assertRaisesRegex(
         util.ParseError, 'future feature foo is not defined',
         imputil.parse_future_features, mod)
 

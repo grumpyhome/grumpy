@@ -25,7 +25,7 @@ def TestArgv():
 
 
 def TestMaxInt():
-  assert sys.maxint > 2000000000
+  assert sys.maxsize > 2000000000
 
 
 def TestSysModules():

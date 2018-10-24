@@ -217,7 +217,7 @@ def _some_str(value):
     except Exception:
         pass
     try:
-        value = unicode(value)
+        value = str(value)
         return value.encode("ascii", "backslashreplace")
     except Exception:
         pass

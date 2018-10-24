@@ -153,13 +153,13 @@ class _SplitResult(tuple):
 
     def _asdict(self):
         'Return a new OrderedDict which maps field names to their values'
-        return OrderedDict(zip(self._fields, self))
+        return OrderedDict(list(zip(self._fields, self)))
 
     def _replace(_self, **kwds):
         'Return a new SplitResult object replacing specified fields with new values'
-        result = _self._make(map(kwds.pop, ('scheme', 'netloc', 'path', 'query', 'fragment'), _self))
+        result = _self._make(list(map(kwds.pop, ('scheme', 'netloc', 'path', 'query', 'fragment'), _self)))
         if kwds:
-            raise ValueError('Got unexpected field names: %r' % kwds.keys())
+            raise ValueError('Got unexpected field names: %r' % list(kwds.keys()))
         return result
 
     def __getnewargs__(self):
@@ -216,13 +216,13 @@ class _ParseResult(tuple):
 
     def _asdict(self):
         'Return a new OrderedDict which maps field names to their values'
-        return OrderedDict(zip(self._fields, self))
+        return OrderedDict(list(zip(self._fields, self)))
 
     def _replace(_self, **kwds):
         'Return a new ParseResult object replacing specified fields with new values'
-        result = _self._make(map(kwds.pop, ('scheme', 'netloc', 'path', 'params', 'query', 'fragment'), _self))
+        result = _self._make(list(map(kwds.pop, ('scheme', 'netloc', 'path', 'params', 'query', 'fragment'), _self)))
         if kwds:
-            raise ValueError('Got unexpected field names: %r' % kwds.keys())
+            raise ValueError('Got unexpected field names: %r' % list(kwds.keys()))
         return result
 
     def __getnewargs__(self):
@@ -437,13 +437,13 @@ def urldefrag(url):
         return url, ''
 
 try:
-    unicode
+    str
 except NameError:
     def _is_unicode(x):
         return 0
 else:
     def _is_unicode(x):
-        return isinstance(x, unicode)
+        return isinstance(x, str)
 
 # unquote method for parse_qs and parse_qsl
 # Cannot use directly from urllib as it would create a circular reference
@@ -536,7 +536,7 @@ def parse_qsl(qs, keep_blank_values=0, strict_parsing=0):
         nv = name_value.split('=', 1)
         if len(nv) != 2:
             if strict_parsing:
-                raise ValueError, "bad query field: %r" % (name_value,)
+                raise ValueError("bad query field: %r" % (name_value,))
             # Handle case of a control-name with no equal sign
             if keep_blank_values:
                 nv.append('')

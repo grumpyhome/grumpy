@@ -17,12 +17,12 @@
 
 """A Python -> Go transcompiler."""
 
-from __future__ import unicode_literals
+
 
 import argparse
 import os
 import sys
-from StringIO import StringIO
+from io import StringIO
 import textwrap
 import pickle
 import logging

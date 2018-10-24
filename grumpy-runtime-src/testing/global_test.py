@@ -45,7 +45,7 @@ def f3():
   del x
 f3()
 try:
-  print x
+  print(x)
   raise AssertionError
 except NameError:
   pass

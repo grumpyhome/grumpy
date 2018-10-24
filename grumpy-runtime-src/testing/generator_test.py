@@ -39,17 +39,17 @@ def gen3():
   yield 1  # pylint: disable=unreachable
 g = gen3()
 try:
-  g.next()
+  next(g)
 except RuntimeError:
   pass
 assert list(g) == []  # pylint: disable=g-explicit-bool-comparison
 
 
 def gen4():
-  yield g.next()
+  yield next(g)
 g = gen4()
 try:
-  g.next()
+  next(g)
 except ValueError as e:
   assert 'generator already executing' in str(e), str(e)
 else:

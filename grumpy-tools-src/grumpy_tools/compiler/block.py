@@ -16,7 +16,7 @@
 
 """Classes for analyzing and storing the state of Python code blocks."""
 
-from __future__ import unicode_literals
+
 
 import abc
 import collections
@@ -49,10 +49,8 @@ class Loop(object):
     self.breakvar = breakvar
 
 
-class Block(object):
+class Block(object, metaclass=abc.ABCMeta):
   """Represents a Python block such as a function or class definition."""
-
-  __metaclass__ = abc.ABCMeta
 
   def __init__(self, parent, name):
     self.root = parent.root if parent else self

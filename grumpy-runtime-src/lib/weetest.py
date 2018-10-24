@@ -96,19 +96,19 @@ def _RunOneBenchmark(name, test_func):
   """Runs a single benchmark and returns a _TestResult."""
   b = _Benchmark(test_func, 1)
   result = _TestResult(name)
-  print name,
+  print(name, end=' ')
   start_time = time.time()
   try:
     b.Run()
   except Exception as e:  # pylint: disable=broad-except
     result.status = 'error'
-    print 'ERROR'
+    print('ERROR')
     traceback.print_exc()
   else:
     result.status = 'passed'
     ops_per_sec = b.N / b.duration
     result.properties['ops_per_sec'] = ops_per_sec
-    print 'PASSED', ops_per_sec
+    print('PASSED', ops_per_sec)
   finally:
     result.duration = time.time() - start_time
   return result
@@ -122,11 +122,11 @@ def _RunOneTest(name, test_func):
     test_func()
   except AssertionError as e:
     result.status = 'failed'
-    print name, 'FAILED'
+    print(name, 'FAILED')
     traceback.print_exc()
   except Exception as e:  # pylint: disable=broad-except
     result.status = 'error'
-    print name, 'ERROR'
+    print(name, 'ERROR')
     traceback.print_exc()
   else:
     result.status = 'passed'

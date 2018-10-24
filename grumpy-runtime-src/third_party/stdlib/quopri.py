@@ -105,7 +105,7 @@ def encode(input, output, quotetabs, header = 0):
 def encodestring(s, quotetabs = 0, header = 0):
     if b2a_qp is not None:
         return b2a_qp(s, quotetabs = quotetabs, header = header)
-    from cStringIO import StringIO
+    from io import StringIO
     infp = StringIO(s)
     outfp = StringIO()
     encode(infp, outfp, quotetabs, header)
@@ -159,7 +159,7 @@ def decode(input, output, header = 0):
 def decodestring(s, header = 0):
     if a2b_qp is not None:
         return a2b_qp(s, header = header)
-    from cStringIO import StringIO
+    from io import StringIO
     infp = StringIO(s)
     outfp = StringIO()
     decode(infp, outfp, header = header)
@@ -194,12 +194,12 @@ def main():
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'td')
-    except getopt.error, msg:
+    except getopt.error as msg:
         sys.stdout = sys.stderr
-        print msg
-        print "usage: quopri [-t | -d] [file] ..."
-        print "-t: quote tabs"
-        print "-d: decode; default encode"
+        print(msg)
+        print("usage: quopri [-t | -d] [file] ...")
+        print("-t: quote tabs")
+        print("-d: decode; default encode")
         sys.exit(2)
     deco = 0
     tabs = 0
@@ -208,7 +208,7 @@ def main():
         if o == '-d': deco = 1
     if tabs and deco:
         sys.stdout = sys.stderr
-        print "-t and -d are mutually exclusive"
+        print("-t and -d are mutually exclusive")
         sys.exit(2)
     if not args: args = ['-']
     sts = 0
@@ -218,7 +218,7 @@ def main():
         else:
             try:
                 fp = open(file)
-            except IOError, msg:
+            except IOError as msg:
                 sys.stderr.write("%s: can't open (%s)\n" % (file, msg))
                 sts = 1
                 continue

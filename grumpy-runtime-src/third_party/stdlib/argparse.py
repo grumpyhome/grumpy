@@ -1154,7 +1154,7 @@ class _SubParsersAction(Action):
         # namespace for the relevant parts.
         subnamespace, arg_strings = parser.parse_known_args(arg_strings, None)
         # for key, value in vars(subnamespace).items():
-        for key, value in subnamespace.__dict__.items():
+        for key, value in list(subnamespace.__dict__.items()):
             setattr(namespace, key, value)
 
         if arg_strings:
@@ -2045,7 +2045,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
                     # twice (which may fail) if the argument was given, but
                     # only if it was defined already in the namespace
                     if (action.default is not None and
-                            isinstance(action.default, basestring) and
+                            isinstance(action.default, str) and
                             hasattr(namespace, action.dest) and
                             action.default is getattr(namespace, action.dest)):
                         setattr(namespace, action.dest,
@@ -2298,7 +2298,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
                 value = action.const
             else:
                 value = action.default
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 value = self._get_value(action, value)
                 self._check_value(action, value)
 

@@ -6,7 +6,7 @@ import re
 import fnmatch
 
 try:
-    _unicode = unicode
+    _unicode = str
 except NameError:
     # If Python is built without Unicode support, the unicode type
     # will not exist. Fake one.
@@ -71,8 +71,8 @@ def iglob(pathname):
 def glob1(dirname, pattern):
     if not dirname:
         dirname = os.curdir
-    if isinstance(pattern, _unicode) and not isinstance(dirname, unicode):
-        dirname = unicode(dirname, sys.getfilesystemencoding() or
+    if isinstance(pattern, _unicode) and not isinstance(dirname, str):
+        dirname = str(dirname, sys.getfilesystemencoding() or
                                    sys.getdefaultencoding())
     try:
         names = os.listdir(dirname)

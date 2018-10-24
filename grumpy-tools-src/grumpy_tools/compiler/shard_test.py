@@ -14,7 +14,7 @@
 
 """Wrapper for unit tests that loads a subset of all test methods."""
 
-from __future__ import unicode_literals
+
 
 import argparse
 import random

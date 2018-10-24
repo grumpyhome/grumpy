@@ -110,7 +110,7 @@ class Foo(object):
 
 def BenchmarkCallMethod(b):
   f = Foo()
-  for _ in xrange(b.N):
+  for _ in range(b.N):
     # 20 calls
     f.foo(1, 2, 3, 4)
     f.foo(1, 2, 3, 4)

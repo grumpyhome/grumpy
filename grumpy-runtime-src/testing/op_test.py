@@ -77,7 +77,7 @@ def TestNeg():
   x = float('nan')
   assert math.isnan(-x)
 
-  x = long(100)
+  x = int(100)
   assert -x == -100
 
 
@@ -100,7 +100,7 @@ def TestPos():
   x = float('nan')
   assert math.isnan(+x)
 
-  x = long(100)
+  x = int(100)
   assert +x == 100
 
 

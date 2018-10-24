@@ -229,11 +229,11 @@ class CommonTest(GenericTest):
             check('$spam}bar', '%s}bar' % snonascii)
 
             check(unonascii, unonascii)
-            check(u'$spam bar', u'%s bar' % unonascii)
-            check(u'${spam}bar', u'%sbar' % unonascii)
-            check(u'${%s}bar' % unonascii, u'ham%sbar' % unonascii)
-            check(u'$bar%s bar' % unonascii, u'$bar%s bar' % unonascii)
-            check(u'$spam}bar', u'%s}bar' % unonascii)
+            check('$spam bar', '%s bar' % unonascii)
+            check('${spam}bar', '%sbar' % unonascii)
+            check('${%s}bar' % unonascii, 'ham%sbar' % unonascii)
+            check('$bar%s bar' % unonascii, '$bar%s bar' % unonascii)
+            check('$spam}bar', '%s}bar' % unonascii)
 
     def test_abspath(self):
         self.assertIn("foo", self.pathmodule.abspath("foo"))
@@ -248,18 +248,18 @@ class CommonTest(GenericTest):
     @test_support.requires_unicode
     def test_normpath_issue5827(self):
         # Make sure normpath preserves unicode
-        for path in (u'', u'.', u'/', u'\\', u'///foo/.//bar//'):
-            self.assertIsInstance(self.pathmodule.normpath(path), unicode)
+        for path in ('', '.', '/', '\\', '///foo/.//bar//'):
+            self.assertIsInstance(self.pathmodule.normpath(path), str)
 
     @test_support.requires_unicode
     def test_abspath_issue3426(self):
         # Check that abspath returns unicode when the arg is unicode
         # with both ASCII and non-ASCII cwds.
         abspath = self.pathmodule.abspath
-        for path in (u'', u'fuu', u'f\xf9\xf9', u'/fuu', u'U:\\'):
-            self.assertIsInstance(abspath(path), unicode)
+        for path in ('', 'fuu', 'f\xf9\xf9', '/fuu', 'U:\\'):
+            self.assertIsInstance(abspath(path), str)
 
-        unicwd = u'\xe7w\xf0'
+        unicwd = '\xe7w\xf0'
         try:
             fsencoding = test_support.TESTFN_ENCODING or "ascii"
             unicwd.encode(fsencoding)
@@ -268,8 +268,8 @@ class CommonTest(GenericTest):
             pass
         else:
             with test_support.temp_cwd(unicwd):
-                for path in (u'', u'fuu', u'f\xf9\xf9', u'/fuu', u'U:\\'):
-                    self.assertIsInstance(abspath(path), unicode)
+                for path in ('', 'fuu', 'f\xf9\xf9', '/fuu', 'U:\\'):
+                    self.assertIsInstance(abspath(path), str)
 
     @unittest.skipIf(sys.platform == 'darwin',
         "Mac OS X denies the creation of a directory with an invalid utf8 name")

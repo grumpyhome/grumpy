@@ -3,7 +3,7 @@
 import sys as _sys
 
 try:
-    import thread
+    import _thread
 except ImportError:
     del _sys.modules[__name__]
     raise
@@ -32,10 +32,10 @@ __all__ = ['activeCount', 'active_count', 'Condition', 'currentThread',
            'Lock', 'RLock', 'Semaphore', 'BoundedSemaphore', 'Thread',
            'Timer', 'setprofile', 'settrace', 'local', 'stack_size']
 
-_start_new_thread = thread.start_new_thread
-_allocate_lock = thread.allocate_lock
-_get_ident = thread.get_ident
-ThreadError = thread.error
+_start_new_thread = _thread.start_new_thread
+_allocate_lock = _thread.allocate_lock
+_get_ident = _thread.get_ident
+ThreadError = _thread.error
 del thread
 
 
@@ -615,7 +615,7 @@ class _Event(_Verbose):
             return self.__flag
 
 # Helper to generate new thread names
-_counter = _count().next
+_counter = _count().__next__
 _counter() # Consume 0 so first non-main thread has id 1.
 def _newname(template="Thread-%d"):
     return template % _counter()
@@ -802,27 +802,27 @@ class Thread(_Verbose):
                 # _sys) in case sys.stderr was redefined since the creation of
                 # self.
                 if _sys and _sys.stderr is not None:
-                    print>>_sys.stderr, ("Exception in thread %s:\n%s" %
-                                         (self.name, _format_exc()))
+                    print(("Exception in thread %s:\n%s" %
+                                         (self.name, _format_exc())), file=_sys.stderr)
                 elif self.__stderr is not None:
                     # Do the best job possible w/o a huge amt. of code to
                     # approximate a traceback (code ideas from
                     # Lib/traceback.py)
                     exc_type, exc_value, exc_tb = _sys.exc_info()
                     try:
-                        print>>self.__stderr, (
+                        print((
                             "Exception in thread " + self.name +
-                            " (most likely raised during interpreter shutdown):")
-                        print>>self.__stderr, (
-                            "Traceback (most recent call last):")
+                            " (most likely raised during interpreter shutdown):"), file=self.__stderr)
+                        print((
+                            "Traceback (most recent call last):"), file=self.__stderr)
                         while exc_tb:
-                            print>>self.__stderr, (
+                            print((
                                 '  File "%s", line %s, in %s' %
                                 (exc_tb.tb_frame.f_code.co_filename,
                                     exc_tb.tb_lineno,
-                                    exc_tb.tb_frame.f_code.co_name))
+                                    exc_tb.tb_frame.f_code.co_name)), file=self.__stderr)
                             exc_tb = exc_tb.tb_next
-                        print>>self.__stderr, ("%s: %s" % (exc_type, exc_value))
+                        print(("%s: %s" % (exc_type, exc_value)), file=self.__stderr)
                     # Make sure that exc_tb gets deleted since it is a memory
                     # hog; deleting everything else is just for thoroughness
                     finally:
@@ -1161,7 +1161,7 @@ active_count = activeCount
 
 def _enumerate():
     # Same as enumerate(), but without the lock. Internal use only.
-    return _active.values() + _limbo.values()
+    return list(_active.values()) + list(_limbo.values())
 
 def enumerate():
     """Return a list of all Thread objects currently alive.
@@ -1172,9 +1172,9 @@ def enumerate():
 
     """
     with _active_limbo_lock:
-        return _active.values() + _limbo.values()
+        return list(_active.values()) + list(_limbo.values())
 
-from thread import stack_size
+from _thread import stack_size
 
 # Create the main thread object,
 # and make it available for the interpreter
@@ -1278,7 +1278,7 @@ class local(_localbase):
 
         for thread in threads:
             try:
-                __dict__ = thread.__dict__
+                __dict__ = _thread.__dict__
             except AttributeError:
                 # Thread is dying, rest in peace.
                 continue
@@ -1309,16 +1309,16 @@ def _after_fork():
             # Any lock/condition variable may be currently locked or in an
             # invalid state, so we reinitialize them.
             if hasattr(thread, '_reset_internal_locks'):
-                thread._reset_internal_locks()
+                _thread._reset_internal_locks()
             if thread is current:
                 # There is only one active thread. We reset the ident to
                 # its new value since it can have changed.
                 ident = _get_ident()
-                thread.__ident = ident
+                _thread.__ident = ident
                 new_active[ident] = thread
             else:
                 # All the others are already stopped.
-                thread.__stop()
+                _thread.__stop()
 
         _limbo.clear()
         _active.clear()
@@ -1388,7 +1388,7 @@ def _test():
         def run(self):
             while self.count > 0:
                 item = self.queue.get()
-                print item
+                print(item)
                 self.count = self.count - 1
 
     NP = 3
