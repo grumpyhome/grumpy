@@ -799,10 +799,6 @@ func builtinSum(f *Frame, args Args, _ KWArgs) (*Object, *BaseException) {
 	if raised := checkFunctionArgs(f, "sum", args, expectedTypes...); raised != nil {
 		return nil, raised
 	}
-	iter, raised := Iter(f, args[0])
-	if raised != nil {
-		return nil, raised
-	}
 	var result *Object
 	if argc > 1 {
 		if args[1].typ == StrType {
@@ -812,11 +808,13 @@ func builtinSum(f *Frame, args Args, _ KWArgs) (*Object, *BaseException) {
 	} else {
 		result = NewInt(0).ToObject()
 	}
+
+	raised := seqForEach(f, args[0], func(o *Object) (raised *BaseException) {
+		result, raised = Add(f, result, o)
+		return raised
+	})
+
 	if raised != nil {
-		if raised.isInstance(StopIterationType) {
-			f.RestoreExc(nil, nil)
-			return result, nil
-		}
 		return nil, raised
 	}
 	return result, nil
