@@ -41,6 +41,26 @@ func Abs(f *Frame, o *Object) (*Object, *BaseException) {
 // Add returns the result of adding v and w together according to the
 // __add/radd__ operator.
 func Add(f *Frame, v, w *Object) (*Object, *BaseException) {
+	if v.typ == IntType {
+		if w.typ == IntType {
+			result := NewInt(toIntUnsafe(v).Value() + toIntUnsafe(w).Value()).ToObject()
+			return result, nil
+		}
+		if w.typ == FloatType {
+			result := NewFloat(float64(toIntUnsafe(v).Value()) + toFloatUnsafe(w).Value()).ToObject()
+			return result, nil
+		}
+	}
+	if v.typ == FloatType {
+		if w.typ == FloatType {
+			result := NewFloat(toFloatUnsafe(v).Value() + toFloatUnsafe(w).Value()).ToObject()
+			return result, nil
+		}
+		if w.typ == IntType {
+			result := NewFloat(toFloatUnsafe(v).Value() + float64(toIntUnsafe(w).Value())).ToObject()
+			return result, nil
+		}
+	}
 	return binaryOp(f, v, w, v.typ.slots.Add, v.typ.slots.RAdd, w.typ.slots.RAdd, "+")
 }
 

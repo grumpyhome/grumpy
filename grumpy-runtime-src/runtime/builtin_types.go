@@ -812,53 +812,6 @@ func builtinSum(f *Frame, args Args, _ KWArgs) (*Object, *BaseException) {
 	} else {
 		result = NewInt(0).ToObject()
 	}
-	if result.typ == IntType {
-		item, raised := Next(f, iter)
-		for ; raised == nil; item, raised = Next(f, iter) {
-			if item.typ == IntType {
-				result = NewInt(toIntUnsafe(result).Value() + toIntUnsafe(item).Value()).ToObject()
-				continue
-			}
-			result, raised = Add(f, result, item)
-			break
-		}
-		if raised != nil {
-			if raised.isInstance(StopIterationType) {
-				f.RestoreExc(nil, nil)
-				return result, nil
-			}
-			return nil, raised
-		}
-	}
-	if result.typ == FloatType {
-		item, raised := Next(f, iter)
-		for ; raised == nil; item, raised = Next(f, iter) {
-			if item.typ == FloatType {
-				result = NewFloat(toFloatUnsafe(result).Value() + toFloatUnsafe(item).Value()).ToObject()
-				continue
-			}
-			if item.typ == IntType {
-				result = NewFloat(toFloatUnsafe(result).Value() + float64(toIntUnsafe(item).Value())).ToObject()
-				continue
-			}
-			result, raised = Add(f, result, item)
-			break
-		}
-		if raised != nil {
-			if raised.isInstance(StopIterationType) {
-				f.RestoreExc(nil, nil)
-				return result, nil
-			}
-			return nil, raised
-		}
-	}
-	item, raised := Next(f, iter)
-	for ; raised == nil; item, raised = Next(f, iter) {
-		result, raised = Add(f, result, item)
-		if raised != nil {
-			return nil, raised
-		}
-	}
 	if raised != nil {
 		if raised.isInstance(StopIterationType) {
 			f.RestoreExc(nil, nil)
