@@ -40,6 +40,9 @@ def main(script=None, modname=None, package_dir='', with_imports=False):
       if imp.is_native and imp.name:
         yield imp.name
       else:
+        if not imp.script:
+          continue  # Let the ImportError raise on run time
+
         parts = imp.name.split('.')
         # Iterate over all packages and the leaf module.
         for i in xrange(len(parts)):
