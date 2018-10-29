@@ -836,7 +836,7 @@ func dictPopItem(f *Frame, args Args, _ KWArgs) (item *Object, raised *BaseExcep
 	}
 	d := toDictUnsafe(args[0])
 	d.mutex.Lock(f)
-	iter := newDictEntryIterator(d)
+	iter := newDictEntryIterator(f, d)
 	entry := iter.next()
 	if entry == nil {
 		raised = f.RaiseType(KeyErrorType, "popitem(): dictionary is empty")
