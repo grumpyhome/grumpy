@@ -32,7 +32,7 @@ var (
 	StrType                = newBasisType("str", reflect.TypeOf(Str{}), toStrUnsafe, BaseStringType)
 	whitespaceSplitRegexp  = regexp.MustCompile(`\s+`)
 	strASCIISpaces         = []byte(" \t\n\v\f\r")
-	strInterpolationRegexp = regexp.MustCompile(`^%([#0 +-]?)((\*|[0-9]+)?)((\.(\*|[0-9]+))?)[hlL]?([diouxXeEfFgGcrs%])`)
+	strInterpolationRegexp = regexp.MustCompile(`^%(\(([^)]+)\))?([#0 +-]?)(\*|[0-9]+)?(\.(\*|[0-9]+))?[hlL]?([diouxXeEfFgGcrs%])`)
 	internedStrs           = map[string]*Str{}
 	caseOffset             = byte('a' - 'A')
 
@@ -553,18 +553,6 @@ func strLT(f *Frame, v, w *Object) (*Object, *BaseException) {
 	return strCompare(v, w, True, False, False), nil
 }
 
-func strMod(f *Frame, v, w *Object) (*Object, *BaseException) {
-	s := toStrUnsafe(v).Value()
-	switch {
-	case w.isInstance(DictType):
-		return nil, f.RaiseType(NotImplementedErrorType, "mappings not yet supported")
-	case w.isInstance(TupleType):
-		return strInterpolate(f, s, toTupleUnsafe(w))
-	default:
-		return strInterpolate(f, s, NewTuple1(w))
-	}
-}
-
 func strMul(f *Frame, v, w *Object) (*Object, *BaseException) {
 	s := toStrUnsafe(v).Value()
 	n, ok, raised := strRepeatCount(f, len(s), w)
@@ -622,6 +610,52 @@ func strNew(f *Frame, t *Type, args Args, _ KWArgs) (*Object, *BaseException) {
 		return nil, raised
 	}
 	return s.ToObject(), nil
+}
+
+// strPartition splits the string at the first occurrence of sep, and
+// return a 3-tuple containing the part before the separator, the separator
+// itself, and the part after the separator. If the separator is not found,
+// return a 3-tuple containing the string itself, followed by two empty strings.
+func strPartition(f *Frame, args Args, _ KWArgs) (*Object, *BaseException) {
+	if raised := checkMethodArgs(f, "partition", args, StrType, StrType); raised != nil {
+		return nil, raised
+	}
+	sep := toStrUnsafe(args[1]).Value()
+	if sep == "" {
+		return nil, f.RaiseType(ValueErrorType, "empty separator")
+	}
+	s := toStrUnsafe(args[0]).Value()
+	pos := strings.Index(s, sep)
+	if pos < 0 {
+		emptyStr := NewStr("").ToObject()
+		return NewTuple(args[0], emptyStr, emptyStr).ToObject(), nil
+	}
+	start := NewStr(s[0:pos]).ToObject()
+	end := NewStr(s[pos+len(sep):]).ToObject()
+	return NewTuple(start, args[1], end).ToObject(), nil
+}
+
+// strPartition splits the string at the last occurrence of sep, and
+// return a 3-tuple containing the part before the separator, the separator
+// itself, and the part after the separator. If the separator is not found,
+// return a 3-tuple containing two empty strings, followed by the string itself.
+func strRPartition(f *Frame, args Args, _ KWArgs) (*Object, *BaseException) {
+	if raised := checkMethodArgs(f, "rpartition", args, StrType, StrType); raised != nil {
+		return nil, raised
+	}
+	sep := toStrUnsafe(args[1]).Value()
+	if sep == "" {
+		return nil, f.RaiseType(ValueErrorType, "empty separator")
+	}
+	s := toStrUnsafe(args[0]).Value()
+	pos := strings.LastIndex(s, sep)
+	if pos < 0 {
+		emptyStr := NewStr("").ToObject()
+		return NewTuple(emptyStr, emptyStr, args[0]).ToObject(), nil
+	}
+	start := NewStr(s[0:pos]).ToObject()
+	end := NewStr(s[pos+len(sep):]).ToObject()
+	return NewTuple(start, args[1], end).ToObject(), nil
 }
 
 // strReplace returns a copy of the string s with the first n non-overlapping
@@ -960,6 +994,8 @@ func initStrType(dict map[string]*Object) {
 	dict["startswith"] = newBuiltinFunction("startswith", strStartsWith).ToObject()
 	dict["strip"] = newBuiltinFunction("strip", strStrip).ToObject()
 	dict["swapcase"] = newBuiltinFunction("swapcase", strSwapCase).ToObject()
+	dict["partition"] = newBuiltinFunction("partition", strPartition).ToObject()
+	dict["rpartition"] = newBuiltinFunction("rpartition", strRPartition).ToObject()
 	dict["replace"] = newBuiltinFunction("replace", strReplace).ToObject()
 	dict["rstrip"] = newBuiltinFunction("rstrip", strRStrip).ToObject()
 	dict["title"] = newBuiltinFunction("title", strTitle).ToObject()
@@ -1003,7 +1039,33 @@ func strCompare(v, w *Object, ltResult, eqResult, gtResult *Int) *Object {
 	return gtResult.ToObject()
 }
 
-func strInterpolate(f *Frame, format string, values *Tuple) (*Object, *BaseException) {
+func strMod(f *Frame, v, args *Object) (*Object, *BaseException) {
+	format := toStrUnsafe(v).Value()
+	// If the format string contains mappings, args must be a dict,
+	// otherwise it must be treated as a tuple of values, so if it's not a tuple already
+	// it must be transformed into a single element tuple.
+	var values *Tuple
+	var mappings *Dict
+	if args.isInstance(TupleType) {
+		values = toTupleUnsafe(args)
+	} else {
+		values = NewTuple1(args)
+		if args.isInstance(DictType) {
+			mappings = toDictUnsafe(args)
+		}
+	}
+	const (
+		idxAll = iota
+		// Todo: mapping keys can contain balanced parentheses, these should be matched
+		// manually before using the regexp
+		_
+		idxMappingKey
+		idxFlags
+		idxWidth
+		idxPrecision
+		_
+		idxType
+	)
 	var buf bytes.Buffer
 	valueIndex := 0
 	index := strings.Index(format, "%")
@@ -1014,34 +1076,53 @@ func strInterpolate(f *Frame, format string, values *Tuple) (*Object, *BaseExcep
 		if matches == nil {
 			return nil, f.RaiseType(ValueErrorType, "invalid format spec")
 		}
-		flags, fieldType := matches[1], matches[7]
-		if fieldType != "%" && valueIndex >= len(values.elems) {
-			return nil, f.RaiseType(TypeErrorType, "not enough arguments for format string")
+		mappingKey, fieldType := matches[idxMappingKey], matches[idxType]
+		var value *Object
+		if mappingKey != "" {
+			// Nb: mappings are checked even in case of "%%"
+			if mappings == nil {
+				return nil, f.RaiseType(TypeErrorType, "format requires a mapping")
+			}
+			var raised *BaseException
+			value, raised = mappings.GetItemString(f, mappingKey)
+			if raised != nil {
+				return nil, raised
+			}
+			if value == nil {
+				return nil, f.RaiseType(KeyErrorType, fmt.Sprintf("'%s'", mappingKey))
+			}
+			valueIndex = 1
+		} else if fieldType != "%" {
+			if valueIndex >= len(values.elems) {
+				return nil, f.RaiseType(TypeErrorType, "not enough arguments for format string")
+			}
+			value = values.elems[valueIndex]
+			valueIndex++
 		}
 		fieldWidth := -1
-		if matches[2] == "*" || matches[4] != "" {
+		if matches[idxWidth] == "*" || matches[idxPrecision] != "" {
 			return nil, f.RaiseType(NotImplementedErrorType, "field width not yet supported")
 		}
-		if matches[2] != "" {
+		if matches[idxWidth] != "" {
 			var err error
-			fieldWidth, err = strconv.Atoi(matches[2])
+			fieldWidth, err = strconv.Atoi(matches[idxWidth])
 			if err != nil {
 				return nil, f.RaiseType(TypeErrorType, fmt.Sprint(err))
 			}
 		}
+		flags := matches[idxFlags]
 		if flags != "" && flags != "0" {
 			return nil, f.RaiseType(NotImplementedErrorType, "conversion flags not yet supported")
 		}
 		var val string
 		switch fieldType {
 		case "r", "s":
-			o := values.elems[valueIndex]
 			var s *Str
 			var raised *BaseException
 			if fieldType == "r" {
-				s, raised = Repr(f, o)
+				s, raised = Repr(f, value)
 			} else {
-				s, raised = ToStr(f, o)
+				s, raised = ToStr(f, value)
 			}
 			if raised != nil {
 				return nil, raised
@@ -1051,10 +1132,8 @@ func strInterpolate(f *Frame, format string, values *Tuple) (*Object, *BaseExcep
 				val = strLeftPad(val, fieldWidth, " ")
 			}
 			buf.WriteString(val)
-			valueIndex++
 		case "f":
-			o := values.elems[valueIndex]
-			if v, ok := floatCoerce(o); ok {
+			if v, ok := floatCoerce(value); ok {
 				val := strconv.FormatFloat(v, 'f', 6, 64)
 				if fieldWidth > 0 {
 					fillchar := " "
@@ -1064,13 +1143,11 @@ func strInterpolate(f *Frame, format string, values *Tuple) (*Object, *BaseExcep
 					val = strLeftPad(val, fieldWidth, fillchar)
 				}
 				buf.WriteString(val)
-				valueIndex++
 			} else {
-				return nil, f.RaiseType(TypeErrorType, fmt.Sprintf("float argument required, not %s", o.typ.Name()))
+				return nil, f.RaiseType(TypeErrorType, fmt.Sprintf("float argument required, not %s", value.typ.Name()))
 			}
 		case "d", "x", "X", "o":
-			o := values.elems[valueIndex]
-			i, raised := ToInt(f, values.elems[valueIndex])
+			i, raised := ToInt(f, value)
 			if raised != nil {
 				return nil, raised
 			}
@@ -1080,15 +1157,15 @@ func strInterpolate(f *Frame, format string, values *Tuple) (*Object, *BaseExcep
 					return nil, raised
 				}
 				val = s.Value()
-			} else if matches[7] == "o" {
-				if o.isInstance(LongType) {
-					val = toLongUnsafe(o).Value().Text(8)
+			} else if matches[idxType] == "o" {
+				if value.isInstance(LongType) {
+					val = toLongUnsafe(value).Value().Text(8)
 				} else {
 					val = strconv.FormatInt(int64(toIntUnsafe(i).Value()), 8)
 				}
 			} else {
-				if o.isInstance(LongType) {
-					val = toLongUnsafe(o).Value().Text(16)
+				if value.isInstance(LongType) {
+					val = toLongUnsafe(value).Value().Text(16)
 				} else {
 					val = strconv.FormatInt(int64(toIntUnsafe(i).Value()), 16)
 				}
@@ -1104,7 +1181,6 @@ func strInterpolate(f *Frame, format string, values *Tuple) (*Object, *BaseExcep
 				val = strLeftPad(val, fieldWidth, fillchar)
 			}
 			buf.WriteString(val)
-			valueIndex++
 		case "%":
 			val = "%"
 			if fieldWidth > 0 {
@@ -1115,7 +1191,7 @@ func strInterpolate(f *Frame, format string, values *Tuple) (*Object, *BaseExcep
 			format := "conversion type not yet supported: %s"
 			return nil, f.RaiseType(NotImplementedErrorType, fmt.Sprintf(format, fieldType))
 		}
-		format = format[len(matches[0]):]
+		format = format[len(matches[idxAll]):]
 		index = strings.Index(format, "%")
 	}
 	if valueIndex < len(values.elems) {

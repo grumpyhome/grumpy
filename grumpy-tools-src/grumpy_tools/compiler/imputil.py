@@ -51,6 +51,7 @@ class Import(object):
 
   MODULE = "<BindType 'module'>"
   MEMBER = "<BindType 'member'>"
+  STAR = "<BindType 'star'>"
 
   def __init__(self, name, script=None, is_native=False):
     self.name = name
@@ -97,7 +98,8 @@ class Importer(algorithm.Visitor):
         asname = alias.asname if alias.asname else alias.name.split('/')[-1]
         imp.add_binding(Import.MODULE, asname, 0)
       else:
-        imp = self._resolve_import(node, alias.name)
+        imp = self._resolve_import(node, alias.name, allow_error=True)
+
         if alias.asname:
           imp.add_binding(Import.MODULE, alias.asname, imp.name.count('.'))
         else:
@@ -109,7 +111,14 @@ class Importer(algorithm.Visitor):
 
   def visit_ImportFrom(self, node):
     if any(a.name == '*' for a in node.names):
-      raise util.ImportError(node, 'wildcard member import is not implemented')
+      if len(node.names) != 1:
+        # TODO: Change to SyntaxError, as CPython does on "from foo import *, bar"
+        raise util.ImportError(node, 'invalid syntax on wildcard import')
+
+      # Imported name is * (star). Will bind __all__ the module contents.
+      imp = self._resolve_import(node, node.module)
+      imp.add_binding(Import.STAR, '*', imp.name.count('.'))
+      return [imp]
 
     if not node.level and node.module == '__future__':
       return []
@@ -147,7 +156,7 @@ class Importer(algorithm.Visitor):
         imports.append(imp)
     return imports
 
-  def _resolve_import(self, node, modname):
+  def _resolve_import(self, node, modname, allow_error=False):
     if not self.absolute_import and self.package_dir:
       script = find_script(self.package_dir, modname)
       if script:
@@ -156,6 +165,8 @@ class Importer(algorithm.Visitor):
       script = find_script(dirname, modname)
       if script:
         return Import(modname, script)
+    if allow_error:
+      return Import(modname, '')
     raise util.ImportError(node, 'no such module: {} (script: {})'.format(modname, self.script))
 
   def _resolve_relative_import(self, level, node, modname):

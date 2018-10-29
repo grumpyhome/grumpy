@@ -98,12 +98,52 @@ func byteArrayGT(f *Frame, v, w *Object) (*Object, *BaseException) {
 }
 
 func byteArrayInit(f *Frame, o *Object, args Args, _ KWArgs) (*Object, *BaseException) {
-	if raised := checkFunctionArgs(f, "__init__", args, IntType); raised != nil {
+	argc := len(args)
+	if argc == 0 {
+		return None, nil
+	}
+	expectedTypes := []*Type{ObjectType}
+	if raised := checkFunctionArgs(f, "__init__", args, expectedTypes...); raised != nil {
 		return nil, raised
 	}
 	a := toByteArrayUnsafe(o)
+	if args[0].isInstance(IntType) {
+		a.mutex.Lock()
+		a.value = make([]byte, toIntUnsafe(args[0]).Value())
+		a.mutex.Unlock()
+		return None, nil
+	}
+	// else it must be an iterable
+	value := []byte{}
+	iter, raised := Iter(f, args[0])
+	if raised != nil {
+		return nil, raised
+	}
+	item, raised := Next(f, iter)
+	for ; raised == nil; item, raised = Next(f, iter) {
+		switch {
+		case item.isInstance(StrType):
+			sval := toStrUnsafe(item).Value()
+			if len(sval) != 1 {
+				return nil, f.RaiseType(ValueErrorType, "string must be of size 1")
+			}
+			value = append(value, sval[0])
+		case item.isInstance(IntType):
+			ival := toIntUnsafe(item).Value()
+			if ival < 0 || ival >= 256 {
+				return nil, f.RaiseType(ValueErrorType, "byte must be in range(0, 256)")
+			}
+			value = append(value, byte(ival))
+		default:
+			return nil, f.RaiseType(TypeErrorType, "an integer or string of size 1 is required")
+		}
+	}
+	if !raised.isInstance(StopIterationType) {
+		return nil, raised
+	}
+	f.RestoreExc(nil, nil)
 	a.mutex.Lock()
-	a.value = make([]byte, toIntUnsafe(args[0]).Value())
+	a.value = value
 	a.mutex.Unlock()
 	return None, nil
 }

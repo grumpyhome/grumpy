@@ -68,8 +68,18 @@ func TestByteArrayGetItem(t *testing.T) {
 
 func TestByteArrayInit(t *testing.T) {
 	cases := []invokeTestCase{
+		{args: wrapArgs(), want: newTestByteArray("").ToObject()},
 		{args: wrapArgs(3), want: newTestByteArray("\x00\x00\x00").ToObject()},
-		{args: wrapArgs(newObject(ObjectType)), wantExc: mustCreateException(TypeErrorType, `'__init__' requires a 'int' object but received a "object"`)},
+		{args: wrapArgs([]int{3, 2, 1}), want: newTestByteArray("\x03\x02\x01").ToObject()},
+		{args: wrapArgs("abc"), want: newTestByteArray("abc").ToObject()},
+		{args: wrapArgs([]string{"a", "b", "c"}), want: newTestByteArray("abc").ToObject()},
+		{args: wrapArgs(newTestXRange(3)), want: newTestByteArray("\x00\x01\x02").ToObject()},
+		{args: wrapArgs(newTestRange(3)), want: newTestByteArray("\x00\x01\x02").ToObject()},
+		{args: wrapArgs(newObject(ObjectType)), wantExc: mustCreateException(TypeErrorType, `'object' object is not iterable`)},
+		{args: wrapArgs([]int{-1}), wantExc: mustCreateException(ValueErrorType, `byte must be in range(0, 256)`)},
+		{args: wrapArgs([]int{256}), wantExc: mustCreateException(ValueErrorType, `byte must be in range(0, 256)`)},
+		{args: wrapArgs([]string{"ab"}), wantExc: mustCreateException(ValueErrorType, `string must be of size 1`)},
+		{args: wrapArgs([]interface{}{5, []interface{}{}}), wantExc: mustCreateException(TypeErrorType, `an integer or string of size 1 is required`)},
 	}
 	for _, cas := range cases {
 		if err := runInvokeTestCase(ByteArrayType.ToObject(), &cas); err != "" {

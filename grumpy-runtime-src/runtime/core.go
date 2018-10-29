@@ -256,6 +256,17 @@ func GetAttr(f *Frame, o *Object, name *Str, def *Object) (*Object, *BaseExcepti
 	return result, raised
 }
 
+// GetAttrImport behaves as GetAttr, but errors raises ImportError instead of
+// AttributeError
+func GetAttrImport(f *Frame, o *Object, name *Str) (*Object, *BaseException) {
+	result, raised := GetAttr(f, o, name, nil)
+	if raised != nil && raised.isInstance(AttributeErrorType) {
+		msg := fmt.Sprintf("cannot import name %s", name.Value())
+		return nil, f.RaiseType(ImportErrorType, msg)
+	}
+	return result, raised
+}
+
 // GT returns the result of operation v > w.
 func GT(f *Frame, v, w *Object) (*Object, *BaseException) {
 	r, raised := compareRich(f, compareOpGT, v, w)
