@@ -204,7 +204,7 @@ func newDictEntryIterator(f *Frame, d *Dict) (iter dictEntryIterator) {
 	} else {
 		d.mutex.Lock(f)
 		iter.table = d.write
-		if itr.table == nil {
+		if iter.table == nil {
 			iter.table = *d.loadReadTable()
 		} else {
 			// Promote to prevent unlocked mutations to the
