@@ -1,8 +1,22 @@
-def ascii_decode(*args, **kwargs):
+# coding: utf-8
+
+def ascii_decode(data, errors=None):
     raise NotImplementedError()
 
 
-def ascii_encode(*args, **kwargs):
+def ascii_encode(str_, errors=None,):
+    raise NotImplementedError()
+
+
+def charmap_build(map_):  # Not 2.7
+    raise NotImplementedError()
+
+
+def charmap_decode(data, errors=None, mapping=None):  # Not 2.7
+    raise NotImplementedError()
+
+
+def charmap_encode(str_, errors=None, mapping=None):  # Not 2.7
     raise NotImplementedError()
 
 
@@ -22,51 +36,49 @@ def charmap_encode(*args, **kwargs):
     raise NotImplementedError()
 
 
-def decode(obj, encoding=None, errors=None) -> object:
+def decode(obj, encoding='utf-8', errors='strict'):
     """
-    decode(obj, [encoding[,errors]]) -> object
+    Decodes obj using the codec registered for encoding.
 
-    Decodes obj using the codec registered for encoding. encoding defaults
-    to the default encoding. errors may be given to set a different error
-    handling scheme. Default is 'strict' meaning that encoding errors raise
-    a ValueError. Other possible values are 'ignore' and 'replace'
-    as well as any other name registered with codecs.register_error that is
-    able to handle ValueErrors.
-    """
-    raise NotImplementedError()
-
-
-def encode(obj, encoding=None, errors=None) -> object:
-    """
-    encode(obj, [encoding[,errors]]) -> object
-
-    Encodes obj using the codec registered for encoding. encoding defaults
-    to the default encoding. errors may be given to set a different error
-    handling scheme. Default is 'strict' meaning that encoding errors raise
-    a ValueError. Other possible values are 'ignore', 'replace' and
-    'xmlcharrefreplace' as well as any other name registered with
+    Default encoding is 'utf-8'.  errors may be given to set a
+    different error handling scheme.  Default is 'strict' meaning that encoding
+    errors raise a ValueError.  Other possible values are 'ignore', 'replace'
+    and 'backslashreplace' as well as any other name registered with
     codecs.register_error that can handle ValueErrors.
     """
     raise NotImplementedError()
 
 
-def escape_decode(*args, **kwargs):
+def encode(obj, encoding='utf-8', errors='strict'):
+    """
+    Encodes obj using the codec registered for encoding.
+
+    The default encoding is 'utf-8'. Errors may be given to set a
+    different error handling scheme.  Default is 'strict' meaning that encoding
+    errors raise a ValueError.  Other possible values are 'ignore', 'replace'
+    and 'backslashreplace' as well as any other name registered with
+    codecs.register_error that can handle ValueErrors.
+    """
     raise NotImplementedError()
 
 
-def escape_encode(*args, **kwargs):
+def escape_decode(data, errors=None):
     raise NotImplementedError()
 
 
-def latin_1_decode(*args, **kwargs):
+def escape_encode(data, errors=None):
     raise NotImplementedError()
 
 
-def latin_1_encode(*args, **kwargs):
+def latin_1_decode(data, errors=None):
     raise NotImplementedError()
 
 
-def lookup(encoding) -> 'CodecInfo':
+def latin_1_encode(str_, errors=None):
+    raise NotImplementedError()
+
+
+def lookup(encoding):
     """
     lookup(encoding) -> CodecInfo
 
@@ -76,7 +88,7 @@ def lookup(encoding) -> 'CodecInfo':
     raise NotImplementedError()
 
 
-def lookup_error(errors) -> 'handler':
+def lookup_error(errors):
     """
     lookup_error(errors) -> handler
 
@@ -86,15 +98,15 @@ def lookup_error(errors) -> 'handler':
     raise NotImplementedError()
 
 
-def raw_unicode_escape_decode(*args, **kwargs):
+def raw_unicode_escape_decode(data, errors=None):
     raise NotImplementedError()
 
 
-def raw_unicode_escape_encode(*args, **kwargs):
+def raw_unicode_escape_encode(str_, errors=None):
     raise NotImplementedError()
 
 
-def readbuffer_encode(*args, **kwargs):
+def readbuffer_encode(data, errors=None):
     raise NotImplementedError()
 
 
@@ -119,89 +131,89 @@ def register_error(errors, handler):
     raise NotImplementedError()
 
 
-def unicode_escape_decode(*args, **kwargs):
+def unicode_escape_decode(data, errors=None):
     raise NotImplementedError()
 
 
-def unicode_escape_encode(*args, **kwargs):
+def unicode_escape_encode(str_, errors=None):
     raise NotImplementedError()
 
 
-def unicode_internal_decode(*args, **kwargs):
+def unicode_internal_decode(obj, errors=None):
     raise NotImplementedError()
 
 
-def unicode_internal_encode(*args, **kwargs):
+def unicode_internal_encode(obj, errors=None):
     raise NotImplementedError()
 
 
-def utf_16_be_decode(*args, **kwargs):
+def utf_16_be_decode(data, errors=None, final=False):
     raise NotImplementedError()
 
 
-def utf_16_be_encode(*args, **kwargs):
+def utf_16_be_encode(str_, errors=None):
     raise NotImplementedError()
 
 
-def utf_16_decode(*args, **kwargs):
+def utf_16_decode(data, errors=None, final=False):
     raise NotImplementedError()
 
 
-def utf_16_encode(*args, **kwargs):
+def utf_16_encode(str_, errors=None, byteorder=0):
     raise NotImplementedError()
 
 
-def utf_16_ex_decode(*args, **kwargs):
+def utf_16_ex_decode(data, errors=None, byteorder=0, final=False):
     raise NotImplementedError()
 
 
-def utf_16_le_decode(*args, **kwargs):
+def utf_16_le_decode(data, errors=None, final=False):
     raise NotImplementedError()
 
 
-def utf_16_le_encode(*args, **kwargs):
+def utf_16_le_encode(str_, errors=None,):
     raise NotImplementedError()
 
 
-def utf_32_be_decode(*args, **kwargs):
+def utf_32_be_decode(data, errors=None, final=False):
     raise NotImplementedError()
 
 
-def utf_32_be_encode(*args, **kwargs):
+def utf_32_be_encode(str_, errors=None):
     raise NotImplementedError()
 
 
-def utf_32_decode(*args, **kwargs):
+def utf_32_decode(data, errors=None, final=False):
     raise NotImplementedError()
 
 
-def utf_32_encode(*args, **kwargs):
+def utf_32_encode(str_, errors=None, byteorder=0):
     raise NotImplementedError()
 
 
-def utf_32_ex_decode(*args, **kwargs):
+def utf_32_ex_decode(data, errors=None, byteorder=0, final=False):
     raise NotImplementedError()
 
 
-def utf_32_le_decode(*args, **kwargs):
+def utf_32_le_decode(data, errors=None, final=False):
     raise NotImplementedError()
 
 
-def utf_32_le_encode(*args, **kwargs):
+def utf_32_le_encode(str_, errors=None,):
     raise NotImplementedError()
 
 
-def utf_7_decode(*args, **kwargs):
+def utf_7_decode(data, errors=None, final=False):
     raise NotImplementedError()
 
 
-def utf_7_encode(*args, **kwargs):
+def utf_7_encode(str_, errors=None):
     raise NotImplementedError()
 
 
-def utf_8_decode(*args, **kwargs):
+def utf_8_decode(data, errors=None, final=False):
     raise NotImplementedError()
 
 
-def utf_8_encode(*args, **kwargs):
+def utf_8_encode(str_, errors=None):
     raise NotImplementedError()
