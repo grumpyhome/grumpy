@@ -52,9 +52,8 @@ var basisTypes = map[reflect.Type]*Type{
 // newClass creates a Python type with the given name, base classes and type
 // dict. It is similar to the Python expression 'type(name, bases, dict)'.
 func newClass(f *Frame, meta *Type, name string, bases []*Type, dict *Dict) (*Type, *BaseException) {
-	numBases := len(bases)
-	if numBases == 0 {
-		return nil, f.RaiseType(TypeErrorType, "class must have base classes")
+	if len(bases) == 0 {
+		bases = append(bases, ObjectType)
 	}
 	var basis reflect.Type
 	for _, base := range bases {
