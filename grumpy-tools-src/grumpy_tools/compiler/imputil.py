@@ -33,10 +33,10 @@ try:
 except ImportError:
     from backports.functools_lru_cache import lru_cache
 
-from grumpy_tools.compiler import util
-from grumpy_tools.vendor import pythonparser
-from grumpy_tools.vendor.pythonparser import algorithm
-from grumpy_tools.vendor.pythonparser import ast
+from grumpy_tools.compiler import util, parser
+import pythonparser
+from pythonparser import algorithm
+from pythonparser import ast
 
 try:
   xrange          # Python 2
@@ -247,6 +247,7 @@ class _ImportCollector(algorithm.Visitor):
 
 
 def collect_imports(modname, script, gopath, package_dir=''):
+  parser.patch_pythonparser()
   with open(script) as py_file:
     py_contents = py_file.read()
   mod = pythonparser.parse(py_contents)

@@ -28,8 +28,8 @@ from grumpy_tools.compiler import imputil
 from grumpy_tools.compiler import shard_test
 from grumpy_tools.compiler import stmt
 from grumpy_tools.compiler import util
-from grumpy_tools.vendor import pythonparser
-from grumpy_tools.vendor.pythonparser import ast
+import pythonparser
+from pythonparser import ast
 
 import pytest
 

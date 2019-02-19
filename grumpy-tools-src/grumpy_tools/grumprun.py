@@ -37,6 +37,27 @@ from . import grumpc
 
 logger = logging.getLogger(__name__)
 
+TRACEBACK_DEPENDENCIES = [
+  '__go__/grumpy',
+  '__go__/io/ioutil',
+  '__go__/os',
+  '__go__/path/filepath',
+  '__go__/reflect',
+  '__go__/runtime',
+  '__go__/sync',
+  '__go__/syscall',
+  '__go__/time',
+  '__go__/unicode',
+  '_syscall',
+  'linecache',
+  'os',
+  'os/path',
+  'stat',
+  'sys',
+  'traceback',
+  'types',
+]
+
 module_tmpl = string.Template("""\
 package main
 import (
@@ -116,7 +137,8 @@ def main(stream=None, modname=None, pep3147=False, clean_tempfolder=True, go_act
       dummy_file.write(transpiled)
 
     # Make sure traceback is available in all Python binaries.
-    names = sorted(set(['traceback']).union(deps))
+    names = sorted(set(['traceback'] + TRACEBACK_DEPENDENCIES).union(deps))
+
     go_main = os.path.join(workdir, 'main.go')
     package = grumpc._package_name(modname)
     imports = ''.join('\t_ "' + grumpc._package_name(name) + '"\n' for name in names)

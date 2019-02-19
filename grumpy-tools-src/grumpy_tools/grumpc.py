@@ -33,7 +33,8 @@ from .compiler import block
 from .compiler import imputil
 from .compiler import stmt
 from .compiler import util
-from .vendor import pythonparser
+from .compiler.parser import patch_pythonparser
+import pythonparser
 from .pep_support.pep3147pycache import make_transpiled_module_folders, should_refresh, set_checksum, fixed_keyword
 from . import pydeps
 
@@ -41,6 +42,7 @@ logger = logging.getLogger(__name__)
 
 
 def _parse_and_visit(stream, script, modname):
+  patch_pythonparser()
   gopath = os.environ['GOPATH']
 
   stream.seek(0)

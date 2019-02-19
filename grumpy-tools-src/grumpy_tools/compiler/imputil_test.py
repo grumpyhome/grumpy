@@ -27,7 +27,10 @@ import unittest
 
 from grumpy_tools.compiler import imputil
 from grumpy_tools.compiler import util
-from grumpy_tools.vendor import pythonparser
+from grumpy_tools.compiler.parser import patch_pythonparser
+import pythonparser
+
+patch_pythonparser()
 
 
 class ImportVisitorTest(unittest.TestCase):

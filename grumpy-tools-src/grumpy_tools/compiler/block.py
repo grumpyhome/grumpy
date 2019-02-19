@@ -24,9 +24,9 @@ import re
 
 from grumpy_tools.compiler import expr
 from grumpy_tools.compiler import util
-from grumpy_tools.vendor.pythonparser import algorithm
-from grumpy_tools.vendor.pythonparser import ast
-from grumpy_tools.vendor.pythonparser import source
+from pythonparser import algorithm
+from pythonparser import ast
+from pythonparser import source
 
 
 _non_word_re = re.compile('[^A-Za-z0-9_]')

@@ -58,7 +58,7 @@ GOPATH_PY_ROOT := $(GOPATH)/src/__python__
 PYTHONPARSER_SRCS := $(patsubst third_party/%,$(PY_DIR)/grumpy/%,$(wildcard third_party/pythonparser/*.py))
 
 COMPILER_BIN := build/bin/grumpc
-COMPILER_SRCS := $(addprefix $(PY_DIR)/grumpy/compiler/,$(notdir $(shell find compiler -name '*.py' -not -name '*_test.py'))) $(PY_DIR)/grumpy/__init__.py
+COMPILER_SRCS := $(PY_DIR)/grumpy/__init__.py
 COMPILER_TESTS := $(patsubst %.py,grumpy/%,$(filter-out compiler/expr_visitor_test.py compiler/stmt_test.py,$(wildcard compiler/*_test.py)))
 COMPILER_TEST_SRCS := $(patsubst %,$(PY_DIR)/%.py,$(COMPILER_TESTS))
 COMPILER_SHARDED_TEST_SRCS := $(patsubst %,$(PY_DIR)/grumpy/compiler/%,expr_visitor_test.py stmt_test.py)

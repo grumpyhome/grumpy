@@ -28,11 +28,11 @@ except:
 
 requirements = [
     'Click>=6.0',
-    # TODO: Put package requirements here
     'importlib2>=3.5.0.2',
     'click-default-group>=1.2',
     'click-log>=0.3.2',
     'dill>=0.2.7.1',
+    'pythonparser>=1.1',
     'backports.functools-lru-cache>=1.5',
     'backports.tempfile==1.0',
 ]

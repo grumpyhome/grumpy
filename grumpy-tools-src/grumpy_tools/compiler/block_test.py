@@ -24,7 +24,7 @@ import unittest
 from grumpy_tools.compiler import block
 from grumpy_tools.compiler import imputil
 from grumpy_tools.compiler import util
-from grumpy_tools.vendor import pythonparser
+import pythonparser
 
 
 class PackageTest(unittest.TestCase):
