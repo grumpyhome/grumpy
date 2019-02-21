@@ -35,7 +35,7 @@ func TestNewClass(t *testing.T) {
 		{objectBasis, invokeTestCase{args: wrapArgs([]*Type{ObjectType}), want: None}},
 		{fooType.basis, invokeTestCase{args: wrapArgs([]*Type{fooType, StrType}), want: None}},
 		{fooType.basis, invokeTestCase{args: wrapArgs([]*Type{fooType, StrType, ObjectType}), want: None}},
-		{nil, invokeTestCase{args: wrapArgs([]*Type{}), wantExc: mustCreateException(TypeErrorType, "class must have base classes")}},
+		{nil, invokeTestCase{args: wrapArgs([]*Type{}), want: None}},
 		{nil, invokeTestCase{args: wrapArgs([]*Type{BoolType, ObjectType}), wantExc: mustCreateException(TypeErrorType, "type 'bool' is not an acceptable base type")}},
 		{nil, invokeTestCase{args: wrapArgs([]*Type{IntType, StrType}), wantExc: mustCreateException(TypeErrorType, "class layout error")}},
 		{nil, invokeTestCase{args: wrapArgs([]*Type{StrType, fooType}), wantExc: mustCreateException(TypeErrorType, "mro error for: Foo")}},
