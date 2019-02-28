@@ -28,6 +28,8 @@ def _get_data(object, all_=None):
 
 
 class StubDoc(pydoc._PlainTextDoc):
+    # Extending from code in `pydoc.py` of Python 3.6.5
+
     def section(self, title, contents):
         """Format a section with a given heading."""
         clean_contents = contents.rstrip()
