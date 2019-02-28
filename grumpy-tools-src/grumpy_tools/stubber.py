@@ -3,7 +3,9 @@ import sys
 import re
 import inspect
 import pydoc
-from pydoc import getdoc, visiblename, isdata, classname, _is_bound_method
+from pydoc import (getdoc, visiblename, isdata, classname, _is_bound_method,
+                   classify_class_attrs, _split_list, builtins, sort_attributes)
+from collections import deque
 
 
 def _get_classes(object, all_=None):
@@ -80,6 +82,134 @@ class StubDoc(pydoc._PlainTextDoc):
         if hasattr(object, '__credits__'):
             result = result + self.section('## CREDITS ##', str(object.__credits__))
         return result
+
+    def docclass(self, object, name=None, mod=None, *ignored):
+        """Produce text documentation for a given class object."""
+        realname = object.__name__
+        name = name or realname
+        bases = object.__bases__
+
+        def makename(c, m=object.__module__):
+            return classname(c, m)
+
+        if name == realname:
+            title = 'class ' + self.bold(realname)
+        else:
+            title = self.bold(name) + ' = class ' + realname
+        if bases:
+            parents = map(makename, bases)
+            title = title + '(%s)' % ', '.join(parents)
+
+        contents = []
+        push = contents.append
+
+        doc = getdoc(object)
+        if doc:
+            push(f'"""\n{doc}\n"""')
+
+        # List the mro, if non-trivial.
+        mro = deque(inspect.getmro(object))
+        if len(mro) > 2:
+            push("\n## Method resolution order:")
+            for i, base in enumerate(mro, 1):
+                push(f'# {i}) ' + makename(base))
+            push('')
+
+        # Cute little class to pump out a horizontal rule between sections.
+        class HorizontalRule:
+            def __init__(self):
+                self.needone = 0
+            def maybe(self):
+                if self.needone:
+                    push('# ' + '-' * 68)
+                self.needone = 1
+        hr = HorizontalRule()
+
+        def spill(msg, attrs, predicate):
+            ok, attrs = _split_list(attrs, predicate)
+            if ok:
+                hr.maybe()
+                push('# ' + msg)
+                for name, kind, homecls, value in ok:
+                    try:
+                        value = getattr(object, name)
+                    except Exception:
+                        # Some descriptors may meet a failure in their __get__.
+                        # (bug #1785)
+                        push(self._docdescriptor(name, value, mod))
+                    else:
+                        push(self.document(value,
+                                        name, mod, object))
+            return attrs
+
+        def spilldescriptors(msg, attrs, predicate):
+            ok, attrs = _split_list(attrs, predicate)
+            if ok:
+                hr.maybe()
+                push('# ' + msg)
+                for name, kind, homecls, value in ok:
+                    push(self._docdescriptor(name, value, mod))
+            return attrs
+
+        def spilldata(msg, attrs, predicate):
+            ok, attrs = _split_list(attrs, predicate)
+            if ok:
+                hr.maybe()
+                push('# ' + msg)
+                for name, kind, homecls, value in ok:
+                    if callable(value) or inspect.isdatadescriptor(value):
+                        doc = getdoc(value)
+                    else:
+                        doc = None
+                    try:
+                        obj = getattr(object, name)
+                    except AttributeError:
+                        obj = homecls.__dict__[name]
+                    push(self.docother(obj, name, mod, maxlen=70, doc=doc) +
+                         '\n')
+            return attrs
+
+        attrs = [(name, kind, cls, value)
+                 for name, kind, cls, value in inspect.classify_class_attrs(object)
+                 if visiblename(name, obj=object)]
+
+        while attrs:
+            if mro:
+                thisclass = mro.popleft()
+            else:
+                thisclass = attrs[0][2]
+            attrs, inherited = _split_list(attrs, lambda t: t[2] is thisclass)
+
+            if thisclass is builtins.object:
+                attrs = inherited
+                continue
+            elif thisclass is object:
+                tag = "defined here"
+            else:
+                tag = "inherited from %s" % classname(thisclass,
+                                                      object.__module__)
+
+            sort_attributes(attrs, object)
+
+            # Pump out the attrs, segregated by kind.
+            attrs = spill("Methods %s:\n" % tag, attrs,
+                          lambda t: t[1] == 'method')
+            attrs = spill("Class methods %s:\n" % tag, attrs,
+                          lambda t: t[1] == 'class method')
+            attrs = spill("Static methods %s:\n" % tag, attrs,
+                          lambda t: t[1] == 'static method')
+            attrs = spilldescriptors("Data descriptors %s:\n" % tag, attrs,
+                                     lambda t: t[1] == 'data descriptor')
+            attrs = spilldata("Data and other attributes %s:\n" % tag, attrs,
+                              lambda t: t[1] == 'data')
+
+            assert attrs == []
+            attrs = inherited
+
+        contents = '\n'.join(contents)
+        if not contents:
+            return title + '\n'
+        return title + '\n' + self.indent(contents.rstrip(), '    ') + '\n'
 
     def docroutine(self, object, name=None, mod=None, cl=None):
         """Produce text documentation for a function or method object."""
