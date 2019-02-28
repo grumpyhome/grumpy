@@ -28,7 +28,6 @@ def _get_data(object, all_=None):
             yield (key, value)
 
 
-
 class StubDoc(pydoc._PlainTextDoc):
     # Extending from code in `pydoc.py` of Python 3.6.5
 
@@ -262,6 +261,30 @@ class StubDoc(pydoc._PlainTextDoc):
             if doc:
                 doc = f'"""\n{doc}\n"""'
             return decl + '\n' + self.indent(((doc + '\n') if doc else '') + impl).rstrip() + '\n'
+
+    def _docdescriptor(self, name, value, mod):
+        results = []
+        push = results.append
+
+        if name:
+            push(self.bold(name) + ' = None')
+            push('\n')
+        doc = getdoc(value) or ''
+        if doc:
+            push(self.indent(doc, prefix='  # '))
+            push('\n')
+        return ''.join(results)
+
+    def docother(self, object, name=None, mod=None, parent=None, maxlen=None, doc=None):
+        """Produce text documentation for a data object."""
+        repr = self.repr(object)
+        if maxlen:
+            line = (name and name + ' = ' or '') + repr
+        line = (name and self.bold(name) + ' = ' or '') + repr
+        if str(doc):
+            line += '\n' + self.indent(str(doc), prefix='# ')
+        return line
+
 
 
 def get_stubfile(target) -> str:
