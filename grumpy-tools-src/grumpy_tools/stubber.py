@@ -169,7 +169,7 @@ class StubDoc(pydoc._PlainTextDoc):
             return attrs
 
         attrs = [(name, kind, cls, value)
-                 for name, kind, cls, value in inspect.classify_class_attrs(object)
+                 for name, kind, cls, value in classify_class_attrs(object)
                  if visiblename(name, obj=object)]
 
         while attrs:
