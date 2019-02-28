@@ -138,8 +138,7 @@ class StubDoc(pydoc._PlainTextDoc):
                         # (bug #1785)
                         push(self._docdescriptor(name, value, mod))
                     else:
-                        push(self.document(value,
-                                        name, mod, object))
+                        push(self.document(value, name, mod, object))
             return attrs
 
         def spilldescriptors(msg, attrs, predicate):
