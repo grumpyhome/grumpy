@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+import re
 import inspect
 import pydoc
 from pydoc import getdoc, visiblename, isdata, classname, _is_bound_method
@@ -112,6 +113,8 @@ class StubDoc(pydoc._PlainTextDoc):
                 signature = None
             if signature:
                 argspec = str(signature)
+                argspec = re.sub(', /\)', ')', argspec)
+                argspec = re.sub(', /', '', argspec)
                 if realname == '<lambda>':
                     title = self.bold(name) + ' lambda '
                     # XXX lambda's won't usually have func_annotations['return']
@@ -130,6 +133,7 @@ class StubDoc(pydoc._PlainTextDoc):
             if doc:
                 doc = f'"""\n{doc}\n"""'
             return decl + '\n' + self.indent(((doc + '\n') if doc else '') + impl).rstrip() + '\n'
+
 
 def get_stubfile(target) -> str:
     return pydoc.render_doc(
