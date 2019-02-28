@@ -205,10 +205,8 @@ class StubDoc(pydoc._PlainTextDoc):
             assert attrs == []
             attrs = inherited
 
-        contents = '\n'.join(contents)
-        if not contents:
-            return title + '\n'
-        return title + '\n' + self.indent(contents.rstrip(), '    ') + '\n'
+        contents = '\n'.join(contents) or 'pass'
+        return '\n' + title + '\n' + self.indent(contents.rstrip(), '    ') + '\n'
 
     def docroutine(self, object, name=None, mod=None, cl=None):
         """Produce text documentation for a function or method object."""
