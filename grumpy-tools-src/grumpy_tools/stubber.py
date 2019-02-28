@@ -2,7 +2,7 @@
 import sys
 import inspect
 import pydoc
-from pydoc import getdoc, visiblename, isdata
+from pydoc import getdoc, visiblename, isdata, classname, _is_bound_method
 
 
 def _get_classes(object, all_=None):
@@ -78,10 +78,58 @@ class StubDoc(pydoc._PlainTextDoc):
             result = result + self.section('## CREDITS ##', str(object.__credits__))
         return result
 
-    # def docmodule(self, *args, **kwargs):
-    #     import ipdb; ipdb.set_trace()
-    #     return super(__class__, self).docmodule(*args, **kwargs)
+    def docroutine(self, object, name=None, mod=None, cl=None):
+        """Produce text documentation for a function or method object."""
+        realname = object.__name__
+        name = name or realname
+        note = ''
+        skipdocs = 0
+        if _is_bound_method(object):
+            imclass = object.__self__.__class__
+            if cl:
+                if imclass is not cl:
+                    note = ' from ' + classname(imclass, mod)
+            else:
+                if object.__self__ is not None:
+                    note = ' method of %s instance' % classname(
+                        object.__self__.__class__, mod)
+                else:
+                    note = ' unbound %s method' % classname(imclass,mod)
 
+        if name == realname:
+            title = self.bold(realname)
+        else:
+            if (cl and realname in cl.__dict__ and
+                cl.__dict__[realname] is object):
+                skipdocs = 1
+            title = self.bold(name) + ' = ' + realname
+        argspec = None
+
+        if inspect.isroutine(object):
+            try:
+                signature = inspect.signature(object)
+            except (ValueError, TypeError):
+                signature = None
+            if signature:
+                argspec = str(signature)
+                if realname == '<lambda>':
+                    title = self.bold(name) + ' lambda '
+                    # XXX lambda's won't usually have func_annotations['return']
+                    # since the syntax doesn't support but it is possible.
+                    # So removing parentheses isn't truly safe.
+                    argspec = argspec[1:-1] # remove parentheses
+        if not argspec:
+            argspec = '(...)'
+        decl = 'def ' + title + argspec + note + ':'
+
+        impl = 'raise NotImplementedError()'
+        if skipdocs:
+            return decl + '\n' + self.indent(impl) + '\n'
+        else:
+            doc = getdoc(object) or ''
+            if doc:
+                doc = f'"""\n{doc}\n"""'
+            return decl + '\n' + self.indent(((doc + '\n') if doc else '') + impl).rstrip() + '\n'
 
 def get_stubfile(target) -> str:
     return pydoc.render_doc(
