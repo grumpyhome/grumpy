@@ -454,6 +454,7 @@ class StatementVisitor(algorithm.Visitor):
     mgr_list = [self.visit_expr(item.context_expr).__enter__() for item in node.items]
     exit_funcs = [self.block.alloc_temp().__enter__() for mgr in mgr_list]
     values = [self.block.alloc_temp().__enter__() for mgr in mgr_list]
+    mgr = values[0] if values else exit_funcs[0]
 
       # The code here has a subtle twist: It gets the exit function attribute
       # from the class, not from the object. This matches the pseudo code from
