@@ -18,9 +18,10 @@
 
 from __future__ import unicode_literals
 
+from builtins import zip
 import string
 import textwrap
-from itertools import ifilter
+
 
 from grumpy_tools.compiler import block
 from grumpy_tools.compiler import expr

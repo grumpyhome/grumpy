@@ -33,6 +33,7 @@ requirements = [
     'click-log>=0.3.2',
     'dill>=0.2.7.1',
     'pythonparser>=1.1',
+    'future==0.17.1',
     'backports.functools-lru-cache>=1.5',
     'backports.tempfile==1.0',
 ]

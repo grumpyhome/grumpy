@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 """Console script for grumpy_tools."""
+from future import standard_library
+standard_library.install_aliases()
 import os
 import sys
-from StringIO import StringIO
+from io import StringIO
 from pkg_resources import resource_filename, Requirement, DistributionNotFound
 import logging
 logger = logging.getLogger(__package__)

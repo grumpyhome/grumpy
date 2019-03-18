@@ -18,10 +18,13 @@
 
 from __future__ import unicode_literals
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 import codecs
 import contextlib
 import string
-import StringIO
+import io
 import textwrap
 
 try:
@@ -65,7 +68,7 @@ class Writer(object):
   """Utility class for writing blocks of Go code to a file-like object."""
 
   def __init__(self, out=None):
-    self.out = codecs.getwriter('utf8')(out or StringIO.StringIO())
+    self.out = codecs.getwriter('utf8')(out or io.StringIO())
     self.indent_level = 0
 
   def getvalue(self):
@@ -139,7 +142,7 @@ class Writer(object):
 
 def go_str(value):
   """Returns value as a valid Go string literal."""
-  io = StringIO.StringIO()
+  io = io.StringIO()
   io.write('"')
   for c in value:
     if c in _ESCAPES:

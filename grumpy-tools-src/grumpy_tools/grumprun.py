@@ -20,6 +20,8 @@ Usage: $ grumprun -m <module>             # Run the named module.
        $ echo 'print "hola!"' | grumprun  # Execute Python code from stdin.
 """
 
+from future import standard_library
+standard_library.install_aliases()
 import argparse
 import os
 import random
@@ -29,7 +31,7 @@ import subprocess
 import sys
 import tempfile
 import logging
-from StringIO import StringIO
+from io import StringIO
 
 from .compiler import imputil
 from .pep_support.pep3147pycache import make_transpiled_module_folders
