@@ -84,7 +84,11 @@ class Writer(object):
   def write(self, output):
     for line in output.split('\n'):
       if line:
-        self.out.write(''.join(('\t' * self.indent_level, line, '\n')))
+        translated_line = ''.join(('\t' * self.indent_level, unicode(line), '\n'))
+        try:
+          self.out.write(translated_line)
+        except TypeError:
+          self.out.stream.write(translated_line)
 
   def write_block(self, block_, body):
     """Outputs the boilerplate necessary for code blocks like functions.
@@ -148,7 +152,7 @@ def go_str(value):
     if c in _ESCAPES:
       buffer.write(_ESCAPES[c])
     elif c in _SIMPLE_CHARS:
-      buffer.write(c)
+      buffer.write(unicode(c))
     else:
       buffer.write(r'\x{:02x}'.format(ord(c)))
   buffer.write('"')
