@@ -142,17 +142,17 @@ class Writer(object):
 
 def go_str(value):
   """Returns value as a valid Go string literal."""
-  io = io.StringIO()
-  io.write('"')
+  buffer = io.StringIO()
+  buffer.write('"')
   for c in value:
     if c in _ESCAPES:
-      io.write(_ESCAPES[c])
+      buffer.write(_ESCAPES[c])
     elif c in _SIMPLE_CHARS:
-      io.write(c)
+      buffer.write(c)
     else:
-      io.write(r'\x{:02x}'.format(ord(c)))
-  io.write('"')
-  return io.getvalue()
+      buffer.write(r'\x{:02x}'.format(ord(c)))
+  buffer.write('"')
+  return buffer.getvalue()
 
 
 def adjust_local_name(name):
