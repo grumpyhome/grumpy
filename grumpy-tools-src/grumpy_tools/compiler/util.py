@@ -68,7 +68,7 @@ class Writer(object):
   """Utility class for writing blocks of Go code to a file-like object."""
 
   def __init__(self, out=None):
-    self.out = codecs.getwriter('utf8')(out or io.StringIO())
+    self.out = codecs.getwriter('utf8')(out or io.BytesIO())
     self.indent_level = 0
 
   def getvalue(self):
