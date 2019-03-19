@@ -27,6 +27,8 @@ import string
 import io
 import textwrap
 
+unicode = type(u'')
+
 try:
   string.letters
 except AttributeError:
@@ -150,7 +152,7 @@ def go_str(value):
     elif c in _SIMPLE_CHARS:
       buffer.write(c)
     else:
-      buffer.write(r'\x{:02x}'.format(ord(c)))
+      buffer.write(r'\x{:02x}'.format(c if isinstance(c, int) else ord(c)))
   buffer.write('"')
   return buffer.getvalue()
 
