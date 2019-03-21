@@ -70,7 +70,7 @@ def run(file=None, cmd=None, modname=None, keep_main=False, pep3147=True, go_act
     elif file:
         stream = BytesIO(file.read())
     elif cmd:
-        stream = BytesIO(cmd)
+        stream = BytesIO(cmd.encode())
     else:   # Read from STDIN
         stdin = click.get_text_stream('stdin')
         if stdin.isatty():  # Interactive terminal -> REPL
