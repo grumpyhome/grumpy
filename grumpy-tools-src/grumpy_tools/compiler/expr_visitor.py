@@ -18,9 +18,9 @@
 
 from __future__ import unicode_literals
 
-import contextlib
 import textwrap
 
+from grumpy_tools.compiler.compat import nested
 from grumpy_tools.compiler import expr
 from grumpy_tools.compiler import util
 from pythonparser import algorithm
@@ -216,7 +216,7 @@ class ExprVisitor(algorithm.Visitor):
   def visit_ExtSlice(self, node):
     result = self.block.alloc_temp()
     if len(node.dims) <= util.MAX_DIRECT_TUPLE:
-      with contextlib.nested(*(self.visit(d) for d in node.dims)) as dims:
+      with nested(*(self.visit(d) for d in node.dims)) as dims:
         self.writer.write('{} = πg.NewTuple{}({}).ToObject()'.format(
             result.name, len(dims), ', '.join(d.expr for d in dims)))
     else:
@@ -351,7 +351,7 @@ class ExprVisitor(algorithm.Visitor):
   def visit_Tuple(self, node):
     result = self.block.alloc_temp()
     if len(node.elts) <= util.MAX_DIRECT_TUPLE:
-      with contextlib.nested(*(self.visit(e) for e in node.elts)) as elts:
+      with nested(*(self.visit(e) for e in node.elts)) as elts:
         self.writer.write('{} = πg.NewTuple{}({}).ToObject()'.format(
             result.name, len(elts), ', '.join(e.expr for e in elts)))
     else:
