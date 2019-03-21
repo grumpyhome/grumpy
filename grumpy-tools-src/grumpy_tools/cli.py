@@ -5,7 +5,7 @@ from future import standard_library
 standard_library.install_aliases()
 import os
 import sys
-from io import StringIO
+from io import StringIO, BytesIO
 from pkg_resources import resource_filename, Requirement, DistributionNotFound
 import logging
 logger = logging.getLogger(__package__)
@@ -68,9 +68,9 @@ def run(file=None, cmd=None, modname=None, keep_main=False, pep3147=True, go_act
     if modname:
         stream = None
     elif file:
-        stream = StringIO(file.read())
+        stream = BytesIO(file.read())
     elif cmd:
-        stream = StringIO(cmd)
+        stream = BytesIO(cmd)
     else:   # Read from STDIN
         stdin = click.get_text_stream('stdin')
         if stdin.isatty():  # Interactive terminal -> REPL
@@ -79,7 +79,7 @@ def run(file=None, cmd=None, modname=None, keep_main=False, pep3147=True, go_act
                        err=True)
             sys.exit(1)
         else:               # Piped terminal
-            stream = StringIO(stdin.read())
+            stream = BytesIO(stdin.read())
 
     if stream is not None:
         stream.seek(0)
