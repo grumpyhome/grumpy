@@ -74,7 +74,7 @@ class Writer(object):
     self.indent_level = 0
 
   def getvalue(self):
-    return self.out.getvalue().decode('utf8')
+    return self.out.getvalue()
 
   @contextlib.contextmanager
   def indent_block(self, n=1):
@@ -86,7 +86,15 @@ class Writer(object):
   def write(self, output):
     for line in output.split('\n'):
       if line:
-        self.out.write(''.join(('\t' * self.indent_level, line, '\n')))
+        if type(line) != unicode:
+          line = line.decode('utf-8')
+
+        translated_line = ''.join(('\t' * self.indent_level, line, '\n'))
+        try:
+          self.out.write(translated_line)
+        except TypeError:
+          self.out.stream.write(translated_line)
+
 
   def write_block(self, block_, body):
     """Outputs the boilerplate necessary for code blocks like functions.
@@ -150,7 +158,7 @@ def go_str(value):
     if c in _ESCAPES:
       buffer.write(_ESCAPES[c])
     elif c in _SIMPLE_CHARS:
-      buffer.write(c)
+      buffer.write(c.decode())
     else:
       buffer.write(r'\x{:02x}'.format(c if isinstance(c, int) else ord(c)))
   buffer.write('"')

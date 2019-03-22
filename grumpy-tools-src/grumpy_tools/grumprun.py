@@ -22,6 +22,7 @@ Usage: $ grumprun -m <module>             # Run the named module.
 
 from future import standard_library
 standard_library.install_aliases()
+from builtins import open
 import argparse
 import os
 import random
@@ -133,7 +134,7 @@ def main(stream=None, modname=None, pep3147=False, clean_tempfolder=True, go_act
     os.environ['GOPATH'] = os.pathsep.join([gopath_folder, gopath]) #, workdir])
 
     # Compile the dummy script to Go using grumpc.
-    with open(os.path.join(mod_dir, 'module.go'), 'w+') as dummy_file:
+    with open(os.path.join(mod_dir, 'module.go'), 'w+', encoding='utf-8') as dummy_file:
       result = grumpc.main(stream, modname=modname, pep3147=True, recursive=True, return_deps=True)
       transpiled, deps = result['gocode'], result['deps']
       dummy_file.write(transpiled)
