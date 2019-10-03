@@ -234,7 +234,7 @@ build/gofmt.diff: $(wildcard runtime/*.go)
 	@gofmt -d $^ > $@
 
 gofmt: build/gofmt.diff
-	@if [ -s $< ]; then echo 'gofmt found errors, run: gofmt -w $(ROOT_DIR)/runtime/*.go'; false; fi
+	@if [ -s $< ]; then echo 'gofmt found errors, run: gofmt -w $(ROOT_DIR)/runtime/*.go'; cat build/gofmt.diff; false; fi
 
 $(GOLINT_BIN):
 	@go get -u golang.org/x/lint/golint

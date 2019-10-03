@@ -307,7 +307,7 @@ func TestFloatRepr(t *testing.T) {
 		{args: wrapArgs(1e+6), want: NewStr("1000000.0").ToObject()},
 		{args: wrapArgs(1e+15), want: NewStr("1000000000000000.0").ToObject()},
 		{args: wrapArgs(1e+16), want: NewStr("1e+16").ToObject()},
-		{args: wrapArgs(1E16), want: NewStr("1e+16").ToObject()},
+		{args: wrapArgs(1e16), want: NewStr("1e+16").ToObject()},
 		{args: wrapArgs(1e-6), want: NewStr("1e-06").ToObject()},
 		{args: wrapArgs(math.Inf(1)), want: NewStr("inf").ToObject()},
 		{args: wrapArgs(math.Inf(-1)), want: NewStr("-inf").ToObject()},

@@ -412,7 +412,7 @@ func TestComplexPos(t *testing.T) {
 	cases := []invokeTestCase{
 		{args: wrapArgs(complex(0, 0)), want: NewComplex(complex(0, 0)).ToObject()},
 		{args: wrapArgs(complex(42, -0.1)), want: NewComplex(complex(42, -0.1)).ToObject()},
-		{args: wrapArgs(complex(-1.2, 375E+2)), want: NewComplex(complex(-1.2, 37500)).ToObject()},
+		{args: wrapArgs(complex(-1.2, 375e+2)), want: NewComplex(complex(-1.2, 37500)).ToObject()},
 		{args: wrapArgs(complex(5, math.NaN())), want: NewComplex(complex(5, math.NaN())).ToObject()},
 		{args: wrapArgs(complex(math.Inf(1), 0.618)), want: NewComplex(complex(math.Inf(1), 0.618)).ToObject()},
 	}
