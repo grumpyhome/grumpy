@@ -8,3 +8,5 @@ global-exclude *.egg-info/*
 global-exclude *__pycache__*
 
 recursive-exclude grumpy-tools-src *.go
+
+include pyproject.toml
