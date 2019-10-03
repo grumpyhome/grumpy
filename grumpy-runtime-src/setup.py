@@ -46,7 +46,7 @@ if needs_pytest:
     setup_requirements += ['pytest-runner']
 
 COMMON_OPTIONS = dict(
-    version='0.2.2',
+    version='0.3.0',
     description="Grumpy Runtime & Transpiler",
     long_description=readme,
     author="Dylan Trotter et al.",
@@ -158,7 +158,7 @@ class BuildMakeCommandDevelop(BuildExtCommand):  # Ran on setup.py develop
 GRUMPY_RUNTIME_OPTIONS = dict(
     name='grumpy-runtime',
     requires=['grumpy_tools'],
-    install_requires=['grumpy-tools>=0.2.2'],
+    install_requires=['grumpy-tools>=0.3.0'],
     packages=find_packages(
         exclude=["*.tests", "*.tests.*", "tests.*", "tests"],
     ),
