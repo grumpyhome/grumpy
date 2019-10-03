@@ -1,6 +1,6 @@
 # Grumpy: Go running Python
 
-[![Build Status](https://travis-ci.org/alanjds/grumpy.svg?branch=master)](https://travis-ci.org/alanjds/grumpy)
+[![Build Status](https://travis-ci.org/grumpyhome/grumpy.svg?branch=master)](https://travis-ci.org/grumpyhome/grumpy)
 [![Join the chat at https://gitter.im/grumpy-devel/Lobby](https://badges.gitter.im/grumpy-devel/Lobby.svg)](https://gitter.im/grumpy-devel/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
@@ -62,7 +62,7 @@ There are three basic categories of incomplete functionality:
 The commands ahead assumes that you have Golang installed and a recent
 version of Python 2, `setuptools` and `pip`.
 
-### Method 1: binary package
+### Method 0: binary package
 
 For convenience, a Python package is provided from the PyPI. During install,
 many Grumpy will be compiled and stored inside your Python installation.
