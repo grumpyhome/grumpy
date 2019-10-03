@@ -1,2 +1,2 @@
 [build-system]
-requires = ["grumpy-tools > 0.2.2"]
+requires = ["setuptools", "wheel", "grumpy-tools>0.2.2"]
