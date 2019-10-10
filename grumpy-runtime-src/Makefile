@@ -50,8 +50,12 @@ PY_DIR := build/lib/python2.7/site-packages
 PY_INSTALL_DIR := $(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 
 export GOPATH := $(ROOT_DIR)/build
-export PYTHONPATH := $(ROOT_DIR)/$(PY_DIR)
 export PATH := $(ROOT_DIR)/build/bin:$(PATH)
+ifndef PYTHONPATH
+  export PYTHONPATH := $(ROOT_DIR)/$(PY_DIR)
+else
+  export PYTHONPATH := $(PYTHONPATH):$(ROOT_DIR)/$(PY_DIR)
+endif
 
 GOPATH_PY_ROOT := $(GOPATH)/src/__python__
 
