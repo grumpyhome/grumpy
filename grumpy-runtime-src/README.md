@@ -1,3 +1,8 @@
-This is home for Grumpy runtime. Programs produced by Grumpy depend on this Go library, which provides wrappers for system level functions like the CPython API. For instance, [it implements](runtime) Python slices, exceptions and other features on top of Go.
+This is home for Grumpy runtime, which provides Python stdlib written in Go for programs produced by Grumpy. The runtime consists of two directories.
+
+ * [`runtime/`](runtime) contains Go code
+ * [`lib/`](lib) contains Python code
+ 
+Both are used to implement Python feature on top of Go, such as slices, types, exceptions and so on. When `import` code is encountered, it first looks in these two dirs.
 
 See [../README.md](../README.md) for details on using Grumpy.
