@@ -7,14 +7,14 @@ cache:
 
 matrix:
   allow_failures:
-    - python: 3.7
+    - python: 3.8
     - env: GO="stable"
   include:
     - python: 2.7
       env: GO=1.10.x
     - python: 2.7
       env: GO=stable  # Currently 1.11
-    - python: 3.7
+    - python: 3.8
       env: GO=1.10.x
       script:  # To detect Python 3 syntax errors in grumpy-tools
         - pip install --upgrade flake8
