@@ -50,19 +50,19 @@ assert a.pop(0) == -1
 assert a == [0]
 try:
   a.pop(5)
-  assert AssertionError
+  assert False, "Exception: 'pop index out of range' was not raised"
 except IndexError:
   pass
 assert a.pop(0) == 0
 assert a == []
 try:
   a.pop()
-  assert AssertionError
+  assert False, "Exception: 'pop from empty list' was not raised"
 except IndexError:
   pass
 try:
   a.pop(42, 42)
-  assert AssertionError
+  assert False, "Exception: 'pop takes at most 1 argument' was not raised"
 except TypeError:
   pass
 a = [-1, 0, 1]
@@ -89,13 +89,13 @@ assert a == [3, 2, 4, 1, 6, 7, 0, 1, 2]
 
 try:
   a.extend()
-  assert AssertionError
+  assert False, "Exception: 'extend() takes exactly one argument' was not raised"
 except TypeError:
   pass
 
 try:
   a.extend([], [])
-  assert AssertionError
+  assert False, "Exception: 'extend() takes exactly one argument' was not raised"
 except TypeError:
   pass
 
@@ -107,6 +107,6 @@ assert ([2] * 20).count(2) == 20
 
 try:
   [].count()
-  assert AssertionError
+  assert False, "Exception: 'count() takes exactly one argument' was not raised"
 except TypeError:
   pass
