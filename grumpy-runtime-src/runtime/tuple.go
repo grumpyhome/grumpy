@@ -181,6 +181,46 @@ func tupleCount(f *Frame, args Args, kwargs KWArgs) (*Object, *BaseException) {
 	return seqCount(f, args[0], args[1])
 }
 
+func tupleIndex(f *Frame, args Args, kwargs KWArgs) (*Object, *BaseException) {
+	expectedTypes := []*Type{TupleType, ObjectType, ObjectType, ObjectType}
+	argc := len(args)
+	var raised *BaseException
+	if argc == 2 || argc == 3 {
+		expectedTypes = expectedTypes[:argc]
+	}
+	if raised = checkMethodArgs(f, "index", args, expectedTypes...); raised != nil {
+		return nil, raised
+	}
+	t := toTupleUnsafe(args[0])
+	numElems := len(t.elems)
+	start, stop := 0, numElems
+	if argc > 2 {
+		start, raised = IndexInt(f, args[2])
+		if raised != nil {
+			return nil, raised
+		}
+	}
+	if argc > 3 {
+		stop, raised = IndexInt(f, args[3])
+		if raised != nil {
+			return nil, raised
+		}
+	}
+	start, stop = adjustIndex(start, stop, numElems)
+	value := args[1]
+	index := -1
+	if start < numElems && start < stop {
+		index, raised = seqFindElem(f, t.elems[start:stop], value)
+	}
+	if raised != nil {
+		return nil, raised
+	}
+	if index == -1 {
+		return nil, f.RaiseType(ValueErrorType, fmt.Sprintf("%v is not in tuple", value))
+	}
+	return NewInt(index + start).ToObject(), nil
+}
+
 func tupleEq(f *Frame, v, w *Object) (*Object, *BaseException) {
 	return tupleCompare(f, toTupleUnsafe(v), w, Eq)
 }
@@ -288,6 +328,7 @@ func tupleRMul(f *Frame, v, w *Object) (*Object, *BaseException) {
 
 func initTupleType(dict map[string]*Object) {
 	dict["count"] = newBuiltinFunction("count", tupleCount).ToObject()
+	dict["index"] = newBuiltinFunction("index", tupleIndex).ToObject()
 	dict["__getnewargs__"] = newBuiltinFunction("__getnewargs__", tupleGetNewArgs).ToObject()
 	TupleType.slots.Add = &binaryOpSlot{tupleAdd}
 	TupleType.slots.Contains = &binaryOpSlot{tupleContains}

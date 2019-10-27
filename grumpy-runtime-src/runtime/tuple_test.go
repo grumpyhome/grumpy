@@ -115,6 +115,38 @@ func TestTupleCount(t *testing.T) {
 	}
 }
 
+func TestTupleIndex(t *testing.T) {
+	intIndexType := newTestClass("IntIndex", []*Type{ObjectType}, newStringDict(map[string]*Object{
+		"__index__": newBuiltinFunction("__index__", func(f *Frame, _ Args, _ KWArgs) (*Object, *BaseException) {
+			return NewInt(0).ToObject(), nil
+		}).ToObject(),
+	}))
+	cases := []invokeTestCase{
+		{args: wrapArgs(newTestTuple(), 1, "foo"), wantExc: mustCreateException(TypeErrorType, "slice indices must be integers or None or have an __index__ method")},
+		{args: wrapArgs(newTestTuple(10, 20, 30), 20), want: NewInt(1).ToObject()},
+		{args: wrapArgs(newTestTuple(10, 20, 30), 20, newObject(intIndexType)), want: NewInt(1).ToObject()},
+		{args: wrapArgs(newTestTuple(0, "foo", "bar"), "foo"), want: NewInt(1).ToObject()},
+		{args: wrapArgs(newTestTuple(0, 1, 2, 3, 4), 3, 3), want: NewInt(3).ToObject()},
+		{args: wrapArgs(newTestTuple(0, 2.0, 2, 3, 4, 2, 1, "foo"), 3, 3), want: NewInt(3).ToObject()},
+		{args: wrapArgs(newTestTuple(0, 1, 2, 3, 4), 3, 4), wantExc: mustCreateException(ValueErrorType, "3 is not in tuple")},
+		{args: wrapArgs(newTestTuple(0, 1, 2, 3, 4), 3, 0, 4), want: NewInt(3).ToObject()},
+		{args: wrapArgs(newTestTuple(0, 1, 2, 3, 4), 3, 0, 3), wantExc: mustCreateException(ValueErrorType, "3 is not in tuple")},
+		{args: wrapArgs(newTestTuple(0, 1, 2, 3, 4), 3, -2), want: NewInt(3).ToObject()},
+		{args: wrapArgs(newTestTuple(0, 1, 2, 3, 4), 3, -1), wantExc: mustCreateException(ValueErrorType, "3 is not in tuple")},
+		{args: wrapArgs(newTestTuple(0, 1, 2, 3, 4), 3, 0, -1), want: NewInt(3).ToObject()},
+		{args: wrapArgs(newTestTuple(0, 1, 2, 3, 4), 3, 0, -2), wantExc: mustCreateException(ValueErrorType, "3 is not in tuple")},
+		{args: wrapArgs(newTestTuple(0, 1, 2, 3, 4), 3, 0, 999), want: NewInt(3).ToObject()},
+		{args: wrapArgs(newTestTuple(0, 1, 2, 3, 4), "foo", 0, 999), wantExc: mustCreateException(ValueErrorType, "'foo' is not in tuple")},
+		{args: wrapArgs(newTestTuple(0, 1, 2, 3, 4), 3, 999), wantExc: mustCreateException(ValueErrorType, "3 is not in tuple")},
+		{args: wrapArgs(newTestTuple(0, 1, 2, 3, 4), 3, 5, 0), wantExc: mustCreateException(ValueErrorType, "3 is not in tuple")},
+	}
+	for _, cas := range cases {
+		if err := runInvokeMethodTestCase(TupleType, "index", &cas); err != "" {
+			t.Error(err)
+		}
+	}
+}
+
 func BenchmarkTupleContains(b *testing.B) {
 	b.Run("false-3", func(b *testing.B) {
 		t := newTestTuple("foo", 42, "bar").ToObject()
