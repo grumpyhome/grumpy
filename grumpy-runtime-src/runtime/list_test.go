@@ -137,7 +137,7 @@ func TestListIndex(t *testing.T) {
 		}).ToObject(),
 	}))
 	cases := []invokeTestCase{
-		// {args: wrapArgs(newTestList(), 1, "foo"), wantExc: mustCreateException(TypeErrorType, "slice indices must be integers or None or have an __index__ method")},
+		{args: wrapArgs(newTestList(), 1, "foo"), wantExc: mustCreateException(TypeErrorType, "slice indices must be integers or None or have an __index__ method")},
 		{args: wrapArgs(newTestList(10, 20, 30), 20), want: NewInt(1).ToObject()},
 		{args: wrapArgs(newTestList(10, 20, 30), 20, newObject(intIndexType)), want: NewInt(1).ToObject()},
 		{args: wrapArgs(newTestList(0, "foo", "bar"), "foo"), want: NewInt(1).ToObject()},
