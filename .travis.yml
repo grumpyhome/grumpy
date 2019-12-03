@@ -23,7 +23,7 @@ matrix:
       language: go
       go: 1.10.x
       env: OSX_PYTHON=2.7
-      install: brew upgrade python@2
+      install: HOMEBREW_NO_AUTO_UPDATE=1 brew reinstall python@2
 
 install:
   - |
