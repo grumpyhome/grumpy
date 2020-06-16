@@ -24,6 +24,6 @@ WORKDIR /app
 # run-time needs at least `grumpy run` to be built.
 RUN cd grumpy-tools-src && pip install --editable .
 
-# Install run-time
-RUN cd grumpy-runtime-src && pip install --editable .
+# Install run-time in non-editable mode
+RUN cd grumpy-runtime-src && pip install .
 
