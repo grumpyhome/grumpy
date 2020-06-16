@@ -1,6 +1,11 @@
 FROM ubuntu:20.04
 
-# Grumpy is not ported to Python 3 yet
+
+# Installing Python 2, because Grumpy is not ported to Python 3 yet
+
+# Go for run-time pulls tzdata, which asks interactive questions
+# https://stackoverflow.com/questions/44331836/apt-get-install-tzdata-noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     curl \
     gcc \
