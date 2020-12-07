@@ -47,7 +47,7 @@ if needs_pytest:
 
 COMMON_OPTIONS = dict(
     version='0.3.0',
-    description="Grumpy Runtime & Transpiler",
+    description="Grumpy (Python to Go Transpiler) Runtime",
     long_description=readme,
     author="Dylan Trotter et al.",
     maintainer="Alan Justino et al.",
