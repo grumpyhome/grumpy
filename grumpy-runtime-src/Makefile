@@ -251,7 +251,7 @@ golint: $(GOLINT_BIN)
 $(PYLINT_BIN):
 	@mkdir -p build/third_party
 	@cd build/third_party && curl -sL https://pypi.io/packages/source/p/pylint/pylint-2.6.0.tar.gz | tar -zx
-	@cd build/third_party/pylint-1.6.4 && $(PYTHON) setup.py install --prefix $(ROOT_DIR)/build
+	@cd build/third_party/pylint-2.6.0 && $(PYTHON) setup.py install --prefix $(ROOT_DIR)/build
 
 pylint: $(PYLINT_BIN) $(COMPILER_SRCS) $(PYTHONPARSER_SRCS) $(TOOL_BINS)
 	@$(PYTHON) $(PYLINT_BIN) $(COMPILER_SRCS) $(filter-out %pydeps,$(TOOL_BINS))
