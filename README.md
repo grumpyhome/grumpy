@@ -7,12 +7,11 @@
 ## Overview
 
 Grumpy is a Python to Go source code transcompiler and runtime that is intended
-to be a near drop-in replacement for CPython 2.7. The key difference is that it
+to be a near drop-in replacement for CPython 2.7. Grumpy has no VM, because it
 compiles Python source code to Go source code which is then compiled to native
-code, rather than to bytecode. This means that Grumpy has no VM. The compiled Go
-source code is a series of calls to the Grumpy runtime, a Go library serving a
-similar purpose to the Python C API (although the API is incompatible with
-CPython's).
+code (rather than to bytecode). The compiled Go source code uses Go library
+called Grumpy runtime, which replaces Python C API for system calls (although
+the API is incompatible with CPython's).
 
 ## Limitations
 
@@ -55,47 +54,48 @@ There are three basic categories of incomplete functionality:
    some functionality that is locale-dependent may not currently work the same as in
    CPython.
 
-## Running Grumpy Programs
+## Running Grumpy
 
 ### Pre-requisites
 Python 2.7
 pip 
-setuptools
 Go 1.10+ 
 
-### Mac Python 2.7 installation instructions 
-OSX users can go to https://www.python.org/downloads/release/python-2713/ 
+##### Mac Python 2.7
+OSX users can go to https://www.python.org/downloads/release/python-2718/
 
 Once you've succesfull installed Python2.7 please ensure that pip is also 
 installed on your system by running the command "python -m pip --version". 
 If pip is not installed please follow the instructions found here 
 https://pip.pypa.io/en/stable/installing/#
 
-Once pip has succesfully been installed please run the following command  
-"python -m pip install --upgrade pip setuptools".
+Once pip has succesfully been installed please run the following command
 
-### Linux Python 2.7 installation instructions 
-Run the command "python --version" if this command returns Python2.7 
-then it's already installed. If it returns python3+ then run the command 
-"sudo apt install python2.7" Note: Replace "apt" with your package tool.
+    python -m pip install --upgrade pip setuptools
+
+##### Linux Python 2.7
+For Debian based distos you can install Python 2 with.
+
+    sudo apt install python2
 
 Next ensure that pip is installed by running "python -m pip --version" 
 or, "python2 -m pip version". If it returns pip [version number] then 
 pip is already installed. If it doesn't run the command "sudo apt install python-pip".
 Note: Again, replace apt with the appropriate package tool.
 
-Once pip has been succesfully installed run the command "python -m pip install --upgrade pip setuptools"
-### GO Lang installation instructions 
-Note: Please download Go 1.10+
-Go lang can be downloaded here: https://golang.org/dl/ 
+##### Go Compiler
+
+Go can be downloaded here: https://golang.org/dl/ 
 
 Please see the official go installation documentation to install Go: https://golang.org/doc/install
 
 If you wish to build Go from source see the documentation here: https://golang.org/doc/install/source
 
 
+## Installing Grumpy
+
 The commands ahead assumes that you have Golang installed and a recent
-version of Python 2, `setuptools` and `pip`.
+version of Python 2 and `pip`.
 
 ### Method 0: binary package
 
