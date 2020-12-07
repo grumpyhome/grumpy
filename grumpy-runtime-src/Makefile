@@ -250,8 +250,8 @@ golint: $(GOLINT_BIN)
 # Instead build pylint from source. Dependencies will be fetched by distutils.
 $(PYLINT_BIN):
 	@mkdir -p build/third_party
-	@cd build/third_party && curl -sL https://pypi.io/packages/source/p/pylint/pylint-1.9.6.tar.gz | tar -zx
-	@cd build/third_party/pylint-1.9.6 && $(PYTHON) setup.py install --prefix $(ROOT_DIR)/build
+	@cd build/third_party && curl -sL https://pypi.io/packages/source/p/pylint/pylint-1.9.5.tar.gz | tar -zx
+	@cd build/third_party/pylint-1.9.5 && $(PYTHON) setup.py install --prefix $(ROOT_DIR)/build
 
 pylint: $(PYLINT_BIN) $(COMPILER_SRCS) $(PYTHONPARSER_SRCS) $(TOOL_BINS)
 	@$(PYTHON) $(PYLINT_BIN) $(COMPILER_SRCS) $(filter-out %pydeps,$(TOOL_BINS))
