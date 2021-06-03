@@ -77,6 +77,8 @@ Once pip has succesfully been installed please run the following command
 For Debian based distos you can install Python 2 with.
 
     sudo apt install python2
+    wget  https://bootstrap.pypa.io/pip/2.7/get-pip.py
+    sudo python2 get-pip.py
 
 Next ensure that pip is installed by running "python -m pip --version" 
 or, "python2 -m pip version". If it returns pip [version number] then 
